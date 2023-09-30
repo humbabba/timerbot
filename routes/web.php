@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\Timer;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $timers = Timer::all();
+    return view('welcome')->with(['timers' => $timers]);
 });
+Route::resource('timers', 'TimerController')->except([
+    'show'
+]);
+Route::get('timers/{name}', 'App\Http\Controllers\TimerController@show')->name('timers.show');
