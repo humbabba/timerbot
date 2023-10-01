@@ -10,7 +10,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
         <!-- CSRF Token -->
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="csrf_token" content="{{ csrf_token() }}">
 
         <!-- Styles -->
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -24,6 +24,7 @@
       <div class="max-w-[600px] w-full border m-[auto] p-[1rem]">
         <input type="hidden" id="timerName" value="{{$timer->name}}"/>
         <input type="hidden" id="started" value="{{$timer->started}}"/>
+        <input type="hidden" id="over" value="0"/>
         <h1 class="text-2xl underline mb-2">{{$timer->name}} Timerbot</h1>
         <p class="text-[green]{{ ($timer->started)? '':' hidden' }}" id="underway">Event is running</p>
         <p class="text-[red]{{ ($timer->started)? ' hidden':'' }}" id="notUnderway">Event is not not running</p>

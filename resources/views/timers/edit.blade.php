@@ -23,6 +23,7 @@
     <body class="p-[1rem]">
       <div class="max-w-[600px] w-full border m-[auto] p-[1rem]">
         <input type="hidden" id="timerName" value="{{$timer->name}}"/>
+        <input type="hidden" id="over" value="0"/>
         <h1 class="text-2xl underline mb-2">{{$timer->name}} Timerbot - admin</h1>
         <div class="flex flex-wrap gap-4 my-2">
           <p><b>Now:</b> <span id="now">{{ date('H:i:s') }}</span></p>

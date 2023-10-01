@@ -58,6 +58,7 @@ class TimerController extends Controller
       $interval = $timeNow->diff($timeEnd);
       $timer->now = $timeNow->format('H:i:s');
       $timer->remaining = $interval->format('%H:%I:%S');
+      $timer->over = $interval->invert;
       return $timer->toJson();
     }
 
@@ -83,19 +84,41 @@ class TimerController extends Controller
         'success' => false,
         'message' => 'Timer not updated',
       ];
+
       $data = $request->get('data');
       $timerName = $data['timerName'];
+      $eventName = $data['eventName'];
+
       $timer = Timer::where('name',$timerName)->first();
-      if(isset($data['restarting'])) {
-        $timer->started = 0;
-        $timer->current_guy = 0;
-      } else {
-        $started = $data['started'];
-        $timer->started = $started;
-        if($started && !$timer->current_guy) {
-          $timer->current_guy = 1;
-        }
+
+      switch ($eventName) {
+        case 'start':
+          $timer->started = true;
+          if(!$timer->current_guy) {
+            $timer->current_guy = 1;
+          }
+          break;
+        case 'stop':
+          $timer->started = false;
+          break;
+        case 'reset':
+          $timer->started = false;
+          $timer->current_guy = 0;
+          break;
+        case 'pass':
+          if($timer->current_guy === $timer->guys) {
+            $timer->started = false;
+            $timer->current_guy = 0;
+          } else {
+            $timer->current_guy += 1;
+          }
+          break;
+
+        default:
+          // code...
+          break;
       }
+
       if($timer->save()) {
         $output['success'] = true;
         $output['message'] = 'Timer updated';

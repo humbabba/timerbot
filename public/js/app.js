@@ -2529,8 +2529,10 @@ var fields = (_fields = {
   current_guy: document.querySelector('#current_guy'),
   now: document.querySelector('#now'),
   started: document.querySelector('#started'),
+  over: document.querySelector('#over'),
   end_time: document.querySelector('#end_time')
 }, _defineProperty(_fields, "started", document.querySelector('#started')), _defineProperty(_fields, "remaining", document.querySelector('#remaining')), _defineProperty(_fields, "message", document.querySelector('#message')), _fields);
+var token = document.querySelector('meta[name="csrf_token"]').content;
 var underway = document.querySelector('#underway');
 var notUnderway = document.querySelector('#notUnderway');
 var runningInfo = document.querySelector('#runningInfo');
@@ -2547,27 +2549,27 @@ if (startButton) {
     stopButton.classList.remove('hidden');
     passButton.classList.remove('bg-gray-800');
     passButton.classList.add('bg-blue-800');
-    toggleStartStop();
+    sendEvent('start');
   });
   stopButton.addEventListener('click', function () {
     startButton.classList.remove('hidden');
     stopButton.classList.add('hidden');
     passButton.classList.add('bg-gray-800');
     passButton.classList.remove('bg-blue-800');
-    toggleStartStop();
+    sendEvent('stop');
   });
   resetButton.addEventListener('click', function () {
     startButton.classList.remove('hidden');
     stopButton.classList.add('hidden');
     passButton.classList.add('bg-gray-800');
     passButton.classList.remove('bg-blue-800');
-    resetEvent();
+    sendEvent('reset');
   });
   passButton.addEventListener('click', function () {
     if (passButton.classList.contains('bg-gray-800')) {
       return;
     }
-    pass();
+    sendEvent('pass');
   });
 }
 var timerInit = function timerInit() {
@@ -2589,18 +2591,17 @@ var getTimerInfo = function getTimerInfo(timerName) {
       console.log('The server responded with an error: ', response);
     }
   }).then(function (info) {
-    // console.log('tick');
-    // console.log('info: ', info);
+    console.log('info: ', info);
     updateTimerView(info);
     setTimeout(function () {
       return getTimerInfo(timerName);
-    }, 1000);
+    }, 300);
   })["catch"](function (data) {
     console.log('Error: ', data);
   });
 };
 var updateTimerView = function updateTimerView(info) {
-  var valuesToUpdate = ['guys', 'current_guy', 'now', 'end_time', 'remaining', 'started', 'message'];
+  var valuesToUpdate = ['guys', 'current_guy', 'now', 'end_time', 'remaining', 'started', 'over', 'message'];
   for (var _i = 0, _valuesToUpdate = valuesToUpdate; _i < _valuesToUpdate.length; _i++) {
     var el = _valuesToUpdate[_i];
     if (!fields[el]) {
@@ -2608,9 +2609,21 @@ var updateTimerView = function updateTimerView(info) {
     }
     if ('started' === el) {
       if (String(info[el]) !== String(fields[el].value)) {
-        console.log('toggling');
         toggleStartedState(info[el]);
         fields[el].value = info[el];
+      }
+    } else if ('over' === el) {
+      if (String(info[el]) !== String(fields[el].value)) {
+        fields[el].value = info[el];
+        if (info[el]) {
+          //It's over
+          fields.remaining.classList.add('bg-red-800');
+          fields.remaining.classList.add('text-white');
+        } else {
+          //More time!
+          fields.remaining.classList.remove('bg-red-800');
+          fields.remaining.classList.remove('text-white');
+        }
       }
     } else if (String(info[el]) !== String(fields[el].innerHTML)) {
       fields[el].innerHTML = info[el];
@@ -2630,72 +2643,10 @@ var toggleStartedState = function toggleStartedState(startedState) {
     runningInfo.classList.add('hidden');
   }
 };
-var toggleStartStop = function toggleStartStop() {
-  var token = document.querySelector('meta[name="csrf_token"]').content;
+var sendEvent = function sendEvent(eventName) {
   var data = {
     timerName: timerName,
-    started: startButton.classList.contains('hidden'),
-    currentGuy: fields.current_guy.value
-  };
-  console.log('data: ', data);
-  var fetchPromise = fetch('/timers/update', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      "X-CSRF-Token": token
-    },
-    body: JSON.stringify({
-      data: data
-    })
-  });
-  fetchPromise.then(function (response) {
-    if (response.ok) {
-      return response.json();
-    } else {
-      console.log('The server responded with an error: ', response);
-    }
-  }).then(function (data) {
-    console.log(data);
-  })["catch"](function (data) {
-    console.log('Error: ', data);
-  });
-};
-var resetEvent = function resetEvent() {
-  var token = document.querySelector('meta[name="csrf_token"]').content;
-  var data = {
-    timerName: timerName,
-    restarting: true
-  };
-  console.log('data: ', data);
-  var fetchPromise = fetch('/timers/update', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      "X-CSRF-Token": token
-    },
-    body: JSON.stringify({
-      data: data
-    })
-  });
-  fetchPromise.then(function (response) {
-    if (response.ok) {
-      return response.json();
-    } else {
-      console.log('The server responded with an error: ', response);
-    }
-  }).then(function (data) {
-    console.log(data);
-  })["catch"](function (data) {
-    console.log('Error: ', data);
-  });
-};
-var pass = function pass() {
-  var token = document.querySelector('meta[name="csrf_token"]').content;
-  var data = {
-    timerName: timerName,
-    restarting: true
+    eventName: eventName
   };
   console.log('data: ', data);
   var fetchPromise = fetch('/timers/update', {
