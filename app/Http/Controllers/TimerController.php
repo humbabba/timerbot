@@ -48,26 +48,59 @@ class TimerController extends Controller
     }
 
     /**
+    * Get current Timer info
+    */
+    public function info($timerName)
+    {
+      $timer = Timer::where('name',$timerName)->first();
+      $timeNow = new \DateTimeImmutable('now');
+      $timeEnd = \DateTimeImmutable::createFromFormat('H:i:s',$timer->end_time);
+      $interval = $timeNow->diff($timeEnd);
+      $timer->now = $timeNow->format('H:i:s');
+      $timer->remaining = $interval->format('%H:%I:%S');
+      return $timer->toJson();
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  string  $timerName
      */
-    public function edit($id)
+    public function edit($timerName)
     {
-        //
+        $timer = Timer::where('name',$timerName)->first();
+        return view('timers.edit')->with(['timer' => $timer]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+      $output = [
+        'success' => false,
+        'message' => 'Timer not updated',
+      ];
+      $data = $request->get('data');
+      $timerName = $data['timerName'];
+      $timer = Timer::where('name',$timerName)->first();
+      if(isset($data['restarting'])) {
+        $timer->started = 0;
+        $timer->current_guy = 0;
+      } else {
+        $started = $data['started'];
+        $timer->started = $started;
+        if($started && !$timer->current_guy) {
+          $timer->current_guy = 1;
+        }
+      }
+      if($timer->save()) {
+        $output['success'] = true;
+        $output['message'] = 'Timer updated';
+      }
+      return json_encode($output);
     }
 
     /**

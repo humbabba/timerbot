@@ -2471,6 +2471,7 @@ module.exports = {
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+__webpack_require__(/*! ./components/timer */ "./resources/js/components/timer.js");
 
 /***/ }),
 
@@ -2507,6 +2508,222 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/timer.js":
+/*!******************************************!*\
+  !*** ./resources/js/components/timer.js ***!
+  \******************************************/
+/***/ (() => {
+
+var _fields;
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+//Globals
+var timerName;
+var fields = (_fields = {
+  guys: document.querySelector('#guys'),
+  current_guy: document.querySelector('#current_guy'),
+  now: document.querySelector('#now'),
+  started: document.querySelector('#started'),
+  end_time: document.querySelector('#end_time')
+}, _defineProperty(_fields, "started", document.querySelector('#started')), _defineProperty(_fields, "remaining", document.querySelector('#remaining')), _defineProperty(_fields, "message", document.querySelector('#message')), _fields);
+var underway = document.querySelector('#underway');
+var notUnderway = document.querySelector('#notUnderway');
+var runningInfo = document.querySelector('#runningInfo');
+var timePerGuy = document.querySelector('#timePerGuy');
+var startButton = document.querySelector('#startButton');
+var stopButton = document.querySelector('#stopButton');
+var resetButton = document.querySelector('#resetButton');
+var passButton = document.querySelector('#passButton');
+
+//Event handlers
+if (startButton) {
+  startButton.addEventListener('click', function () {
+    startButton.classList.add('hidden');
+    stopButton.classList.remove('hidden');
+    passButton.classList.remove('bg-gray-800');
+    passButton.classList.add('bg-blue-800');
+    toggleStartStop();
+  });
+  stopButton.addEventListener('click', function () {
+    startButton.classList.remove('hidden');
+    stopButton.classList.add('hidden');
+    passButton.classList.add('bg-gray-800');
+    passButton.classList.remove('bg-blue-800');
+    toggleStartStop();
+  });
+  resetButton.addEventListener('click', function () {
+    startButton.classList.remove('hidden');
+    stopButton.classList.add('hidden');
+    passButton.classList.add('bg-gray-800');
+    passButton.classList.remove('bg-blue-800');
+    resetEvent();
+  });
+  passButton.addEventListener('click', function () {
+    if (passButton.classList.contains('bg-gray-800')) {
+      return;
+    }
+    pass();
+  });
+}
+var timerInit = function timerInit() {
+  timerName = document.querySelector('#timerName').value;
+  getTimerInfo(timerName);
+};
+var getTimerInfo = function getTimerInfo(timerName) {
+  var fetchPromise = fetch("/timers/".concat(timerName, "/info"), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  });
+  fetchPromise.then(function (response) {
+    if (response.ok) {
+      return response.json();
+    } else {
+      console.log('The server responded with an error: ', response);
+    }
+  }).then(function (info) {
+    // console.log('tick');
+    // console.log('info: ', info);
+    updateTimerView(info);
+    setTimeout(function () {
+      return getTimerInfo(timerName);
+    }, 1000);
+  })["catch"](function (data) {
+    console.log('Error: ', data);
+  });
+};
+var updateTimerView = function updateTimerView(info) {
+  var valuesToUpdate = ['guys', 'current_guy', 'now', 'end_time', 'remaining', 'started', 'message'];
+  for (var _i = 0, _valuesToUpdate = valuesToUpdate; _i < _valuesToUpdate.length; _i++) {
+    var el = _valuesToUpdate[_i];
+    if (!fields[el]) {
+      continue;
+    }
+    if ('started' === el) {
+      if (String(info[el]) !== String(fields[el].value)) {
+        console.log('toggling');
+        toggleStartedState(info[el]);
+        fields[el].value = info[el];
+      }
+    } else if (String(info[el]) !== String(fields[el].innerHTML)) {
+      fields[el].innerHTML = info[el];
+    }
+  }
+  updateTimePerGuy(info);
+};
+var updateTimePerGuy = function updateTimePerGuy(info) {};
+var toggleStartedState = function toggleStartedState(startedState) {
+  if (startedState) {
+    notUnderway.classList.add('hidden');
+    underway.classList.remove('hidden');
+    runningInfo.classList.remove('hidden');
+  } else {
+    notUnderway.classList.remove('hidden');
+    underway.classList.add('hidden');
+    runningInfo.classList.add('hidden');
+  }
+};
+var toggleStartStop = function toggleStartStop() {
+  var token = document.querySelector('meta[name="csrf_token"]').content;
+  var data = {
+    timerName: timerName,
+    started: startButton.classList.contains('hidden'),
+    currentGuy: fields.current_guy.value
+  };
+  console.log('data: ', data);
+  var fetchPromise = fetch('/timers/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "X-CSRF-Token": token
+    },
+    body: JSON.stringify({
+      data: data
+    })
+  });
+  fetchPromise.then(function (response) {
+    if (response.ok) {
+      return response.json();
+    } else {
+      console.log('The server responded with an error: ', response);
+    }
+  }).then(function (data) {
+    console.log(data);
+  })["catch"](function (data) {
+    console.log('Error: ', data);
+  });
+};
+var resetEvent = function resetEvent() {
+  var token = document.querySelector('meta[name="csrf_token"]').content;
+  var data = {
+    timerName: timerName,
+    restarting: true
+  };
+  console.log('data: ', data);
+  var fetchPromise = fetch('/timers/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "X-CSRF-Token": token
+    },
+    body: JSON.stringify({
+      data: data
+    })
+  });
+  fetchPromise.then(function (response) {
+    if (response.ok) {
+      return response.json();
+    } else {
+      console.log('The server responded with an error: ', response);
+    }
+  }).then(function (data) {
+    console.log(data);
+  })["catch"](function (data) {
+    console.log('Error: ', data);
+  });
+};
+var pass = function pass() {
+  var token = document.querySelector('meta[name="csrf_token"]').content;
+  var data = {
+    timerName: timerName,
+    restarting: true
+  };
+  console.log('data: ', data);
+  var fetchPromise = fetch('/timers/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "X-CSRF-Token": token
+    },
+    body: JSON.stringify({
+      data: data
+    })
+  });
+  fetchPromise.then(function (response) {
+    if (response.ok) {
+      return response.json();
+    } else {
+      console.log('The server responded with an error: ', response);
+    }
+  }).then(function (data) {
+    console.log(data);
+  })["catch"](function (data) {
+    console.log('Error: ', data);
+  });
+};
+document.addEventListener("DOMContentLoaded", function () {
+  timerInit();
+});
 
 /***/ }),
 
