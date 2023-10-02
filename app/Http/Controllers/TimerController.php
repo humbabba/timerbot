@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Timer;
+use App\Helpers\Helpers;
 
 class TimerController extends Controller
 {
@@ -53,12 +54,13 @@ class TimerController extends Controller
     public function info($id)
     {
       $timer = Timer::find($id);
-      $timeNow = new \DateTimeImmutable('now');
-      $timeEnd = \DateTimeImmutable::createFromFormat('H:i:s',$timer->end_time);
-      $interval = $timeNow->diff($timeEnd);
-      $timer->now = $timeNow->format('H:i:s');
+      $timer->now = date('H:i:s');
+      $interval = Helpers::calculateInterval(date('H:i:s'),$timer->end_time);
       $timer->remaining = $interval->format('%H:%I:%S');
       $timer->over = $interval->invert;
+      if($timer->current_guy_start) {
+        $timer->time_per_guy = $timer->calculateTimePerGuy($timer->current_guy_start);
+      }
       return $timer->toJson();
     }
 
@@ -117,6 +119,7 @@ class TimerController extends Controller
           $timer->started = true;
           if(!$timer->current_guy) {
             $timer->current_guy = 1;
+            $timer->current_guy_start = date('H:i:s');
           }
           break;
         case 'stop':
@@ -125,6 +128,7 @@ class TimerController extends Controller
         case 'reset':
           $timer->started = false;
           $timer->current_guy = 0;
+          $timer->current_guy_start = null;
           break;
         case 'pass':
           if($timer->current_guy === $timer->guys) {

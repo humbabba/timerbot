@@ -2531,12 +2531,11 @@ var fields = (_fields = {
   started: document.querySelector('#started'),
   over: document.querySelector('#over'),
   end_time: document.querySelector('#end_time')
-}, _defineProperty(_fields, "started", document.querySelector('#started')), _defineProperty(_fields, "remaining", document.querySelector('#remaining')), _defineProperty(_fields, "message", document.querySelector('#message')), _fields);
+}, _defineProperty(_fields, "started", document.querySelector('#started')), _defineProperty(_fields, "remaining", document.querySelector('#remaining')), _defineProperty(_fields, "time_per_guy", document.querySelector('#time_per_guy')), _defineProperty(_fields, "message", document.querySelector('#message')), _fields);
 var token = document.querySelector('meta[name="csrf_token"]').content;
 var underway = document.querySelector('#underway');
 var notUnderway = document.querySelector('#notUnderway');
 var runningInfo = document.querySelector('#runningInfo');
-var timePerGuy = document.querySelector('#timePerGuy');
 var startButton = document.querySelector('#startButton');
 var stopButton = document.querySelector('#stopButton');
 var resetButton = document.querySelector('#resetButton');
@@ -2547,26 +2546,26 @@ if (startButton) {
   startButton.addEventListener('click', function () {
     startButton.classList.add('hidden');
     stopButton.classList.remove('hidden');
-    passButton.classList.remove('bg-gray-800');
+    passButton.classList.remove('bg-gray-200');
     passButton.classList.add('bg-blue-800');
     sendEvent('start');
   });
   stopButton.addEventListener('click', function () {
     startButton.classList.remove('hidden');
     stopButton.classList.add('hidden');
-    passButton.classList.add('bg-gray-800');
+    passButton.classList.add('bg-gray-200');
     passButton.classList.remove('bg-blue-800');
     sendEvent('stop');
   });
   resetButton.addEventListener('click', function () {
     startButton.classList.remove('hidden');
     stopButton.classList.add('hidden');
-    passButton.classList.add('bg-gray-800');
+    passButton.classList.add('bg-gray-200');
     passButton.classList.remove('bg-blue-800');
     sendEvent('reset');
   });
   passButton.addEventListener('click', function () {
-    if (passButton.classList.contains('bg-gray-800')) {
+    if (passButton.classList.contains('bg-gray-200')) {
       return;
     }
     sendEvent('pass');
@@ -2601,7 +2600,7 @@ var getTimerInfo = function getTimerInfo(timerId) {
   });
 };
 var updateTimerView = function updateTimerView(info) {
-  var valuesToUpdate = ['guys', 'current_guy', 'now', 'end_time', 'remaining', 'started', 'over', 'message'];
+  var valuesToUpdate = ['guys', 'current_guy', 'now', 'end_time', 'remaining', 'time_per_guy', 'started', 'over', 'message'];
   for (var _i = 0, _valuesToUpdate = valuesToUpdate; _i < _valuesToUpdate.length; _i++) {
     var el = _valuesToUpdate[_i];
     if (!fields[el]) {

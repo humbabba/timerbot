@@ -102,4 +102,16 @@ class Helpers
         $code = $dom->saveHTML();
         return $code;
       }
+
+      public static function intervalToSeconds(\DateInterval $interval)
+      {
+        return ($interval->days * 86400) + ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
+      }
+
+      public static function calculateInterval($start,$end)
+      {
+        $timeStart = \DateTimeImmutable::createFromFormat('H:i:s',$start);
+        $timeEnd = \DateTimeImmutable::createFromFormat('H:i:s',$end);
+        return $timeStart->diff($timeEnd);
+      }
 }

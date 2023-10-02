@@ -35,7 +35,7 @@
           <p><b>Remaining:</b> <span id="remaining"></span></p>
         </div>
         <div id="runningInfo" class="{{ ($timer->started)? '':' hidden' }}">
-          <p class="text-lg my-2"><b>Time per guy:</b> <span id="timePerGuy"></span></p>
+          <p class="text-lg my-2"><b>Time per guy:</b> <span id="time_per_guy"></span></p>
           <hr>
           <p class="my-2 text-center text-3xl"><b>Current guy:</b> <span id="current_guy">{{ $timer->current_guy }}</span></p>
           <hr>
