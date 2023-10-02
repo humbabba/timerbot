@@ -22,7 +22,7 @@
     </head>
     <body class="p-[1rem]">
       <div class="max-w-[600px] w-full border m-[auto] p-[1rem]">
-        <input type="hidden" id="timerName" value="{{$timer->name}}"/>
+        <input type="hidden" id="timerId" value="{{$timer->id}}"/>
         <input type="hidden" id="started" value="{{$timer->started}}"/>
         <input type="hidden" id="over" value="0"/>
         <h1 class="text-2xl underline mb-2">{{$timer->name}} Timerbot</h1>

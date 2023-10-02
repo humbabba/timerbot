@@ -41,18 +41,18 @@ class TimerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($timerName)
+    public function show($id)
     {
-        $timer = Timer::where('name',$timerName)->first();
+        $timer = Timer::find($id);
         return view('timers.show')->with(['timer' => $timer]);
     }
 
     /**
     * Get current Timer info
     */
-    public function info($timerName)
+    public function info($id)
     {
-      $timer = Timer::where('name',$timerName)->first();
+      $timer = Timer::find($id);
       $timeNow = new \DateTimeImmutable('now');
       $timeEnd = \DateTimeImmutable::createFromFormat('H:i:s',$timer->end_time);
       $interval = $timeNow->diff($timeEnd);
@@ -67,10 +67,10 @@ class TimerController extends Controller
      *
      * @param  string  $timerName
      */
-    public function edit($timerName)
+    public function edit($id)
     {
-        $timer = Timer::where('name',$timerName)->first();
-        return view('timers.edit')->with(['timer' => $timer]);
+      $timer = Timer::find($id);
+      return view('timers.edit')->with(['timer' => $timer]);
     }
 
     /**
@@ -78,18 +78,39 @@ class TimerController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
+    {
+
+      $timer = Timer::find($id);
+
+      $timer->name = $request->get('name') ?? 'uweo4hKk0BA0La0WMD1xXGxVStkvTVoGaNEkDCx';
+      $timer->guys = $request->get('guys') ?? 8;
+      $timer->end_time = $request->get('end_time') ?? '20:58:00';
+      $timer->message = $request->get('message') ?? '';
+      $timer->updated_at = date('Y-m-d H:i:s');
+
+      if($timer->save()) {
+        return redirect()->route('timers.edit',$timer->id)->with(['message' => 'Timer updated']);
+      }
+    }
+
+    /**
+    * Send event to timer.
+    *
+    * @param  \Illuminate\Http\Request  $request
+    */
+    public function event(Request $request)
     {
       $output = [
         'success' => false,
-        'message' => 'Timer not updated',
+        'message' => 'Event not processed',
       ];
 
       $data = $request->get('data');
-      $timerName = $data['timerName'];
+      $timerId = $data['timerId'];
       $eventName = $data['eventName'];
 
-      $timer = Timer::where('name',$timerName)->first();
+      $timer = Timer::find($timerId);
 
       switch ($eventName) {
         case 'start':
@@ -111,17 +132,14 @@ class TimerController extends Controller
             $timer->current_guy = 0;
           } else {
             $timer->current_guy += 1;
+            $timer->current_guy_start = date('H:i:s');
           }
-          break;
-
-        default:
-          // code...
           break;
       }
 
       if($timer->save()) {
         $output['success'] = true;
-        $output['message'] = 'Timer updated';
+        $output['message'] = 'Event processed';
       }
       return json_encode($output);
     }

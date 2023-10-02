@@ -22,7 +22,7 @@
     </head>
     <body class="p-[1rem]">
       <div class="max-w-[600px] w-full border m-[auto] p-[1rem]">
-        <input type="hidden" id="timerName" value="{{$timer->name}}"/>
+        <input type="hidden" id="timerId" value="{{$timer->id}}"/>
         <input type="hidden" id="over" value="0"/>
         <h1 class="text-2xl underline mb-2">{{$timer->name}} Timerbot - admin</h1>
         <div class="flex flex-wrap gap-4 my-2">
@@ -33,7 +33,10 @@
         <p class="p-[0.5rem] uppercase rounded text-white text-center{{ ($timer->started)? ' bg-blue-800':' bg-gray-800' }}" id="passButton">Pass</p>
         <hr class="my-[1rem]">
         <div id="editableInfo">
-          <form id="timerForm" action="{{ route('timers.edit',$timer->id) }}" method="post" />
+          <form id="timerForm" action="{{ route('timers.update',$timer->id) }}" method="post" />
+            @csrf
+            @method('PATCH')
+            <p class="text-lg my-2"><b>Name:</b> <input type="text" class="max-w-[100px] px-[1rem] border rounded" name="name" value="{{ $timer->name }}"/></p>
             <p class="text-lg my-2"><b>Guys:</b> <input type="number" class="max-w-[100px] px-[1rem] border rounded" name="guys" value="{{ $timer->guys }}"/></p>
             <p class="text-lg my-2"><b>Current guy:</b> <span id="current_guy">{{ $timer->current_guy }}</span></p>
             <p class="text-lg my-2"><b>End:</b> <input type="time" class="border rounded" name="end_time" value="{{ $timer->end_time }}"/></p>

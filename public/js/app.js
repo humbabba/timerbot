@@ -2523,7 +2523,7 @@ function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key i
 function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
 function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 //Globals
-var timerName;
+var timerId;
 var fields = (_fields = {
   guys: document.querySelector('#guys'),
   current_guy: document.querySelector('#current_guy'),
@@ -2573,11 +2573,11 @@ if (startButton) {
   });
 }
 var timerInit = function timerInit() {
-  timerName = document.querySelector('#timerName').value;
-  getTimerInfo(timerName);
+  timerId = document.querySelector('#timerId').value;
+  getTimerInfo(timerId);
 };
-var getTimerInfo = function getTimerInfo(timerName) {
-  var fetchPromise = fetch("/timers/".concat(timerName, "/info"), {
+var getTimerInfo = function getTimerInfo(timerId) {
+  var fetchPromise = fetch("/timers/".concat(timerId, "/info"), {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -2594,8 +2594,8 @@ var getTimerInfo = function getTimerInfo(timerName) {
     console.log('info: ', info);
     updateTimerView(info);
     setTimeout(function () {
-      return getTimerInfo(timerName);
-    }, 300);
+      return getTimerInfo(timerId);
+    }, 1000);
   })["catch"](function (data) {
     console.log('Error: ', data);
   });
@@ -2645,11 +2645,11 @@ var toggleStartedState = function toggleStartedState(startedState) {
 };
 var sendEvent = function sendEvent(eventName) {
   var data = {
-    timerName: timerName,
+    timerId: timerId,
     eventName: eventName
   };
   console.log('data: ', data);
-  var fetchPromise = fetch('/timers/update', {
+  var fetchPromise = fetch("/timers/event", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -18,10 +18,6 @@ Route::get('/', function () {
     $timers = Timer::all();
     return view('welcome')->with(['timers' => $timers]);
 });
-Route::resource('timers', 'TimerController')->except([
-    'show'
-]);
-Route::get('timers/{name}', 'App\Http\Controllers\TimerController@show')->name('timers.show');
-Route::get('timers/{name}/info', 'App\Http\Controllers\TimerController@info')->name('timers.info');
-Route::get('timers/{name}/admin', 'App\Http\Controllers\TimerController@edit')->name('timers.edit');
-Route::post('timers/update', 'App\Http\Controllers\TimerController@update')->name('timers.update');
+Route::resource('timers', 'App\Http\Controllers\TimerController');
+Route::get('timers/{id}/info', 'App\Http\Controllers\TimerController@info')->name('timers.info');
+Route::post('timers/event', 'App\Http\Controllers\TimerController@event')->name('timers.event');
