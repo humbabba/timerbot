@@ -59,7 +59,14 @@ class TimerController extends Controller
       $timer->remaining = $interval->format('%H:%I:%S');
       $timer->over = $interval->invert;
       if($timer->current_guy_start) {
-        $timer->time_per_guy = $timer->calculateTimePerGuy($timer->current_guy_start);
+        $timer->time_per_guy = $timer->calculateTimePerGuy();
+        $currentGuyRemainingInterval = $timer->calculateCurrentGuyRemainingInterval();
+        $timer->current_guy_remaining = $currentGuyRemainingInterval->format('%H:%I:%S');
+        $timer->current_guy_over = $currentGuyRemainingInterval->invert;
+        if($timer->current_guy_over) {
+          $updatedTimePerGuy = $timer->adjustTimePerGuyByOverage();
+          $timer->time_per_guy = $updatedTimePerGuy;
+        }
       }
       return $timer->toJson();
     }

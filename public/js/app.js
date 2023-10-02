@@ -2531,7 +2531,7 @@ var fields = (_fields = {
   started: document.querySelector('#started'),
   over: document.querySelector('#over'),
   end_time: document.querySelector('#end_time')
-}, _defineProperty(_fields, "started", document.querySelector('#started')), _defineProperty(_fields, "remaining", document.querySelector('#remaining')), _defineProperty(_fields, "time_per_guy", document.querySelector('#time_per_guy')), _defineProperty(_fields, "message", document.querySelector('#message')), _fields);
+}, _defineProperty(_fields, "started", document.querySelector('#started')), _defineProperty(_fields, "remaining", document.querySelector('#remaining')), _defineProperty(_fields, "time_per_guy", document.querySelector('#time_per_guy')), _defineProperty(_fields, "current_guy_remaining", document.querySelector('#current_guy_remaining')), _defineProperty(_fields, "current_guy_over", document.querySelector('#current_guy_over')), _defineProperty(_fields, "message", document.querySelector('#message')), _fields);
 var token = document.querySelector('meta[name="csrf_token"]').content;
 var underway = document.querySelector('#underway');
 var notUnderway = document.querySelector('#notUnderway');
@@ -2600,7 +2600,7 @@ var getTimerInfo = function getTimerInfo(timerId) {
   });
 };
 var updateTimerView = function updateTimerView(info) {
-  var valuesToUpdate = ['guys', 'current_guy', 'now', 'end_time', 'remaining', 'time_per_guy', 'started', 'over', 'message'];
+  var valuesToUpdate = ['guys', 'current_guy', 'now', 'end_time', 'remaining', 'time_per_guy', 'current_guy_remaining', 'current_guy_over', 'started', 'over', 'message'];
   for (var _i = 0, _valuesToUpdate = valuesToUpdate; _i < _valuesToUpdate.length; _i++) {
     var el = _valuesToUpdate[_i];
     if (!fields[el]) {
@@ -2622,6 +2622,23 @@ var updateTimerView = function updateTimerView(info) {
           //More time!
           fields.remaining.classList.remove('bg-red-800');
           fields.remaining.classList.remove('text-white');
+        }
+      }
+    } else if ('current_guy_over' === el) {
+      if (String(info[el]) !== String(fields[el].value)) {
+        fields[el].value = info[el];
+        if (info[el]) {
+          //It's over
+          fields.current_guy_remaining.classList.add('bg-red-800');
+          fields.current_guy_remaining.classList.add('text-white');
+          fields.time_per_guy.classList.add('bg-red-800');
+          fields.time_per_guy.classList.add('text-white');
+        } else {
+          //More time!
+          fields.current_guy_remaining.classList.remove('bg-red-800');
+          fields.current_guy_remaining.classList.remove('text-white');
+          fields.time_per_guy.classList.remove('bg-red-800');
+          fields.time_per_guy.classList.remove('text-white');
         }
       }
     } else if (String(info[el]) !== String(fields[el].innerHTML)) {

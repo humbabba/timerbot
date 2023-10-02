@@ -25,6 +25,7 @@
         <input type="hidden" id="timerId" value="{{$timer->id}}"/>
         <input type="hidden" id="started" value="{{$timer->started}}"/>
         <input type="hidden" id="over" value="0"/>
+        <input type="hidden" id="current_guy_over" value="0"/>
         <h1 class="text-2xl underline mb-2">{{$timer->name}} Timerbot</h1>
         <p class="text-[green]{{ ($timer->started)? '':' hidden' }}" id="underway">Event is running</p>
         <p class="text-[red]{{ ($timer->started)? ' hidden':'' }}" id="notUnderway">Event is not not running</p>
@@ -38,8 +39,8 @@
           <p class="text-lg my-2"><b>Time per guy:</b> <span id="time_per_guy"></span></p>
           <hr>
           <p class="my-2 text-center text-3xl"><b>Current guy:</b> <span id="current_guy">{{ $timer->current_guy }}</span></p>
+          <div class="my-2 text-center text-3xl text-emerald-800 font-bold" id="current_guy_remaining"></div>
           <hr>
-          <div class="" id="time_left_for_current_guy"></div>
         </div>
         <hr>
         <p class="my-2"><span id="message">{{ $timer->message }}</span></p>
