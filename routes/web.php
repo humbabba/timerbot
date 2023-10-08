@@ -15,8 +15,7 @@ use App\Models\Timer;
 */
 
 Route::get('/', function () {
-    $timers = Timer::all();
-    return view('welcome')->with(['timers' => $timers]);
+    return redirect()->route('timers.index');
 });
 Route::resource('timers', 'App\Http\Controllers\TimerController');
 Route::get('timers/{id}/info', 'App\Http\Controllers\TimerController@info')->name('timers.info');

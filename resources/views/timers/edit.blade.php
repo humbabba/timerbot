@@ -39,6 +39,8 @@
             <p class="text-lg my-2"><b>Name:</b> <input type="text" class="max-w-[100px] px-[1rem] border rounded" name="name" value="{{ $timer->name }}"/></p>
             <p class="text-lg my-2"><b>Guys:</b> <input type="number" class="max-w-[100px] px-[1rem] border rounded" name="guys" value="{{ $timer->guys }}"/></p>
             <p class="text-lg my-2"><b>Current guy:</b> <span id="current_guy">{{ $timer->current_guy }}</span></p>
+            <p class="text-lg my-2"><b>Current guy remaining:</b> <span id="current_guy_remaining"></span></p>
+              <p class="text-lg my-2"><b>Time per guy:</b> <span id="time_per_guy"></span></p>
             <p class="text-lg my-2"><b>End:</b> <input type="time" class="border rounded" name="end_time" value="{{ $timer->end_time }}"/></p>
             <p class="text-lg my-2"><b>Message:</b><br><textarea class="border rounded w-full p-[0.5rem] min-h-[100px]" name="message">{{ $timer->message }}</textarea></p>
             <input type="submit" class="p-[0.5rem] uppercase rounded bg-cyan-800 text-white" value="Save" />

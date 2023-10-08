@@ -15,7 +15,8 @@ class TimerController extends Controller
      */
     public function index()
     {
-        //
+        $timers = Timer::all();
+        return view('timers.index')->with(['timers' => $timers]);
     }
 
     /**
