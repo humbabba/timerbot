@@ -31,6 +31,14 @@
         </div>
         <hr class="my-[1rem]">
         <p class="p-[0.5rem] uppercase rounded text-white text-center{{ ($timer->started)? ' bg-blue-800':' bg-gray-300' }}" id="passButton">Pass</p>
+        <div class="flex my-[1rem] gap-[1rem]">
+          <span class="p-[0.5rem] uppercase rounded text-white text-center bg-blue-400" id="warning">Warning</span>
+          <audio controls>
+            <source src="{{ asset('audio/warning.wav') }}" type="audio/wav">
+          Your browser does not support the audio element.
+          </audio>
+          <span class="p-[0.5rem] uppercase rounded text-white text-center bg-red-400" id="alarm">Alarm</span>
+        </div>
         <hr class="my-[1rem]">
         <div id="editableInfo">
           <form id="timerForm" action="{{ route('timers.update',$timer->id) }}" method="post" />

@@ -1,6 +1,8 @@
 {
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
+    "/audio/alarm.wav": "/audio/alarm.wav",
+    "/audio/warning.wav": "/audio/warning.wav",
     "/favicon.ico": "/favicon.ico",
     "/index.php": "/index.php",
     "/mix-manifest.json": "/mix-manifest.json",

@@ -15,6 +15,7 @@ require('laravel-mix-clean');
 mix.clean()
     .js('resources/js/app.js', 'public/js')
     .postCss('resources/css/app.css', 'public/css')
+    .copy('resources/audio/*.*','public/audio')
     .copy('resources/root/*.*','public')
     .copy('resources/root/.*','public')
     .copy('resources/img/*.*','public/img')
