@@ -31,27 +31,32 @@
         </div>
         <hr class="my-[1rem]">
         <p class="p-[0.5rem] uppercase rounded text-white text-center{{ ($timer->started)? ' bg-blue-800':' bg-gray-300' }}" id="passButton">Pass</p>
-        <div class="flex my-[1rem] gap-[1rem]">
-          <span class="p-[0.5rem] uppercase rounded text-white text-center bg-blue-400" id="warning">Warning</span>
-          <audio controls>
-            <source src="{{ asset('audio/warning.wav') }}" type="audio/wav">
-          Your browser does not support the audio element.
-          </audio>
-          <span class="p-[0.5rem] uppercase rounded text-white text-center bg-red-400" id="alarm">Alarm</span>
-        </div>
+
         <hr class="my-[1rem]">
         <div id="editableInfo">
           <form id="timerForm" action="{{ route('timers.update',$timer->id) }}" method="post" />
             @csrf
             @method('PATCH')
-            <p class="text-lg my-2"><b>Name:</b> <input type="text" class="max-w-[100px] px-[1rem] border rounded" name="name" value="{{ $timer->name }}"/></p>
-            <p class="text-lg my-2"><b>Guys:</b> <input type="number" class="max-w-[100px] px-[1rem] border rounded" name="guys" value="{{ $timer->guys }}"/></p>
-            <p class="text-lg my-2"><b>Current guy:</b> <span id="current_guy">{{ $timer->current_guy }}</span></p>
-            <p class="text-lg my-2"><b>Current guy remaining:</b> <span id="current_guy_remaining"></span></p>
+            <div class="flex flex-wrap gap-x-[1rem]">
+              <p class="text-lg my-2"><b>Name:</b> <input type="text" class="max-w-[100px] px-[1rem] border rounded" name="name" value="{{ $timer->name }}"/></p>
+              <p class="text-lg my-2"><b>Guys:</b> <input type="number" class="max-w-[100px] px-[1rem] border rounded" name="guys" value="{{ $timer->guys }}"/></p>
+              <p class="text-lg my-2"><b>Current guy:</b> <span id="current_guy">{{ $timer->current_guy }}</span></p>
+              <p class="text-lg my-2"><b>Current guy remaining:</b> <span id="current_guy_remaining"></span></p>
               <p class="text-lg my-2"><b>Time per guy:</b> <span id="time_per_guy"></span></p>
-            <p class="text-lg my-2"><b>End:</b> <input type="time" class="border rounded" name="end_time" value="{{ $timer->end_time }}"/></p>
+              <p class="text-lg my-2"><b>End:</b> <input type="time" class="border rounded" name="end_time" value="{{ $timer->end_time }}"/></p>
+            </div>
             <p class="text-lg my-2"><b>Message:</b><br><textarea class="border rounded w-full p-[0.5rem] min-h-[100px]" name="message">{{ $timer->message }}</textarea></p>
-            <input type="submit" class="p-[0.5rem] uppercase rounded bg-cyan-800 text-white" value="Save" />
+            <div class="flex my-[1rem] gap-[1rem]">
+              <input type="submit" class="p-[0.5rem] uppercase rounded bg-cyan-800 text-white" value="Save" />
+              <span class="p-[0.5rem] uppercase rounded text-white text-center bg-blue-400" id="warningButton">Warning</span>
+              <audio class="hidden" id="warningAudio">
+                <source src="{{ asset('audio/warning.wav') }}" type="audio/wav">
+              </audio>
+              <span class="p-[0.5rem] uppercase rounded text-white text-center bg-red-400" id="alarmButton">Alarm</span>
+              <audio class="hidden" id="alarmAudio">
+                <source src="{{ asset('audio/alarm.wav') }}" type="audio/wav">
+              </audio>
+            </div>
           </form>
           <hr class="my-[1rem]">
           <p class="p-[0.5rem] uppercase rounded bg-emerald-800 text-white text-center{{ ($timer->started)? ' hidden':'' }}" id="startButton">Start</p>

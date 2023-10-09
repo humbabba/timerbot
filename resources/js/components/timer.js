@@ -23,6 +23,10 @@ const startButton = document.querySelector('#startButton');
 const stopButton = document.querySelector('#stopButton');
 const resetButton = document.querySelector('#resetButton');
 const passButton = document.querySelector('#passButton');
+const warningButton = document.querySelector('#warningButton');
+const warningAudio = document.querySelector('#warningAudio');
+const alarmButton = document.querySelector('#alarmButton');
+const alarmAudio = document.querySelector('#alarmAudio');
 
 //Event handlers
 if(startButton) {
@@ -52,6 +56,22 @@ if(startButton) {
       return;
     }
     sendEvent('pass');
+  });
+}
+
+if(warningButton) {
+  warningButton.addEventListener('click',() => {
+    warningAudio.play();
+  });
+}
+
+if(alarmButton) {
+  alarmButton.addEventListener('click',() => {
+    if(alarmAudio.duration > 0 && !alarmAudio.paused) {
+      alarmAudio.pause();
+    } else {
+      alarmAudio.play();
+    }
   });
 }
 

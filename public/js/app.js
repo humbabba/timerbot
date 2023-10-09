@@ -2540,6 +2540,10 @@ var startButton = document.querySelector('#startButton');
 var stopButton = document.querySelector('#stopButton');
 var resetButton = document.querySelector('#resetButton');
 var passButton = document.querySelector('#passButton');
+var warningButton = document.querySelector('#warningButton');
+var warningAudio = document.querySelector('#warningAudio');
+var alarmButton = document.querySelector('#alarmButton');
+var alarmAudio = document.querySelector('#alarmAudio');
 
 //Event handlers
 if (startButton) {
@@ -2569,6 +2573,20 @@ if (startButton) {
       return;
     }
     sendEvent('pass');
+  });
+}
+if (warningButton) {
+  warningButton.addEventListener('click', function () {
+    warningAudio.play();
+  });
+}
+if (alarmButton) {
+  alarmButton.addEventListener('click', function () {
+    if (alarmAudio.duration > 0 && !alarmAudio.paused) {
+      alarmAudio.pause();
+    } else {
+      alarmAudio.play();
+    }
   });
 }
 var timerInit = function timerInit() {
