@@ -69,9 +69,15 @@ class TimerController extends Controller
         if(31 > intval($currentGuyReaminingSeconds) && !$timer->current_guy_alarm_status) {
           $timer->current_guy_alarm_status = 'warning';
         }
+        if(-29 > intval($currentGuyReaminingSeconds) && 'alarm_sounded' === $timer->current_guy_alarm_status) {
+          $timer->current_guy_alarm_status = 'overtime';
+        }
         if($timer->current_guy_over) {
           $updatedTimePerGuy = $timer->adjustTimePerGuyByOverage();
           $timer->time_per_guy = $updatedTimePerGuy;
+          if('warning_sounded' === $timer->current_guy_alarm_status) {
+            $timer->current_guy_alarm_status = 'alarm';
+          }
         }
       }
       return $timer->toJson();
@@ -142,6 +148,7 @@ class TimerController extends Controller
           $timer->started = false;
           $timer->current_guy = 0;
           $timer->current_guy_start = null;
+          $timer->current_guy_alarm_status = null;
           break;
         case 'pass':
           if($timer->current_guy === $timer->guys) {
@@ -150,8 +157,15 @@ class TimerController extends Controller
           } else {
             $timer->current_guy += 1;
             $timer->current_guy_start = date('H:i:s');
+            $timer->current_guy_alarm_status = null;
           }
           break;
+        case 'warning_sounded':
+        case 'alarm_sounded':
+        case 'overtime_sounded':
+          $timer->current_guy_alarm_status = $eventName;
+          break;
+
       }
 
       if($timer->save()) {

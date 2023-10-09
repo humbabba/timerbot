@@ -2664,7 +2664,16 @@ var updateTimerView = function updateTimerView(info) {
         fields[el].value = info[el];
         if ('warning' === info[el]) {
           warningAudio.play();
+          fields[el].value = 'warning_sounded';
           sendEvent('warning_sounded');
+        } else if ('alarm' === info[el]) {
+          alarmAudio.play();
+          fields[el].value = 'alarm_sounded';
+          sendEvent('alarm_sounded');
+        } else if ('overtime' === info[el]) {
+          alarmAudio.play();
+          fields[el].value = 'overtime_sounded';
+          sendEvent('overtime_sounded');
         }
       }
     } else if (String(info[el]) !== String(fields[el].innerHTML)) {
