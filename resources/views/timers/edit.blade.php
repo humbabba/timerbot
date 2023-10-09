@@ -68,7 +68,7 @@
         <p class="my-[1rem]"><label><input type="checkbox" id="keepAwake"/> Keep screen from going to sleep</label></p>
       </div>
       <video preload="auto" loop id="keepAwakeVideo">
-        <source src="{{ asset('video/white_silence.mp4') }}" type="video/mp4">
+        <source src="{{ asset('video/birds.mp4') }}" type="video/mp4">
       </video>
       <script src="{{ asset('js/app.js') }}" ></script>
     </body>
