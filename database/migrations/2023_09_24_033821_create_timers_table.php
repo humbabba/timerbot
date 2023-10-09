@@ -21,8 +21,7 @@ class CreateTimersTable extends Migration
             $table->time('current_guy_start')->nullable();
             $table->time('end_time')->default('20:58:00');
             $table->boolean('started')->default(0);
-            $table->boolean('warning')->default(0);
-            $table->boolean('alarm')->default(0);
+            $table->text('current_guy_alarm_status')->nullable();
             $table->longText('message')->nullable();
             $table->timestamps();
         });

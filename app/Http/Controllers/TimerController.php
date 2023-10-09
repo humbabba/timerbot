@@ -64,6 +64,11 @@ class TimerController extends Controller
         $currentGuyRemainingInterval = $timer->calculateCurrentGuyRemainingInterval();
         $timer->current_guy_remaining = $currentGuyRemainingInterval->format('%H:%I:%S');
         $timer->current_guy_over = $currentGuyRemainingInterval->invert;
+        $currentGuyReaminingSeconds = ($currentGuyRemainingInterval->invert)? '-':'';
+        $currentGuyReaminingSeconds .= round(Helpers::intervalToSeconds($currentGuyRemainingInterval));
+        if(31 > intval($currentGuyReaminingSeconds) && !$timer->current_guy_alarm_status) {
+          $timer->current_guy_alarm_status = 'warning';
+        }
         if($timer->current_guy_over) {
           $updatedTimePerGuy = $timer->adjustTimePerGuyByOverage();
           $timer->time_per_guy = $updatedTimePerGuy;

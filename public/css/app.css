@@ -575,6 +575,10 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(153 27 27 / var(--tw-bg-opacity));
 }
+.bg-violet-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(91 33 182 / var(--tw-bg-opacity));
+}
 .p-\[0\.5rem\] {
   padding: 0.5rem;
 }

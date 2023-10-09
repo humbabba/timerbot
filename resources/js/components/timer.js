@@ -12,6 +12,7 @@ const fields = {
   time_per_guy: document.querySelector('#time_per_guy'),
   current_guy_remaining: document.querySelector('#current_guy_remaining'),
   current_guy_over: document.querySelector('#current_guy_over'),
+  current_guy_alarm_status: document.querySelector('#current_guy_alarm_status'),
   message: document.querySelector('#message')
 };
 
@@ -113,6 +114,7 @@ const updateTimerView = (info) => {
     'remaining',
     'time_per_guy',
     'current_guy_remaining',
+    'current_guy_alarm_status',
     'current_guy_over',
     'started',
     'over',
@@ -145,15 +147,23 @@ const updateTimerView = (info) => {
         if(info[el]) { //It's over
           fields.current_guy_remaining.classList.add('bg-red-800');
           fields.current_guy_remaining.classList.add('text-white');
-          fields.time_per_guy.classList.add('bg-red-800');
+          fields.time_per_guy.classList.add('bg-violet-800');
           fields.time_per_guy.classList.add('text-white');
         } else { //More time!
           fields.current_guy_remaining.classList.remove('bg-red-800');
           fields.current_guy_remaining.classList.remove('text-white');
-          fields.time_per_guy.classList.remove('bg-red-800');
+          fields.time_per_guy.classList.remove('bg-violet-800');
           fields.time_per_guy.classList.remove('text-white');
         }
       }
+    } else if('current_guy_alarm_status' === el) {
+        if(String(info[el]) !== String(fields[el].value)) {
+          fields[el].value = info[el];
+          if('warning' === info[el]) {
+            warningAudio.play();
+            sendEvent('warning_sounded');
+          }
+        }
     } else if(String(info[el]) !== String(fields[el].innerHTML)) {
       fields[el].innerHTML = info[el];
     }
