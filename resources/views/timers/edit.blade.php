@@ -51,11 +51,11 @@
             <div class="flex my-[1rem] gap-[1rem]">
               <input type="submit" class="p-[0.5rem] uppercase rounded bg-cyan-800 text-white" value="Save" />
               <span class="p-[0.5rem] uppercase rounded text-white text-center bg-blue-400" id="warningButton">Warning</span>
-              <audio class="hidden" id="warningAudio">
+              <audio preload="auto" class="hidden" id="warningAudio">
                 <source src="{{ asset('audio/warning.wav') }}" type="audio/wav">
               </audio>
               <span class="p-[0.5rem] uppercase rounded text-white text-center bg-red-400" id="alarmButton">Alarm</span>
-              <audio class="hidden" id="alarmAudio">
+              <audio preload="auto" class="hidden" id="alarmAudio">
                 <source src="{{ asset('audio/alarm.wav') }}" type="audio/wav">
               </audio>
             </div>
@@ -67,7 +67,7 @@
         </div>
         <p class="my-[1rem]"><label><input type="checkbox" id="keepAwake"/> Keep screen from going to sleep</label></p>
       </div>
-      <video controls loop class="w-[1px] h-[1px]" id="keepAwakeVideo">
+      <video preload="auto" loop id="keepAwakeVideo">
         <source src="{{ asset('video/white_silence.mp4') }}" type="video/mp4">
       </video>
       <script src="{{ asset('js/app.js') }}" ></script>

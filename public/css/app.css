@@ -508,17 +508,11 @@ video {
 .hidden {
   display: none;
 }
-.h-\[1px\] {
-  height: 1px;
-}
 .min-h-\[100px\] {
   min-height: 100px;
 }
 .w-full {
   width: 100%;
-}
-.w-\[1px\] {
-  width: 1px;
 }
 .max-w-\[100px\] {
   max-width: 100px;
