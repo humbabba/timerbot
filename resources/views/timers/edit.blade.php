@@ -65,7 +65,11 @@
           <p class="p-[0.5rem] uppercase rounded bg-red-800 text-white text-center{{ ($timer->started)? '':' hidden' }}" id="stopButton">Stop</p>
           <p class="p-[0.5rem] uppercase rounded bg-black text-white text-center mt-[1rem]" id="resetButton">Reset</p>
         </div>
+        <p class="my-[1rem]"><label><input type="checkbox" id="keepAwake"/> Keep screen from going to sleep</label></p>
       </div>
+      <video controls loop class="w-[1px] h-[1px]" id="keepAwakeVideo">
+        <source src="{{ asset('video/white_silence.mp4') }}" type="video/mp4">
+      </video>
       <script src="{{ asset('js/app.js') }}" ></script>
     </body>
 </html>

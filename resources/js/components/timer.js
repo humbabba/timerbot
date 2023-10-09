@@ -28,6 +28,8 @@ const warningButton = document.querySelector('#warningButton');
 const warningAudio = document.querySelector('#warningAudio');
 const alarmButton = document.querySelector('#alarmButton');
 const alarmAudio = document.querySelector('#alarmAudio');
+const keepAwake = document.querySelector('#keepAwake');
+const keepAwakeVideo = document.querySelector('#keepAwakeVideo');
 
 //Event handlers
 if(startButton) {
@@ -72,6 +74,16 @@ if(alarmButton) {
       alarmAudio.pause();
     } else {
       alarmAudio.play();
+    }
+  });
+}
+
+if(keepAwake) {
+  keepAwake.addEventListener('change',() => {
+    if(keepAwake.checked) {
+      keepAwakeVideo.play();
+    } else {
+      keepAwakeVideo.pause();
     }
   });
 }

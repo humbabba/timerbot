@@ -44,7 +44,11 @@
         </div>
         <hr>
         <p class="my-2"><span id="message">{{ $timer->message }}</span></p>
+        <p class="my-[1rem]"><label><input type="checkbox" id="keepAwake"/> Keep screen from going to sleep</label></p>
       </div>
+      <video controls loop class="w-[1px] h-[1px]" id="keepAwakeVideo">
+        <source src="{{ asset('video/white_silence.mp4') }}" type="video/mp4">
+      </video>
       <script src="{{ asset('js/app.js') }}" ></script>
     </body>
 </html>

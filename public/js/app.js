@@ -2544,6 +2544,8 @@ var warningButton = document.querySelector('#warningButton');
 var warningAudio = document.querySelector('#warningAudio');
 var alarmButton = document.querySelector('#alarmButton');
 var alarmAudio = document.querySelector('#alarmAudio');
+var keepAwake = document.querySelector('#keepAwake');
+var keepAwakeVideo = document.querySelector('#keepAwakeVideo');
 
 //Event handlers
 if (startButton) {
@@ -2586,6 +2588,15 @@ if (alarmButton) {
       alarmAudio.pause();
     } else {
       alarmAudio.play();
+    }
+  });
+}
+if (keepAwake) {
+  keepAwake.addEventListener('change', function () {
+    if (keepAwake.checked) {
+      keepAwakeVideo.play();
+    } else {
+      keepAwakeVideo.pause();
     }
   });
 }
