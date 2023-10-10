@@ -1,3 +1,5 @@
+import NoSleep from 'nosleep.js';
+
 //Globals
 let timerId;
 const fields = {
@@ -29,7 +31,7 @@ const warningAudio = document.querySelector('#warningAudio');
 const alarmButton = document.querySelector('#alarmButton');
 const alarmAudio = document.querySelector('#alarmAudio');
 const keepAwake = document.querySelector('#keepAwake');
-const keepAwakeVideo = document.querySelector('#keepAwakeVideo');
+const noSleep = new NoSleep();
 
 //Event handlers
 if(startButton) {
@@ -81,9 +83,10 @@ if(alarmButton) {
 if(keepAwake) {
   keepAwake.addEventListener('change',() => {
     if(keepAwake.checked) {
-      keepAwakeVideo.play();
+      console.log("Should not be sleeping");
+      noSleep.enable();
     } else {
-      keepAwakeVideo.pause();
+      noSleep.disable();
     }
   });
 }
