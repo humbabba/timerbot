@@ -83,7 +83,6 @@ if(alarmButton) {
 if(keepAwake) {
   keepAwake.addEventListener('change',() => {
     if(keepAwake.checked) {
-      console.log("Should not be sleeping");
       noSleep.enable();
     } else {
       noSleep.disable();
