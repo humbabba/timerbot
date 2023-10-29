@@ -38,26 +38,26 @@ if(startButton) {
   startButton.addEventListener('click',() => {
     startButton.classList.add('hidden');
     stopButton.classList.remove('hidden');
-    passButton.classList.remove('bg-gray-200');
+    passButton.classList.remove('bg-gray-300');
     passButton.classList.add('bg-blue-800');
     sendEvent('start');
   });
   stopButton.addEventListener('click',() => {
     startButton.classList.remove('hidden');
     stopButton.classList.add('hidden');
-    passButton.classList.add('bg-gray-200');
+    passButton.classList.add('bg-gray-300');
     passButton.classList.remove('bg-blue-800');
     sendEvent('stop');
   });
   resetButton.addEventListener('click',() => {
     startButton.classList.remove('hidden');
     stopButton.classList.add('hidden');
-    passButton.classList.add('bg-gray-200');
+    passButton.classList.add('bg-gray-300');
     passButton.classList.remove('bg-blue-800');
     sendEvent('reset');
   });
   passButton.addEventListener('click',() => {
-    if(passButton.classList.contains('bg-gray-200')) {
+    if(passButton.classList.contains('bg-gray-300')) {
       return;
     }
     sendEvent('pass');

@@ -21,8 +21,13 @@ class Timer extends Model
 
   private function calculateSecondsPerGuy()
   {
-    $remainingGuys = $this->guys - ($this->current_guy - 1);
-    $interval = Helpers::calculateInterval($this->current_guy_start,$this->end_time);
+    $remainingGuys = $this->guys;
+    $currentGuyStart = $this->now;
+    if($this->current_guy_start) {
+      $remainingGuys -= ($this->current_guy - 1);
+      $currentGuyStart = $this->current_guy_start;
+    }
+    $interval = Helpers::calculateInterval($currentGuyStart,$this->end_time);
     $remainingSeconds = Helpers::intervalToSeconds($interval);
     return round($remainingSeconds/$remainingGuys);
   }

@@ -59,8 +59,8 @@ class TimerController extends Controller
       $interval = Helpers::calculateInterval(date('H:i:s'),$timer->end_time);
       $timer->remaining = $interval->format('%H:%I:%S');
       $timer->over = $interval->invert;
+      $timer->time_per_guy = $timer->calculateTimePerGuy();
       if($timer->current_guy_start) {
-        $timer->time_per_guy = $timer->calculateTimePerGuy();
         $currentGuyRemainingInterval = $timer->calculateCurrentGuyRemainingInterval();
         $timer->current_guy_remaining = $currentGuyRemainingInterval->format('%H:%I:%S');
         $timer->current_guy_over = $currentGuyRemainingInterval->invert;
@@ -154,6 +154,8 @@ class TimerController extends Controller
           if($timer->current_guy === $timer->guys) {
             $timer->started = false;
             $timer->current_guy = 0;
+            $timer->current_guy_start = null;
+            $timer->current_guy_alarm_status = null;
           } else {
             $timer->current_guy += 1;
             $timer->current_guy_start = date('H:i:s');

@@ -56,7 +56,7 @@
               </audio>
               <span class="p-[0.5rem] uppercase rounded text-white text-center bg-red-400" id="alarmButton">Alarm</span>
               <audio preload="auto" class="hidden" id="alarmAudio">
-                <source src="{{ asset('audio/alarm.wav') }}" type="audio/wav">
+                <source src="{{ asset('audio/alarm.mp3') }}" type="audio/mp3">
               </audio>
             </div>
           </form>
