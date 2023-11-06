@@ -2563,11 +2563,7 @@ if (startButton) {
     sendEvent('start');
   });
   stopButton.addEventListener('click', function () {
-    startButton.classList.remove('hidden');
-    stopButton.classList.add('hidden');
-    passButton.classList.add('bg-gray-300');
-    passButton.classList.remove('bg-blue-800');
-    sendEvent('stop');
+    stopEvent();
   });
   resetButton.addEventListener('click', function () {
     startButton.classList.remove('hidden');
@@ -2630,6 +2626,9 @@ var getTimerInfo = function getTimerInfo(timerId) {
     setTimeout(function () {
       return getTimerInfo(timerId);
     }, 1000);
+    if (info.over) {
+      stopEvent();
+    }
   })["catch"](function (data) {
     console.log('Error: ', data);
   });
@@ -2697,9 +2696,7 @@ var updateTimerView = function updateTimerView(info) {
       fields[el].innerHTML = info[el];
     }
   }
-  updateTimePerGuy(info);
 };
-var updateTimePerGuy = function updateTimePerGuy(info) {};
 var toggleStartedState = function toggleStartedState(startedState) {
   if (startedState) {
     notUnderway.classList.add('hidden');
@@ -2739,6 +2736,13 @@ var sendEvent = function sendEvent(eventName) {
   })["catch"](function (data) {
     console.log('Error: ', data);
   });
+};
+var stopEvent = function stopEvent() {
+  startButton.classList.remove('hidden');
+  stopButton.classList.add('hidden');
+  passButton.classList.add('bg-gray-300');
+  passButton.classList.remove('bg-blue-800');
+  sendEvent('stop');
 };
 document.addEventListener("DOMContentLoaded", function () {
   timerInit();

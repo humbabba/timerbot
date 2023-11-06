@@ -43,11 +43,7 @@ if(startButton) {
     sendEvent('start');
   });
   stopButton.addEventListener('click',() => {
-    startButton.classList.remove('hidden');
-    stopButton.classList.add('hidden');
-    passButton.classList.add('bg-gray-300');
-    passButton.classList.remove('bg-blue-800');
-    sendEvent('stop');
+    stopEvent();
   });
   resetButton.addEventListener('click',() => {
     startButton.classList.remove('hidden');
@@ -113,6 +109,9 @@ const getTimerInfo = (timerId) => {
         console.log('info: ', info);
         updateTimerView(info);
         setTimeout(() => getTimerInfo(timerId),1000);
+        if(info.over) {
+          stopEvent();
+        }
 
     }).catch(data => {
         console.log('Error: ', data);
@@ -191,11 +190,6 @@ const updateTimerView = (info) => {
       fields[el].innerHTML = info[el];
     }
   }
-  updateTimePerGuy(info);
-};
-
-const updateTimePerGuy = info => {
-
 };
 
 const toggleStartedState = startedState => {
@@ -239,6 +233,14 @@ const sendEvent = (eventName) => {
         console.log('Error: ', data);
     });
 };
+
+const stopEvent = () => {
+  startButton.classList.remove('hidden');
+  stopButton.classList.add('hidden');
+  passButton.classList.add('bg-gray-300');
+  passButton.classList.remove('bg-blue-800');
+  sendEvent('stop');
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   timerInit();

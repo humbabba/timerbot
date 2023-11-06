@@ -60,7 +60,12 @@ class TimerController extends Controller
       $timer->remaining = $interval->format('%H:%I:%S');
       $timer->over = $interval->invert;
       $timer->time_per_guy = $timer->calculateTimePerGuy();
-      if($timer->current_guy_start) {
+
+      if($timer->over) {
+        if('warning_sounded' === $timer->current_guy_alarm_status) {
+          $timer->current_guy_alarm_status = 'alarm';
+        }
+      } else if($timer->current_guy_start) {
         $currentGuyRemainingInterval = $timer->calculateCurrentGuyRemainingInterval();
         $timer->current_guy_remaining = $currentGuyRemainingInterval->format('%H:%I:%S');
         $timer->current_guy_over = $currentGuyRemainingInterval->invert;
