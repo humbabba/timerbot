@@ -20,7 +20,7 @@
     <body class="p-[1rem]">
       <div class="max-w-[600px] w-full border m-[auto] p-[1rem]">
         <h1>Timerbot</h1>
-        <p>Welcome. Choose a bot:</p>
+        <p>Welcome. Choose your bot:</p>
         @foreach($timers as $timer)
           <p><a href="{{ route('timers.show',$timer->id) }}">{{ $timer->name }}</a></p>
         @endforeach
