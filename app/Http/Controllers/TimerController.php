@@ -161,8 +161,22 @@ class TimerController extends Controller
             $timer->current_guy = 0;
             $timer->current_guy_start = null;
             $timer->current_guy_alarm_status = null;
+            $timer->over = 1;
           } else {
             $timer->current_guy += 1;
+            $timer->current_guy_start = date('H:i:s');
+            $timer->current_guy_alarm_status = null;
+          }
+          break;
+        case 'passBack':
+          if($timer->current_guy < 2) {
+            $timer->started = false;
+            $timer->current_guy = 0;
+            $timer->current_guy_start = null;
+            $timer->current_guy_alarm_status = null;
+            $timer->over = 1;
+          } else {
+            $timer->current_guy -= 1;
             $timer->current_guy_start = date('H:i:s');
             $timer->current_guy_alarm_status = null;
           }
@@ -178,7 +192,10 @@ class TimerController extends Controller
       if($timer->save()) {
         $output['success'] = true;
         $output['message'] = 'Event processed';
+
+        $output['timer'] = $timer;
       }
+
       return json_encode($output);
     }
 

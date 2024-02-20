@@ -499,6 +499,9 @@ video {
 .mb-2 {
   margin-bottom: 0.5rem;
 }
+.mb-\[1rem\] {
+  margin-bottom: 1rem;
+}
 .mt-\[1rem\] {
   margin-top: 1rem;
 }
@@ -517,8 +520,20 @@ video {
 .max-w-\[100px\] {
   max-width: 100px;
 }
+.max-w-\[50\%\] {
+  max-width: 50%;
+}
 .max-w-\[600px\] {
   max-width: 600px;
+}
+@keyframes spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-once {
+  animation: spin 1s linear 1;
 }
 .flex-wrap {
   flex-wrap: wrap;
@@ -562,6 +577,10 @@ video {
 .bg-gray-300 {
   --tw-bg-opacity: 1;
   background-color: rgb(209 213 219 / var(--tw-bg-opacity));
+}
+.bg-orange-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(234 88 12 / var(--tw-bg-opacity));
 }
 .bg-red-400 {
   --tw-bg-opacity: 1;

@@ -2546,6 +2546,7 @@ var startButton = document.querySelector('#startButton');
 var stopButton = document.querySelector('#stopButton');
 var resetButton = document.querySelector('#resetButton');
 var passButton = document.querySelector('#passButton');
+var passBackButton = document.querySelector('#passBackButton');
 var warningButton = document.querySelector('#warningButton');
 var warningAudio = document.querySelector('#warningAudio');
 var alarmButton = document.querySelector('#alarmButton');
@@ -2560,6 +2561,8 @@ if (startButton) {
     stopButton.classList.remove('hidden');
     passButton.classList.remove('bg-gray-300');
     passButton.classList.add('bg-blue-800');
+    passBackButton.classList.remove('bg-gray-300');
+    passBackButton.classList.add('bg-orange-600');
     sendEvent('start');
   });
   stopButton.addEventListener('click', function () {
@@ -2570,13 +2573,23 @@ if (startButton) {
     stopButton.classList.add('hidden');
     passButton.classList.add('bg-gray-300');
     passButton.classList.remove('bg-blue-800');
+    passBackButton.classList.add('bg-gray-300');
+    passBackButton.classList.remove('bg-orange-600');
     sendEvent('reset');
   });
   passButton.addEventListener('click', function () {
     if (passButton.classList.contains('bg-gray-300')) {
       return;
     }
+    spinEl(passButton);
     sendEvent('pass');
+  });
+  passBackButton.addEventListener('click', function () {
+    if (passBackButton.classList.contains('bg-gray-300')) {
+      return;
+    }
+    spinEl(passBackButton);
+    sendEvent('passBack');
   });
 }
 if (warningButton) {
@@ -2743,6 +2756,12 @@ var stopEvent = function stopEvent() {
   passButton.classList.add('bg-gray-300');
   passButton.classList.remove('bg-blue-800');
   sendEvent('stop');
+};
+var spinEl = function spinEl(el) {
+  el.classList.add('animate-spin-once');
+  setTimeout(function () {
+    el.classList.remove('animate-spin-once');
+  }, 1100);
 };
 document.addEventListener("DOMContentLoaded", function () {
   timerInit();

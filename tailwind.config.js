@@ -6,7 +6,11 @@ module.exports = {
     './resources/js/components/*.js'
   ],
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        'spin-once': 'spin 1s linear 1',
+      }
+    },
   },
   plugins: [],
 }

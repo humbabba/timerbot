@@ -26,6 +26,7 @@ const startButton = document.querySelector('#startButton');
 const stopButton = document.querySelector('#stopButton');
 const resetButton = document.querySelector('#resetButton');
 const passButton = document.querySelector('#passButton');
+const passBackButton = document.querySelector('#passBackButton');
 const warningButton = document.querySelector('#warningButton');
 const warningAudio = document.querySelector('#warningAudio');
 const alarmButton = document.querySelector('#alarmButton');
@@ -40,6 +41,8 @@ if(startButton) {
     stopButton.classList.remove('hidden');
     passButton.classList.remove('bg-gray-300');
     passButton.classList.add('bg-blue-800');
+    passBackButton.classList.remove('bg-gray-300');
+    passBackButton.classList.add('bg-orange-600');
     sendEvent('start');
   });
   stopButton.addEventListener('click',() => {
@@ -50,13 +53,23 @@ if(startButton) {
     stopButton.classList.add('hidden');
     passButton.classList.add('bg-gray-300');
     passButton.classList.remove('bg-blue-800');
+    passBackButton.classList.add('bg-gray-300');
+    passBackButton.classList.remove('bg-orange-600');
     sendEvent('reset');
   });
   passButton.addEventListener('click',() => {
     if(passButton.classList.contains('bg-gray-300')) {
       return;
     }
+    spinEl(passButton);
     sendEvent('pass');
+  });
+  passBackButton.addEventListener('click',() => {
+    if(passBackButton.classList.contains('bg-gray-300')) {
+      return;
+    }
+    spinEl(passBackButton);
+    sendEvent('passBack');
   });
 }
 
@@ -241,6 +254,13 @@ const stopEvent = () => {
   passButton.classList.remove('bg-blue-800');
   sendEvent('stop');
 }
+
+const spinEl = el => {
+  el.classList.add('animate-spin-once');
+  setTimeout(() => {
+    el.classList.remove('animate-spin-once');
+  },1100);
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   timerInit();

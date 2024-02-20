@@ -32,7 +32,8 @@
           <p><b>Remaining:</b> <span id="remaining"></span></p>
         </div>
         <hr class="my-[1rem]">
-        <p class="p-[0.5rem] uppercase rounded text-white text-center{{ ($timer->started)? ' bg-blue-800':' bg-gray-300' }}" id="passButton">Pass</p>
+        <p class="p-[0.5rem] uppercase rounded text-white text-center{{ ($timer->started)? ' bg-blue-800':' bg-gray-300' }} mb-[1rem]" id="passButton">Pass</p>
+        <p class="p-[0.5rem] uppercase rounded text-white text-center{{ ($timer->started)? ' bg-orange-600':' bg-gray-300' }} max-w-[50%]" id="passBackButton">&lt;&lt; Pass back</p>
 
         <hr class="my-[1rem]">
         <div id="editableInfo">
