@@ -17,7 +17,8 @@
       "WebFetch(domain:www.komando.com)",
       "WebFetch(domain:ai.google.dev)",
       "Bash(git log:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(test:*)"
     ]
   }
 }

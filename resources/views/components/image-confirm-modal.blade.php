@@ -28,7 +28,7 @@
             x-transition:leave="ease-in duration-150"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed inset-0 bg-cortex-black/80"
+            class="fixed inset-0 bg-timerbot-black/80"
             x-on:click.prevent.stop="open = false"
         ></div>
 
@@ -41,14 +41,14 @@
             x-transition:leave="ease-in duration-150"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            class="relative bg-cortex-panel border border-gray rounded-2xl shadow-2xl max-w-md w-full overflow-hidden"
+            class="relative bg-timerbot-panel border border-gray rounded-sm shadow-2xl max-w-md w-full overflow-hidden"
             x-on:click.stop
         >
             <!-- Header bar -->
-            <div class="h-2 bg-gradient-to-r from-cortex-lavender via-cortex-peach to-cortex-orange"></div>
+            <div class="h-2 bg-timerbot-green"></div>
 
             <div class="p-6">
-                <h3 class="text-xl font-semibold mb-2 text-cortex-lavender" style="font-family: var(--font-display);">Generate Image?</h3>
+                <h3 class="text-xl font-semibold mb-2 text-timerbot-lavender" style="font-family: var(--font-display);">Generate Image?</h3>
                 <p class="text-text-muted mb-4">This node is configured to generate an image using an AI image API.</p>
                 <p class="text-text-muted mb-6">Proceeding will make an API call, which may incur costs. Do you want to continue?</p>
 
@@ -56,7 +56,7 @@
                     <button
                         type="button"
                         x-on:click.prevent.stop="open = false"
-                        class="px-5 py-2 rounded-full bg-cortex-panel-light text-text hover:bg-cortex-lavender hover:text-cortex-black transition-all duration-200 uppercase text-sm tracking-wider"
+                        class="px-5 py-2 rounded-none bg-timerbot-panel-light text-text hover:bg-timerbot-lavender hover:text-timerbot-black transition-all duration-200 uppercase text-sm tracking-wider"
                         style="font-family: var(--font-display);"
                     >
                         Cancel
@@ -64,7 +64,7 @@
                     <button
                         type="button"
                         x-on:click.prevent.stop="confirm()"
-                        class="px-5 py-2 rounded-full bg-cortex-lavender text-cortex-black hover:shadow-lg hover:shadow-cortex-lavender/30 transition-all duration-200 uppercase text-sm tracking-wider"
+                        class="px-5 py-2 rounded-none bg-timerbot-lavender text-timerbot-black hover:shadow-lg hover:shadow-timerbot-lavender/30 transition-all duration-200 uppercase text-sm tracking-wider"
                         style="font-family: var(--font-display);"
                     >
                         Generate Image

@@ -8,20 +8,20 @@
         </div>
 
         @if (session('error'))
-            <div class="mb-6 p-4 bg-cortex-red/20 border border-cortex-red/50 text-cortex-red rounded-lg">
+            <div class="mb-6 p-4 bg-timerbot-red/20 border border-timerbot-red/50 text-timerbot-red rounded-sm">
                 {{ session('error') }}
             </div>
         @endif
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div class="lg:col-span-2 bg-cortex-panel-light rounded-xl p-6">
+            <div class="lg:col-span-2 bg-timerbot-panel-light rounded-sm p-6">
                 <div class="flex items-center gap-4 mb-6">
-                    <div class="w-3 h-8 bg-cortex-lavender rounded-full"></div>
+                    <div class="w-3 h-8 bg-timerbot-lavender rounded-none"></div>
                     <h2>Item Details</h2>
                 </div>
                 <dl class="space-y-4">
                     <div class="flex items-center">
-                        <dt class="font-semibold text-cortex-blue w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Type</dt>
+                        <dt class="font-semibold text-timerbot-blue w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Type</dt>
                         <dd>
                             <span class="badge badge-lavender">
                                 {{ $trash->model_name }}
@@ -29,15 +29,15 @@
                         </dd>
                     </div>
                     <div class="flex items-center">
-                        <dt class="font-semibold text-cortex-blue w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Original ID</dt>
-                        <dd class="text-cortex-orange font-mono">{{ $trash->trashable_id }}</dd>
+                        <dt class="font-semibold text-timerbot-blue w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Original ID</dt>
+                        <dd class="text-timerbot-orange font-mono">{{ $trash->trashable_id }}</dd>
                     </div>
                     <div class="flex items-center">
-                        <dt class="font-semibold text-cortex-blue w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Deleted By</dt>
+                        <dt class="font-semibold text-timerbot-blue w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Deleted By</dt>
                         <dd>{{ $trash->deletedByUser?->name ?? 'System' }}</dd>
                     </div>
                     <div class="flex items-center">
-                        <dt class="font-semibold text-cortex-blue w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Deleted At</dt>
+                        <dt class="font-semibold text-timerbot-blue w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Deleted At</dt>
                         <dd>
                             {{ $trash->deleted_at->format('M j, Y g:i A') }}
                             <span class="text-text-muted">({{ $trash->deleted_at->diffForHumans() }})</span>
@@ -50,7 +50,7 @@
                 @if(auth()->user()->hasPermission('trash.restore'))
                     <form method="POST" action="{{ route('trash.restore', $trash) }}">
                         @csrf
-                        <button type="submit" class="w-full px-6 py-3 rounded-full bg-cortex-green text-cortex-black font-bold hover:shadow-lg hover:shadow-cortex-green/50 transition-all uppercase text-sm tracking-wider" style="font-family: var(--font-display);">
+                        <button type="submit" class="w-full px-6 py-3 rounded-none bg-timerbot-green text-timerbot-black font-bold hover:shadow-lg hover:shadow-timerbot-green/50 transition-all uppercase text-sm tracking-wider" style="font-family: var(--font-display);">
                             Restore Item
                         </button>
                     </form>
@@ -62,7 +62,7 @@
                         <button
                             type="button"
                             x-data
-                            class="w-full px-6 py-3 rounded-full bg-cortex-red text-white hover:shadow-[0_0_20px_rgba(255,102,102,0.6)] transition-all uppercase text-sm tracking-wider font-semibold"
+                            class="w-full px-6 py-3 rounded-none bg-timerbot-red text-white hover:shadow-[0_0_20px_rgba(255,102,102,0.6)] transition-all uppercase text-sm tracking-wider font-semibold"
                             style="font-family: var(--font-display);"
                             x-on:click="$dispatch('confirm-delete', {
                                 title: 'Permanently Delete',
@@ -79,22 +79,22 @@
 
         <div class="mb-8">
             <div class="flex items-center gap-4 mb-4">
-                <div class="w-3 h-8 bg-cortex-orange rounded-full"></div>
+                <div class="w-3 h-8 bg-timerbot-orange rounded-none"></div>
                 <h2>Stored Data</h2>
             </div>
-            <div class="bg-cortex-dark border border-gray rounded-xl p-6 overflow-x-auto">
-                <pre class="text-sm text-cortex-cyan font-mono">{{ json_encode($trash->data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
+            <div class="bg-timerbot-dark border border-gray rounded-sm p-6 overflow-x-auto">
+                <pre class="text-sm text-timerbot-cyan font-mono">{{ json_encode($trash->data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
             </div>
         </div>
 
         @if(!empty($trash->relationships))
             <div>
                 <div class="flex items-center gap-4 mb-4">
-                    <div class="w-3 h-8 bg-cortex-blue rounded-full"></div>
+                    <div class="w-3 h-8 bg-timerbot-blue rounded-none"></div>
                     <h2>Stored Relationships</h2>
                 </div>
-                <div class="bg-cortex-dark border border-gray rounded-xl p-6 overflow-x-auto">
-                    <pre class="text-sm text-cortex-lavender font-mono">{{ json_encode($trash->relationships, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
+                <div class="bg-timerbot-dark border border-gray rounded-sm p-6 overflow-x-auto">
+                    <pre class="text-sm text-timerbot-lavender font-mono">{{ json_encode($trash->relationships, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                 </div>
             </div>
         @endif

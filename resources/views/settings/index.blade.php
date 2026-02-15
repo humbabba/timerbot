@@ -5,7 +5,7 @@
         </div>
 
         @if (session('status'))
-            <div class="mb-6 p-4 bg-cortex-green/20 border border-cortex-green/50 text-cortex-green rounded-lg">
+            <div class="mb-6 p-4 bg-timerbot-green/20 border border-timerbot-green/50 text-timerbot-green rounded-sm">
                 {{ session('status') }}
             </div>
         @endif
@@ -17,14 +17,14 @@
             @foreach($settings as $group => $groupSettings)
                 <div class="mb-8">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="w-3 h-8 bg-cortex-orange rounded-full"></div>
+                        <div class="w-3 h-8 bg-timerbot-orange rounded-none"></div>
                         <h2 class="capitalize">{{ $group }} Settings</h2>
                     </div>
 
-                    <div class="bg-cortex-panel-light rounded-xl p-6 space-y-6">
+                    <div class="bg-timerbot-panel-light rounded-sm p-6 space-y-6">
                         @foreach($groupSettings as $setting)
                             <div class="flex flex-col md:flex-row md:items-start gap-4">
-                                <label for="settings_{{ $setting->key }}" class="font-semibold text-cortex-lavender md:w-64 uppercase text-sm tracking-wider md:pt-2" style="font-family: var(--font-display);">
+                                <label for="settings_{{ $setting->key }}" class="font-semibold text-timerbot-lavender md:w-64 uppercase text-sm tracking-wider md:pt-2" style="font-family: var(--font-display);">
                                     {{ str_replace('_', ' ', ucwords($setting->key, '_')) }}
                                 </label>
                                 <div class="flex-1">
@@ -40,8 +40,8 @@
                                                     {{ $setting->casted_value ? 'checked' : '' }}
                                                     class="sr-only peer"
                                                 >
-                                                <div class="w-12 h-6 bg-cortex-panel rounded-full peer-checked:bg-cortex-green transition-colors"></div>
-                                                <div class="absolute left-1 top-1 w-4 h-4 bg-text rounded-full peer-checked:translate-x-6 transition-transform"></div>
+                                                <div class="w-12 h-6 bg-timerbot-panel rounded-none peer-checked:bg-timerbot-green transition-colors"></div>
+                                                <div class="absolute left-1 top-1 w-4 h-4 bg-text rounded-none peer-checked:translate-x-6 transition-transform"></div>
                                             </div>
                                             <span class="text-text-muted text-sm">{{ $setting->description }}</span>
                                         </label>
@@ -52,7 +52,7 @@
                                                 name="settings[{{ $setting->key }}]"
                                                 id="settings_{{ $setting->key }}"
                                                 value="{{ $setting->value }}"
-                                                class="bg-cortex-panel border border-gray rounded-lg px-4 py-2 text-text w-32"
+                                                class="bg-timerbot-panel border border-gray rounded-sm px-4 py-2 text-text w-32"
                                             >
                                             @if($setting->description)
                                                 <p class="text-text-muted text-sm mt-2">{{ $setting->description }}</p>
@@ -81,7 +81,7 @@
                                                 name="settings[{{ $setting->key }}]"
                                                 id="settings_{{ $setting->key }}"
                                                 value="{{ $setting->value }}"
-                                                class="bg-cortex-panel border border-gray rounded-lg px-4 py-2 text-text w-full max-w-md"
+                                                class="bg-timerbot-panel border border-gray rounded-sm px-4 py-2 text-text w-full max-w-md"
                                             >
                                             @if($setting->description)
                                                 <p class="text-text-muted text-sm mt-2">{{ $setting->description }}</p>

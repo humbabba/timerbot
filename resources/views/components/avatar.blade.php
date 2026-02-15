@@ -15,7 +15,7 @@
 
 <div
     x-data="{ imgError: false }"
-    class="{{ $classes }} rounded-full overflow-hidden flex items-center justify-center bg-cortex-lavender"
+    class="{{ $classes }} rounded-none overflow-hidden flex items-center justify-center bg-timerbot-lavender"
 >
     <img
         x-show="!imgError"
@@ -27,6 +27,6 @@
     <span
         x-show="imgError"
         x-cloak
-        class="text-cortex-black font-bold"
+        class="text-timerbot-black font-bold"
     >{{ $initial }}</span>
 </div>

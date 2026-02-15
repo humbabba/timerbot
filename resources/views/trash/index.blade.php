@@ -23,27 +23,27 @@
         </div>
 
         @if (session('status'))
-            <div class="mb-6 p-4 bg-cortex-green/20 border border-cortex-green/50 text-cortex-green rounded-lg">
+            <div class="mb-6 p-4 bg-timerbot-green/20 border border-timerbot-green/50 text-timerbot-green rounded-sm">
                 {{ session('status') }}
             </div>
         @endif
 
         @if (session('error'))
-            <div class="mb-6 p-4 bg-cortex-red/20 border border-cortex-red/50 text-cortex-red rounded-lg">
+            <div class="mb-6 p-4 bg-timerbot-red/20 border border-timerbot-red/50 text-timerbot-red rounded-sm">
                 {{ session('error') }}
             </div>
         @endif
 
-        <div class="mb-6 p-4 bg-cortex-panel-light rounded-xl">
+        <div class="mb-6 p-4 bg-timerbot-panel-light rounded-sm">
             <form method="GET" action="{{ route('trash.index') }}" class="flex flex-wrap gap-4 items-end">
                 <div>
-                    <label class="block font-semibold text-cortex-lavender uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">Search</label>
+                    <label class="block font-semibold text-timerbot-lavender uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">Search</label>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
-                           class="bg-cortex-panel border border-gray rounded-lg px-4 py-2 text-text min-w-[200px]">
+                           class="bg-timerbot-panel border border-gray rounded-sm px-4 py-2 text-text min-w-[200px]">
                 </div>
                 <div>
-                    <label for="type" class="block font-semibold text-cortex-lavender uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">Type</label>
-                    <select name="type" id="type" class="bg-cortex-panel border border-gray rounded-lg px-4 py-2 text-text min-w-[150px]">
+                    <label for="type" class="block font-semibold text-timerbot-lavender uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">Type</label>
+                    <select name="type" id="type" class="bg-timerbot-panel border border-gray rounded-sm px-4 py-2 text-text min-w-[150px]">
                         <option value="">All types</option>
                         @foreach($types as $value => $label)
                             <option value="{{ $value }}" {{ request('type') === $value ? 'selected' : '' }}>
@@ -53,14 +53,14 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block font-semibold text-cortex-lavender uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">From</label>
+                    <label class="block font-semibold text-timerbot-lavender uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">From</label>
                     <input type="date" name="from" value="{{ request('from') }}"
-                           class="bg-cortex-panel border border-gray rounded-lg px-4 py-2 text-text">
+                           class="bg-timerbot-panel border border-gray rounded-sm px-4 py-2 text-text">
                 </div>
                 <div>
-                    <label class="block font-semibold text-cortex-lavender uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">To</label>
+                    <label class="block font-semibold text-timerbot-lavender uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">To</label>
                     <input type="date" name="to" value="{{ request('to') }}"
-                           class="bg-cortex-panel border border-gray rounded-lg px-4 py-2 text-text">
+                           class="bg-timerbot-panel border border-gray rounded-sm px-4 py-2 text-text">
                 </div>
                 <div class="flex gap-2">
                     <button type="submit" class="btn btn-secondary">Filter</button>
@@ -72,7 +72,7 @@
         </div>
 
         @if($trashItems->count() > 0)
-            <div class="overflow-x-auto rounded-xl border border-gray">
+            <div class="overflow-x-auto rounded-sm border border-gray">
                 <table class="w-full">
                     <thead>
                         <tr>
@@ -85,13 +85,13 @@
                     </thead>
                     <tbody>
                         @foreach($trashItems as $item)
-                            <tr class="hover:bg-cortex-panel-light transition-colors">
+                            <tr class="hover:bg-timerbot-panel-light transition-colors">
                                 <td class="p-4 border-b border-gray/50">
                                     <span class="badge badge-lavender">
                                         {{ $item->model_name }}
                                     </span>
                                 </td>
-                                <td class="p-4 border-b border-gray/50 text-cortex-peach">{{ $item->display_name }}</td>
+                                <td class="p-4 border-b border-gray/50 text-timerbot-peach">{{ $item->display_name }}</td>
                                 <td class="p-4 border-b border-gray/50 text-text-muted">
                                     {{ $item->deletedByUser?->name ?? 'System' }}
                                 </td>
@@ -102,14 +102,14 @@
                                 <td class="p-4 border-b border-gray/50">
                                     <div class="flex gap-2">
                                         @if(auth()->user()->hasPermission('trash.view'))
-                                            <a href="{{ route('trash.show', $item) }}" class="px-3 py-1.5 rounded-full bg-cortex-panel-light text-cortex-blue hover:bg-cortex-blue hover:text-cortex-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
+                                            <a href="{{ route('trash.show', $item) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-blue hover:bg-timerbot-blue hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                                 View
                                             </a>
                                         @endif
                                         @if(auth()->user()->hasPermission('trash.restore'))
                                             <form method="POST" action="{{ route('trash.restore', $item) }}">
                                                 @csrf
-                                                <button type="submit" class="px-3 py-1.5 rounded-full bg-cortex-panel border border-cortex-green/50 text-cortex-green hover:bg-cortex-green hover:text-cortex-black hover:border-cortex-green transition-all text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
+                                                <button type="submit" class="px-3 py-1.5 rounded-none bg-timerbot-panel border border-timerbot-green/50 text-timerbot-green hover:bg-timerbot-green hover:text-timerbot-black hover:border-timerbot-green transition-all text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
                                                     Restore
                                                 </button>
                                             </form>
@@ -121,7 +121,7 @@
                                                 <button
                                                     type="button"
                                                     x-data
-                                                    class="px-3 py-1.5 rounded-full bg-cortex-panel-light text-cortex-red hover:bg-cortex-red hover:text-white transition-all text-xs uppercase tracking-wider"
+                                                    class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-red hover:bg-timerbot-red hover:text-white transition-all text-xs uppercase tracking-wider"
                                                     style="font-family: var(--font-display);"
                                                     x-on:click="$dispatch('confirm-delete', {
                                                         title: 'Permanently Delete',
@@ -146,8 +146,8 @@
             </div>
         @else
             <div class="text-center py-16 text-text-muted">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-cortex-panel-light flex items-center justify-center">
-                    <svg class="w-8 h-8 text-cortex-lavender" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-none bg-timerbot-panel-light flex items-center justify-center">
+                    <svg class="w-8 h-8 text-timerbot-lavender" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                     </svg>
                 </div>

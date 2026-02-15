@@ -50,11 +50,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function favoriteWaves(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(Wave::class, 'user_wave_favorites')->withTimestamps();
-    }
-
     protected function getRelationshipsForTrash(): array
     {
         return [

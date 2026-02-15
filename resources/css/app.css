@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Fira+Code:wght@300;400;500;600;700&display=swap');
 @import 'trix/dist/trix.css';
 @import 'tailwindcss';
 
@@ -8,43 +8,43 @@
 @source '../**/*.js';
 
 @theme {
-    /* LCARS-inspired color palette */
-    --font-sans: 'Exo 2', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Orbitron', ui-sans-serif, system-ui, sans-serif;
+    /* Hacker green wireframe palette */
+    --font-sans: 'Fira Code', ui-monospace, 'Courier New', monospace;
+    --font-display: 'Share Tech Mono', ui-monospace, 'Courier New', monospace;
 
     /* Backgrounds */
-    --color-cortex-black: #000000;
-    --color-cortex-dark: #0a0a14;
-    --color-cortex-panel: #1a1a2e;
-    --color-cortex-panel-light: #252542;
+    --color-timerbot-black: #000000;
+    --color-timerbot-dark: #030a03;
+    --color-timerbot-panel: #0a120a;
+    --color-timerbot-panel-light: #0f1a0f;
 
-    /* LCARS accent colors */
-    --color-cortex-orange: #ff9966;
-    --color-cortex-peach: #ffcc99;
-    --color-cortex-gold: #cc9933;
-    --color-cortex-lavender: #cc99cc;
-    --color-cortex-purple: #9977aa;
-    --color-cortex-blue: #99ccff;
-    --color-cortex-cyan: #66ccff;
-    --color-cortex-teal: #339999;
+    /* Green accent colors (replacing LCARS multi-color) */
+    --color-timerbot-orange: #33ff33;
+    --color-timerbot-peach: #66ff66;
+    --color-timerbot-gold: #00cc66;
+    --color-timerbot-lavender: #00ff88;
+    --color-timerbot-purple: #33ff99;
+    --color-timerbot-blue: #66ff66;
+    --color-timerbot-cyan: #00ff88;
+    --color-timerbot-teal: #00cc66;
 
     /* Semantic colors */
-    --color-primary: #ff9966;
-    --color-primary-dark: #cc7744;
-    --color-secondary: #cc99cc;
-    --color-secondary-dark: #9977aa;
-    --color-tertiary: #99ccff;
-    --color-tertiary-dark: #6699cc;
+    --color-primary: #33ff33;
+    --color-primary-dark: #1a9952;
+    --color-secondary: #00ff88;
+    --color-secondary-dark: #00cc66;
+    --color-tertiary: #66ff66;
+    --color-tertiary-dark: #33cc33;
 
     /* UI colors */
-    --color-gray: #3a3a5a;
-    --color-light-gray: #4a4a6a;
-    --color-red: #ff6666;
-    --color-green: #66cc66;
-    --color-cortex-red: #ff6666;
-    --color-cortex-green: #66cc66;
-    --color-text: #e0e0f0;
-    --color-text-muted: #a0a0c0;
+    --color-gray: #1a331a;
+    --color-light-gray: #264026;
+    --color-red: #ff4444;
+    --color-green: #33ff33;
+    --color-timerbot-red: #ff4444;
+    --color-timerbot-green: #33ff33;
+    --color-text: #33ff33;
+    --color-text-muted: #1a9952;
 }
 
 @layer base {
@@ -53,7 +53,7 @@
     }
 
     html {
-        background-color: var(--color-cortex-black);
+        background-color: var(--color-timerbot-black);
     }
 
     body {
@@ -64,20 +64,23 @@
     h1 {
         @apply text-3xl font-semibold tracking-wide;
         font-family: var(--font-display);
-        color: var(--color-cortex-orange);
+        color: var(--color-timerbot-orange);
+        text-shadow: 0 0 10px rgba(51, 255, 51, 0.5), 0 0 20px rgba(51, 255, 51, 0.2);
     }
     h2 {
         @apply text-2xl font-semibold tracking-wide;
         font-family: var(--font-display);
-        color: var(--color-cortex-peach);
+        color: var(--color-timerbot-peach);
+        text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
     }
     h3 {
         @apply text-xl font-semibold;
-        color: var(--color-cortex-lavender);
+        color: var(--color-timerbot-lavender);
+        text-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
     }
     h4 {
         @apply text-lg font-medium;
-        color: var(--color-cortex-blue);
+        color: var(--color-timerbot-blue);
     }
     h5 {
         @apply text-base font-medium;
@@ -87,12 +90,12 @@
     }
 
     a {
-        color: var(--color-cortex-cyan);
+        color: var(--color-timerbot-cyan);
         transition: color 0.2s, text-shadow 0.2s;
     }
     a:hover {
-        color: var(--color-cortex-blue);
-        text-shadow: 0 0 8px var(--color-cortex-cyan);
+        color: var(--color-timerbot-blue);
+        text-shadow: 0 0 8px var(--color-timerbot-cyan);
     }
 
     /* Form elements */
@@ -102,9 +105,9 @@
     input[type="password"],
     textarea,
     select {
-        background-color: var(--color-cortex-panel);
+        background-color: var(--color-timerbot-panel);
         border: 1px solid var(--color-gray);
-        border-radius: 0.5rem;
+        border-radius: 2px;
         color: var(--color-text);
         padding: 0.5rem 0.75rem;
         transition: border-color 0.2s, box-shadow 0.2s;
@@ -113,8 +116,8 @@
     textarea:focus,
     select:focus {
         outline: none;
-        border-color: var(--color-cortex-cyan);
-        box-shadow: 0 0 0 2px rgba(102, 204, 255, 0.2);
+        border-color: var(--color-timerbot-cyan);
+        box-shadow: 0 0 0 2px rgba(51, 255, 51, 0.15);
     }
 
     /* Tables */
@@ -123,8 +126,8 @@
         border-spacing: 0;
     }
     th {
-        background-color: var(--color-cortex-panel);
-        color: var(--color-cortex-orange);
+        background-color: var(--color-timerbot-panel);
+        color: var(--color-timerbot-orange);
         font-family: var(--font-display);
         font-weight: 500;
         letter-spacing: 0.05em;
@@ -138,88 +141,92 @@
 }
 
 @layer components {
-    /* LCARS-style buttons */
+    /* Wireframe buttons */
     .btn {
-        @apply px-4 py-2 font-semibold rounded-full transition-all duration-200 whitespace-nowrap;
+        @apply px-4 py-2 font-semibold rounded-none transition-all duration-200 whitespace-nowrap;
         font-family: var(--font-display);
         letter-spacing: 0.05em;
         text-transform: uppercase;
         font-size: 0.85rem;
+        border: 1px solid transparent;
     }
     .btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
     }
     .btn-primary {
-        background: linear-gradient(135deg, var(--color-cortex-orange), var(--color-primary-dark));
-        color: var(--color-cortex-black);
+        background: transparent;
+        color: var(--color-timerbot-orange);
+        border-color: var(--color-timerbot-orange);
     }
     .btn-primary:hover {
-        box-shadow: 0 0 20px rgba(255, 153, 102, 0.4);
+        background: var(--color-timerbot-orange);
+        color: var(--color-timerbot-black);
+        box-shadow: 0 0 12px rgba(51, 255, 51, 0.4);
     }
     .btn-secondary {
-        background: linear-gradient(135deg, var(--color-cortex-lavender), var(--color-secondary-dark));
-        color: var(--color-cortex-black);
+        background: transparent;
+        color: var(--color-timerbot-lavender);
+        border-color: var(--color-timerbot-lavender);
+    }
+    .btn-secondary:hover {
+        background: var(--color-timerbot-lavender);
+        color: var(--color-timerbot-black);
     }
     .btn-danger {
-        background: linear-gradient(135deg, var(--color-red), #cc4444);
-        color: white;
+        background: transparent;
+        color: var(--color-red);
+        border-color: var(--color-red);
     }
     .btn-danger:hover {
-        box-shadow: 0 0 20px rgba(255, 102, 102, 0.4);
+        background: var(--color-red);
+        color: white;
+        box-shadow: 0 0 12px rgba(255, 68, 68, 0.4);
     }
 
-    /* LCARS panel styling */
-    .cortex-panel {
-        background-color: var(--color-cortex-panel);
-        border-radius: 1rem;
+    /* Wireframe panel */
+    .timerbot-panel {
+        background-color: var(--color-timerbot-panel);
+        border-radius: 2px;
         border: 1px solid var(--color-gray);
     }
 
-    /* LCARS decorative bar */
-    .cortex-bar {
-        height: 4px;
-        background: linear-gradient(90deg,
-            var(--color-cortex-orange) 0%,
-            var(--color-cortex-orange) 25%,
-            var(--color-cortex-lavender) 25%,
-            var(--color-cortex-lavender) 50%,
-            var(--color-cortex-blue) 50%,
-            var(--color-cortex-blue) 75%,
-            var(--color-cortex-peach) 75%,
-            var(--color-cortex-peach) 100%
-        );
+    /* Terminal bar (single green line with glow) */
+    .timerbot-bar {
+        height: 2px;
+        background: var(--color-timerbot-green);
+        box-shadow: 0 0 6px rgba(51, 255, 51, 0.5), 0 0 12px rgba(51, 255, 51, 0.2);
     }
 
-    /* Badge styling */
+    /* Badge styling - wireframe outlined */
     .badge {
-        @apply inline-block px-3 py-1 text-xs font-semibold rounded-full whitespace-nowrap;
+        @apply inline-block px-3 py-1 text-xs font-semibold rounded-none whitespace-nowrap;
         font-family: var(--font-display);
         letter-spacing: 0.05em;
+        background: transparent;
     }
     .badge-orange {
-        background-color: var(--color-cortex-orange);
-        color: var(--color-cortex-black);
+        color: var(--color-timerbot-orange);
+        border: 1px solid var(--color-timerbot-orange);
     }
     .badge-lavender {
-        background-color: var(--color-cortex-lavender);
-        color: var(--color-cortex-black);
+        color: var(--color-timerbot-lavender);
+        border: 1px solid var(--color-timerbot-lavender);
     }
     .badge-blue {
-        background-color: var(--color-cortex-blue);
-        color: var(--color-cortex-black);
+        color: var(--color-timerbot-blue);
+        border: 1px solid var(--color-timerbot-blue);
     }
     .badge-peach {
-        background-color: var(--color-cortex-peach);
-        color: var(--color-cortex-black);
+        color: var(--color-timerbot-peach);
+        border: 1px solid var(--color-timerbot-peach);
     }
     .badge-green {
-        background-color: var(--color-cortex-green);
-        color: var(--color-cortex-black);
+        color: var(--color-timerbot-green);
+        border: 1px solid var(--color-timerbot-green);
     }
     .badge-red {
-        background-color: var(--color-cortex-red);
-        color: white;
+        color: var(--color-timerbot-red);
+        border: 1px solid var(--color-timerbot-red);
     }
 }
 
@@ -230,24 +237,24 @@
     height: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: var(--color-cortex-dark);
+    background: var(--color-timerbot-dark);
 }
 ::-webkit-scrollbar-thumb {
     background: var(--color-gray);
-    border-radius: 4px;
+    border-radius: 0;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-cortex-lavender);
+    background: var(--color-timerbot-green);
 }
 
-/* AJAX Save Indicator */
-/* Position: nav (h-16 = 4rem) + cortex-bar (4px) + main margin (1rem) + internal offset (0.5rem) */
+/* AJAX Save Indicator - wireframe */
+/* Position: nav (h-16 = 4rem) + timerbot-bar (2px) + main margin (1rem) + internal offset (0.5rem) */
 .save-indicator {
     position: fixed;
-    top: calc(4rem + 4px + 1rem + 0.5rem);
+    top: calc(4rem + 2px + 1rem + 0.5rem);
     right: calc(1rem + 0.5rem);
     padding: 0.75rem 1.25rem;
-    border-radius: 9999px;
+    border-radius: 2px;
     font-family: var(--font-display);
     font-size: 0.85rem;
     font-weight: 600;
@@ -256,44 +263,45 @@
     cursor: pointer;
     z-index: 50;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .save-indicator:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 12px rgba(51, 255, 51, 0.3);
 }
 
 .save-indicator--unsaved {
-    background: linear-gradient(135deg, var(--color-cortex-red), #cc4444);
-    color: white;
+    background: transparent;
+    color: var(--color-timerbot-red);
+    border: 1px solid var(--color-timerbot-red);
     animation: pulse-unsaved 2s ease-in-out infinite;
 }
 
 .save-indicator--saved {
-    background: linear-gradient(135deg, var(--color-cortex-green), #44aa44);
-    color: white;
+    background: transparent;
+    color: var(--color-timerbot-green);
+    border: 1px solid var(--color-timerbot-green);
 }
 
 .save-indicator--saving {
-    background: linear-gradient(135deg, var(--color-cortex-orange), var(--color-primary-dark));
-    color: var(--color-cortex-black);
+    background: transparent;
+    color: var(--color-timerbot-orange);
+    border: 1px solid var(--color-timerbot-orange);
 }
 
 @keyframes pulse-unsaved {
     0%, 100% {
-        box-shadow: 0 4px 12px rgba(255, 102, 102, 0.3);
+        box-shadow: 0 0 4px rgba(255, 68, 68, 0.3);
     }
     50% {
-        box-shadow: 0 4px 20px rgba(255, 102, 102, 0.6);
+        box-shadow: 0 0 12px rgba(255, 68, 68, 0.6);
     }
 }
 
-/* Date input styling for dark theme */
+/* Date input styling */
 input[type="date"] {
-    background-color: var(--color-cortex-panel);
+    background-color: var(--color-timerbot-panel);
     border: 1px solid var(--color-gray);
-    border-radius: 0.5rem;
+    border-radius: 2px;
     color: var(--color-text);
     padding: 0.5rem 0.75rem;
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -301,8 +309,8 @@ input[type="date"] {
 
 input[type="date"]:focus {
     outline: none;
-    border-color: var(--color-cortex-cyan);
-    box-shadow: 0 0 0 2px rgba(102, 204, 255, 0.2);
+    border-color: var(--color-timerbot-cyan);
+    box-shadow: 0 0 0 2px rgba(51, 255, 51, 0.15);
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -312,17 +320,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Trix Editor - Dark theme styling */
 trix-toolbar {
-    background-color: var(--color-cortex-panel);
+    background-color: var(--color-timerbot-panel);
     border: 1px solid var(--color-gray);
     border-bottom: none;
-    border-radius: 0.5rem 0.5rem 0 0;
+    border-radius: 2px 2px 0 0;
     padding: 0.5rem;
 }
 
 trix-toolbar .trix-button-group {
-    background-color: var(--color-cortex-panel-light);
+    background-color: var(--color-timerbot-panel-light);
     border: none;
-    border-radius: 0.25rem;
+    border-radius: 2px;
     margin-right: 0.5rem;
 }
 
@@ -338,8 +346,8 @@ trix-toolbar .trix-button:hover {
 }
 
 trix-toolbar .trix-button.trix-active {
-    background-color: var(--color-cortex-cyan);
-    color: var(--color-cortex-black);
+    background-color: var(--color-timerbot-cyan);
+    color: var(--color-timerbot-black);
 }
 
 trix-toolbar .trix-button::before {
@@ -351,9 +359,9 @@ trix-toolbar .trix-button.trix-active::before {
 }
 
 trix-editor {
-    background-color: var(--color-cortex-panel);
+    background-color: var(--color-timerbot-panel);
     border: 1px solid var(--color-gray);
-    border-radius: 0 0 0.5rem 0.5rem;
+    border-radius: 0 0 2px 2px;
     color: var(--color-text);
     min-height: 150px;
     padding: 0.75rem;
@@ -361,12 +369,12 @@ trix-editor {
 
 trix-editor:focus {
     outline: none;
-    border-color: var(--color-cortex-cyan);
-    box-shadow: 0 0 0 2px rgba(102, 204, 255, 0.2);
+    border-color: var(--color-timerbot-cyan);
+    box-shadow: 0 0 0 2px rgba(51, 255, 51, 0.15);
 }
 
 trix-editor a {
-    color: var(--color-cortex-cyan);
+    color: var(--color-timerbot-cyan);
 }
 
 /* Hide file upload button in Trix */
@@ -394,4 +402,49 @@ trix-toolbar .trix-button--align-center::before {
 trix-toolbar .trix-button--align-right::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='3' y1='6' x2='21' y2='6'/%3E%3Cline x1='9' y1='12' x2='21' y2='12'/%3E%3Cline x1='3' y1='18' x2='21' y2='18'/%3E%3C/svg%3E");
     background-size: 65%;
+}
+
+/* CRT scanline overlay */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.03) 0px,
+        rgba(0, 0, 0, 0.03) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+}
+
+/* CRT flicker animation on page load */
+@keyframes crt-flicker {
+    0% { opacity: 0.8; }
+    5% { opacity: 1; }
+    10% { opacity: 0.85; }
+    15% { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+body {
+    animation: crt-flicker 0.5s ease-out;
+}
+
+/* Panel: green wireframe border with cut corner (bottom-right) */
+.bg-timerbot-panel-light {
+    --cut: 20px;
+    background-color: transparent;
+    background-image:
+        linear-gradient(315deg, transparent var(--cut), var(--color-timerbot-panel-light) var(--cut)),
+        linear-gradient(315deg, transparent calc(var(--cut) - 1.5px), var(--color-timerbot-green) calc(var(--cut) - 1.5px));
+    background-origin: padding-box, border-box;
+    background-clip: padding-box, border-box;
+    border: 1px solid transparent;
+    border-bottom-right-radius: 0;
 }

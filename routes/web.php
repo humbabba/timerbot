@@ -3,14 +3,10 @@
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AppSettingController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\NodeController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\TimerController;
 use App\Http\Controllers\TrashController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\VoiceProfileController;
-use App\Http\Controllers\VoiceRewriteController;
-use App\Http\Controllers\WaveController;
-use App\Http\Controllers\WaveExecutionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -51,41 +47,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('permission:roles.delete');
     Route::post('/roles/{role}/copy', [RoleController::class, 'copy'])->name('roles.copy')->middleware('permission:roles.create');
 
-    // Node management
-    Route::get('/nodes', [NodeController::class, 'index'])->name('nodes.index')->middleware('permission:nodes.view');
-    Route::get('/nodes/create', [NodeController::class, 'create'])->name('nodes.create')->middleware('permission:nodes.create');
-    Route::post('/nodes', [NodeController::class, 'store'])->name('nodes.store')->middleware('permission:nodes.create');
-    Route::get('/nodes/{node}', [NodeController::class, 'show'])->name('nodes.show')->middleware('permission:nodes.view');
-    Route::post('/nodes/{node}/run', [NodeController::class, 'run'])->name('nodes.run')->middleware('permission:nodes.run');
-    Route::post('/nodes/{node}/fetch-url', [NodeController::class, 'fetchUrl'])->name('nodes.fetch-url')->middleware('permission:nodes.run');
-    Route::post('/nodes/{node}/generate-image', [NodeController::class, 'generateImage'])->name('nodes.generate-image')->middleware('permission:nodes.run');
-    Route::get('/download-image', [NodeController::class, 'downloadImage'])->name('download-image');
-    Route::get('/nodes/{node}/edit', [NodeController::class, 'edit'])->name('nodes.edit')->middleware('permission:nodes.edit');
-    Route::put('/nodes/{node}', [NodeController::class, 'update'])->name('nodes.update')->middleware('permission:nodes.edit');
-    Route::delete('/nodes/{node}', [NodeController::class, 'destroy'])->name('nodes.destroy')->middleware('permission:nodes.delete');
-    Route::post('/nodes/{node}/copy', [NodeController::class, 'copy'])->name('nodes.copy')->middleware('permission:nodes.create');
-
-    // Voice profile management
-    Route::get('/voice-profiles', [VoiceProfileController::class, 'index'])->name('voice-profiles.index')->middleware('permission:voice-profiles.view');
-    Route::get('/voice-profiles/create', [VoiceProfileController::class, 'create'])->name('voice-profiles.create')->middleware('permission:voice-profiles.create');
-    Route::post('/voice-profiles', [VoiceProfileController::class, 'store'])->name('voice-profiles.store')->middleware('permission:voice-profiles.create');
-    Route::get('/voice-profiles/{voiceProfile}', [VoiceProfileController::class, 'show'])->name('voice-profiles.show')->middleware('permission:voice-profiles.view');
-    Route::get('/voice-profiles/{voiceProfile}/edit', [VoiceProfileController::class, 'edit'])->name('voice-profiles.edit')->middleware('permission:voice-profiles.edit');
-    Route::put('/voice-profiles/{voiceProfile}', [VoiceProfileController::class, 'update'])->name('voice-profiles.update')->middleware('permission:voice-profiles.edit');
-    Route::delete('/voice-profiles/{voiceProfile}', [VoiceProfileController::class, 'destroy'])->name('voice-profiles.destroy')->middleware('permission:voice-profiles.delete');
-    Route::post('/voice-profiles/{voiceProfile}/refine', [VoiceProfileController::class, 'refine'])->name('voice-profiles.refine')->middleware('permission:voice-profiles.edit');
-
-    // Voice rewrite management (nested under voice profiles)
-    Route::get('/voice-profiles/{voiceProfile}/rewrites/create', [VoiceRewriteController::class, 'create'])->name('voice-rewrites.create')->middleware('permission:voice-rewrites.create');
-    Route::post('/voice-profiles/{voiceProfile}/rewrites', [VoiceRewriteController::class, 'store'])->name('voice-rewrites.store')->middleware('permission:voice-rewrites.create');
-    Route::post('/voice-profiles/{voiceProfile}/rewrites/compare', [VoiceRewriteController::class, 'compare'])->name('voice-rewrites.compare')->middleware('permission:voice-rewrites.create');
-    Route::get('/voice-profiles/{voiceProfile}/rewrites/{rewrite}/edit', [VoiceRewriteController::class, 'edit'])->name('voice-rewrites.edit')->middleware('permission:voice-rewrites.edit');
-    Route::put('/voice-profiles/{voiceProfile}/rewrites/{rewrite}', [VoiceRewriteController::class, 'update'])->name('voice-rewrites.update')->middleware('permission:voice-rewrites.edit');
-    Route::delete('/voice-profiles/{voiceProfile}/rewrites/{rewrite}', [VoiceRewriteController::class, 'destroy'])->name('voice-rewrites.destroy')->middleware('permission:voice-rewrites.delete');
-    Route::delete('/voice-profiles/{voiceProfile}/rewrites-oldest', [VoiceRewriteController::class, 'destroyOldest'])->name('voice-rewrites.destroy-oldest')->middleware('permission:voice-rewrites.delete');
-
-    // API: Activity log wave outputs (for rewrite selector)
-    Route::get('/api/activity-logs/wave-outputs', [VoiceRewriteController::class, 'waveOutputs'])->name('api.wave-outputs')->middleware('permission:voice-rewrites.create');
+    // Timer management
+    Route::get('/timers', [TimerController::class, 'index'])->name('timers.index')->middleware('permission:timers.view');
+    Route::get('/timers/create', [TimerController::class, 'create'])->name('timers.create')->middleware('permission:timers.create');
+    Route::post('/timers', [TimerController::class, 'store'])->name('timers.store')->middleware('permission:timers.create');
+    Route::get('/timers/{timer}', [TimerController::class, 'show'])->name('timers.show')->middleware('permission:timers.view');
+    Route::get('/timers/{timer}/edit', [TimerController::class, 'edit'])->name('timers.edit')->middleware('permission:timers.edit');
+    Route::put('/timers/{timer}', [TimerController::class, 'update'])->name('timers.update')->middleware('permission:timers.edit');
+    Route::delete('/timers/{timer}', [TimerController::class, 'destroy'])->name('timers.destroy')->middleware('permission:timers.delete');
+    Route::post('/timers/{timer}/copy', [TimerController::class, 'copy'])->name('timers.copy')->middleware('permission:timers.create');
+    Route::get('/timers/{timer}/run', [TimerController::class, 'run'])->name('timers.run')->middleware('permission:timers.run');
 
     // Trash management
     Route::get('/trash', [TrashController::class, 'index'])->name('trash.index')->middleware('permission:trash.view');
@@ -97,23 +68,6 @@ Route::middleware('auth')->group(function () {
     // App settings
     Route::get('/settings', [AppSettingController::class, 'index'])->name('settings.index')->middleware('permission:settings.manage');
     Route::put('/settings', [AppSettingController::class, 'update'])->name('settings.update')->middleware('permission:settings.manage');
-
-    // Wave management
-    Route::get('/waves', [WaveController::class, 'index'])->name('waves.index')->middleware('permission:waves.view');
-    Route::get('/waves/favorites', [WaveController::class, 'favorites'])->name('waves.favorites')->middleware('permission:waves.view');
-    Route::get('/waves/create', [WaveController::class, 'create'])->name('waves.create')->middleware('permission:waves.create');
-    Route::post('/waves', [WaveController::class, 'store'])->name('waves.store')->middleware('permission:waves.create');
-    Route::post('/waves/{wave}/toggle-favorite', [WaveController::class, 'toggleFavorite'])->name('waves.toggle-favorite')->middleware('permission:waves.view');
-    Route::get('/waves/{wave}', [WaveController::class, 'show'])->name('waves.show')->middleware('permission:waves.view');
-    Route::get('/waves/{wave}/edit', [WaveController::class, 'edit'])->name('waves.edit')->middleware('permission:waves.edit');
-    Route::put('/waves/{wave}', [WaveController::class, 'update'])->name('waves.update')->middleware('permission:waves.edit');
-    Route::delete('/waves/{wave}', [WaveController::class, 'destroy'])->name('waves.destroy')->middleware('permission:waves.delete');
-    Route::post('/waves/{wave}/copy', [WaveController::class, 'copy'])->name('waves.copy')->middleware('permission:waves.create');
-
-    // Wave execution
-    Route::get('/waves/{wave}/run', [WaveExecutionController::class, 'start'])->name('waves.run')->middleware('permission:waves.run');
-    Route::post('/waves/{wave}/run-step', [WaveExecutionController::class, 'runStep'])->name('waves.run-step')->middleware('permission:waves.run');
-    Route::post('/waves/{wave}/rerun-step', [WaveExecutionController::class, 'rerunStep'])->name('waves.rerun-step')->middleware('permission:waves.run');
 
     // Activity logs
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index')->middleware('permission:activity-logs.view');

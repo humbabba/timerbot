@@ -10,12 +10,12 @@
         </div>
 
         @if (session('status'))
-            <div class="mb-6 p-4 bg-cortex-green/20 border border-cortex-green/50 text-cortex-green rounded-lg">
+            <div class="mb-6 p-4 bg-timerbot-green/20 border border-timerbot-green/50 text-timerbot-green rounded-sm">
                 {{ session('status') }}
             </div>
         @endif
 
-        <div class="overflow-x-auto rounded-xl border border-gray">
+        <div class="overflow-x-auto rounded-sm border border-gray">
             <table class="w-full">
                 <thead>
                     <tr>
@@ -27,9 +27,9 @@
                 </thead>
                 <tbody>
                     @foreach($roles as $role)
-                        <tr class="hover:bg-cortex-panel-light transition-colors">
+                        <tr class="hover:bg-timerbot-panel-light transition-colors">
                             <td class="p-4 border-b border-gray/50">
-                                <span class="text-cortex-orange font-semibold">{{ $role->name }}</span>
+                                <span class="text-timerbot-orange font-semibold">{{ $role->name }}</span>
                             </td>
                             <td class="p-4 border-b border-gray/50 text-text-muted">{{ $role->description }}</td>
                             <td class="p-4 border-b border-gray/50">
@@ -44,14 +44,14 @@
                             <td class="p-4 border-b border-gray/50">
                                 <div class="flex gap-2">
                                     @if(auth()->user()->hasPermission('roles.edit'))
-                                        <a href="{{ route('roles.edit', $role) }}" class="px-3 py-1.5 rounded-full bg-cortex-panel-light text-cortex-cyan hover:bg-cortex-cyan hover:text-cortex-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
+                                        <a href="{{ route('roles.edit', $role) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-cyan hover:bg-timerbot-cyan hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                             Edit
                                         </a>
                                     @endif
                                     @if(auth()->user()->hasPermission('roles.create'))
                                         <form method="POST" action="{{ route('roles.copy', $role) }}">
                                             @csrf
-                                            <button type="submit" class="px-3 py-1.5 rounded-full bg-cortex-panel-light text-cortex-green hover:bg-cortex-green hover:text-cortex-black transition-all text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
+                                            <button type="submit" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-green hover:bg-timerbot-green hover:text-timerbot-black transition-all text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
                                                 Copy
                                             </button>
                                         </form>
@@ -63,7 +63,7 @@
                                             <button
                                                 type="button"
                                                 x-data
-                                                class="px-3 py-1.5 rounded-full bg-cortex-panel-light text-cortex-red hover:bg-cortex-red hover:text-white transition-all text-xs uppercase tracking-wider"
+                                                class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-red hover:bg-timerbot-red hover:text-white transition-all text-xs uppercase tracking-wider"
                                                 style="font-family: var(--font-display);"
                                                 x-on:click="$dispatch('confirm-delete', {
                                                     title: 'Delete Role',

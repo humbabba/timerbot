@@ -104,7 +104,7 @@ document.addEventListener('alpine:init', () => {
                 errorContainer.remove();
             }
             // Also clear any existing server-rendered error block
-            const existingErrors = this.form.closest('div').querySelector('.mb-6.p-4.bg-cortex-red\\/20');
+            const existingErrors = this.form.closest('div').querySelector('.mb-6.p-4.bg-timerbot-red\\/20');
             if (existingErrors) {
                 existingErrors.remove();
             }
@@ -116,7 +116,7 @@ document.addEventListener('alpine:init', () => {
             // Find the form's parent container and insert errors before the form
             const formParent = this.form.parentElement;
             const errorHtml = document.createElement('div');
-            errorHtml.className = 'ajax-error-container mb-6 p-4 bg-cortex-red/20 border border-cortex-red/50 text-cortex-red rounded-lg';
+            errorHtml.className = 'ajax-error-container mb-6 p-4 bg-timerbot-red/20 border border-timerbot-red/50 text-timerbot-red rounded-sm';
 
             const messages = Object.values(errors).flat();
             errorHtml.innerHTML = messages.map(msg => `<p>${this.escapeHtml(msg)}</p>`).join('');

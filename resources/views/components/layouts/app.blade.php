@@ -14,16 +14,16 @@
     @endif
     <style>[x-cloak] { display: none !important; }</style>
 </head>
-<body class="h-full bg-cortex-black text-text">
+<body class="h-full bg-timerbot-black text-text">
     <div class="flex flex-col h-full">
         <x-nav />
-        <div class="cortex-bar"></div>
+        <div class="timerbot-bar"></div>
 
-        <main class="flex-1 m-2 md:m-4 overflow-auto cortex-panel">
+        <main class="flex-1 m-2 md:m-4 overflow-auto timerbot-panel">
             {{ $slot }}
         </main>
 
-        <div class="cortex-bar"></div>
+        <div class="timerbot-bar"></div>
         <x-footer />
     </div>
     <x-confirm-modal />
