@@ -1,0 +1,397 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap');
+@import 'trix/dist/trix.css';
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    /* LCARS-inspired color palette */
+    --font-sans: 'Exo 2', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Orbitron', ui-sans-serif, system-ui, sans-serif;
+
+    /* Backgrounds */
+    --color-cortex-black: #000000;
+    --color-cortex-dark: #0a0a14;
+    --color-cortex-panel: #1a1a2e;
+    --color-cortex-panel-light: #252542;
+
+    /* LCARS accent colors */
+    --color-cortex-orange: #ff9966;
+    --color-cortex-peach: #ffcc99;
+    --color-cortex-gold: #cc9933;
+    --color-cortex-lavender: #cc99cc;
+    --color-cortex-purple: #9977aa;
+    --color-cortex-blue: #99ccff;
+    --color-cortex-cyan: #66ccff;
+    --color-cortex-teal: #339999;
+
+    /* Semantic colors */
+    --color-primary: #ff9966;
+    --color-primary-dark: #cc7744;
+    --color-secondary: #cc99cc;
+    --color-secondary-dark: #9977aa;
+    --color-tertiary: #99ccff;
+    --color-tertiary-dark: #6699cc;
+
+    /* UI colors */
+    --color-gray: #3a3a5a;
+    --color-light-gray: #4a4a6a;
+    --color-red: #ff6666;
+    --color-green: #66cc66;
+    --color-cortex-red: #ff6666;
+    --color-cortex-green: #66cc66;
+    --color-text: #e0e0f0;
+    --color-text-muted: #a0a0c0;
+}
+
+@layer base {
+    [x-cloak] {
+        display: none !important;
+    }
+
+    html {
+        background-color: var(--color-cortex-black);
+    }
+
+    body {
+        color: var(--color-text);
+        font-family: var(--font-sans);
+    }
+
+    h1 {
+        @apply text-3xl font-semibold tracking-wide;
+        font-family: var(--font-display);
+        color: var(--color-cortex-orange);
+    }
+    h2 {
+        @apply text-2xl font-semibold tracking-wide;
+        font-family: var(--font-display);
+        color: var(--color-cortex-peach);
+    }
+    h3 {
+        @apply text-xl font-semibold;
+        color: var(--color-cortex-lavender);
+    }
+    h4 {
+        @apply text-lg font-medium;
+        color: var(--color-cortex-blue);
+    }
+    h5 {
+        @apply text-base font-medium;
+    }
+    h6 {
+        @apply text-sm font-medium;
+    }
+
+    a {
+        color: var(--color-cortex-cyan);
+        transition: color 0.2s, text-shadow 0.2s;
+    }
+    a:hover {
+        color: var(--color-cortex-blue);
+        text-shadow: 0 0 8px var(--color-cortex-cyan);
+    }
+
+    /* Form elements */
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="password"],
+    textarea,
+    select {
+        background-color: var(--color-cortex-panel);
+        border: 1px solid var(--color-gray);
+        border-radius: 0.5rem;
+        color: var(--color-text);
+        padding: 0.5rem 0.75rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus,
+    textarea:focus,
+    select:focus {
+        outline: none;
+        border-color: var(--color-cortex-cyan);
+        box-shadow: 0 0 0 2px rgba(102, 204, 255, 0.2);
+    }
+
+    /* Tables */
+    table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    th {
+        background-color: var(--color-cortex-panel);
+        color: var(--color-cortex-orange);
+        font-family: var(--font-display);
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        min-width: 180px;
+    }
+    td {
+        border-bottom: 1px solid var(--color-gray);
+    }
+}
+
+@layer components {
+    /* LCARS-style buttons */
+    .btn {
+        @apply px-4 py-2 font-semibold rounded-full transition-all duration-200 whitespace-nowrap;
+        font-family: var(--font-display);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, var(--color-cortex-orange), var(--color-primary-dark));
+        color: var(--color-cortex-black);
+    }
+    .btn-primary:hover {
+        box-shadow: 0 0 20px rgba(255, 153, 102, 0.4);
+    }
+    .btn-secondary {
+        background: linear-gradient(135deg, var(--color-cortex-lavender), var(--color-secondary-dark));
+        color: var(--color-cortex-black);
+    }
+    .btn-danger {
+        background: linear-gradient(135deg, var(--color-red), #cc4444);
+        color: white;
+    }
+    .btn-danger:hover {
+        box-shadow: 0 0 20px rgba(255, 102, 102, 0.4);
+    }
+
+    /* LCARS panel styling */
+    .cortex-panel {
+        background-color: var(--color-cortex-panel);
+        border-radius: 1rem;
+        border: 1px solid var(--color-gray);
+    }
+
+    /* LCARS decorative bar */
+    .cortex-bar {
+        height: 4px;
+        background: linear-gradient(90deg,
+            var(--color-cortex-orange) 0%,
+            var(--color-cortex-orange) 25%,
+            var(--color-cortex-lavender) 25%,
+            var(--color-cortex-lavender) 50%,
+            var(--color-cortex-blue) 50%,
+            var(--color-cortex-blue) 75%,
+            var(--color-cortex-peach) 75%,
+            var(--color-cortex-peach) 100%
+        );
+    }
+
+    /* Badge styling */
+    .badge {
+        @apply inline-block px-3 py-1 text-xs font-semibold rounded-full whitespace-nowrap;
+        font-family: var(--font-display);
+        letter-spacing: 0.05em;
+    }
+    .badge-orange {
+        background-color: var(--color-cortex-orange);
+        color: var(--color-cortex-black);
+    }
+    .badge-lavender {
+        background-color: var(--color-cortex-lavender);
+        color: var(--color-cortex-black);
+    }
+    .badge-blue {
+        background-color: var(--color-cortex-blue);
+        color: var(--color-cortex-black);
+    }
+    .badge-peach {
+        background-color: var(--color-cortex-peach);
+        color: var(--color-cortex-black);
+    }
+    .badge-green {
+        background-color: var(--color-cortex-green);
+        color: var(--color-cortex-black);
+    }
+    .badge-red {
+        background-color: var(--color-cortex-red);
+        color: white;
+    }
+}
+
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--color-cortex-dark);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--color-gray);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-cortex-lavender);
+}
+
+/* AJAX Save Indicator */
+/* Position: nav (h-16 = 4rem) + cortex-bar (4px) + main margin (1rem) + internal offset (0.5rem) */
+.save-indicator {
+    position: fixed;
+    top: calc(4rem + 4px + 1rem + 0.5rem);
+    right: calc(1rem + 0.5rem);
+    padding: 0.75rem 1.25rem;
+    border-radius: 9999px;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    z-index: 50;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.save-indicator:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.save-indicator--unsaved {
+    background: linear-gradient(135deg, var(--color-cortex-red), #cc4444);
+    color: white;
+    animation: pulse-unsaved 2s ease-in-out infinite;
+}
+
+.save-indicator--saved {
+    background: linear-gradient(135deg, var(--color-cortex-green), #44aa44);
+    color: white;
+}
+
+.save-indicator--saving {
+    background: linear-gradient(135deg, var(--color-cortex-orange), var(--color-primary-dark));
+    color: var(--color-cortex-black);
+}
+
+@keyframes pulse-unsaved {
+    0%, 100% {
+        box-shadow: 0 4px 12px rgba(255, 102, 102, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(255, 102, 102, 0.6);
+    }
+}
+
+/* Date input styling for dark theme */
+input[type="date"] {
+    background-color: var(--color-cortex-panel);
+    border: 1px solid var(--color-gray);
+    border-radius: 0.5rem;
+    color: var(--color-text);
+    padding: 0.5rem 0.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="date"]:focus {
+    outline: none;
+    border-color: var(--color-cortex-cyan);
+    box-shadow: 0 0 0 2px rgba(102, 204, 255, 0.2);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+    cursor: pointer;
+}
+
+/* Trix Editor - Dark theme styling */
+trix-toolbar {
+    background-color: var(--color-cortex-panel);
+    border: 1px solid var(--color-gray);
+    border-bottom: none;
+    border-radius: 0.5rem 0.5rem 0 0;
+    padding: 0.5rem;
+}
+
+trix-toolbar .trix-button-group {
+    background-color: var(--color-cortex-panel-light);
+    border: none;
+    border-radius: 0.25rem;
+    margin-right: 0.5rem;
+}
+
+trix-toolbar .trix-button {
+    background-color: transparent;
+    border: none;
+    color: var(--color-text);
+    padding: 0.5rem;
+}
+
+trix-toolbar .trix-button:hover {
+    background-color: var(--color-gray);
+}
+
+trix-toolbar .trix-button.trix-active {
+    background-color: var(--color-cortex-cyan);
+    color: var(--color-cortex-black);
+}
+
+trix-toolbar .trix-button::before {
+    filter: invert(1);
+}
+
+trix-toolbar .trix-button.trix-active::before {
+    filter: none;
+}
+
+trix-editor {
+    background-color: var(--color-cortex-panel);
+    border: 1px solid var(--color-gray);
+    border-radius: 0 0 0.5rem 0.5rem;
+    color: var(--color-text);
+    min-height: 150px;
+    padding: 0.75rem;
+}
+
+trix-editor:focus {
+    outline: none;
+    border-color: var(--color-cortex-cyan);
+    box-shadow: 0 0 0 2px rgba(102, 204, 255, 0.2);
+}
+
+trix-editor a {
+    color: var(--color-cortex-cyan);
+}
+
+/* Hide file upload button in Trix */
+trix-toolbar .trix-button-group--file-tools {
+    display: none;
+}
+
+/* Trix alignment custom elements */
+align-center {
+    display: block;
+    text-align: center;
+}
+
+align-right {
+    display: block;
+    text-align: right;
+}
+
+/* Trix alignment toolbar button icons */
+trix-toolbar .trix-button--align-center::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='3' y1='6' x2='21' y2='6'/%3E%3Cline x1='7' y1='12' x2='17' y2='12'/%3E%3Cline x1='3' y1='18' x2='21' y2='18'/%3E%3C/svg%3E");
+    background-size: 65%;
+}
+
+trix-toolbar .trix-button--align-right::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='3' y1='6' x2='21' y2='6'/%3E%3Cline x1='9' y1='12' x2='21' y2='12'/%3E%3Cline x1='3' y1='18' x2='21' y2='18'/%3E%3C/svg%3E");
+    background-size: 65%;
+}

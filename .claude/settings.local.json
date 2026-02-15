@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(php artisan tinker:*)",
+      "Bash(php artisan route:list:*)",
+      "Bash(ls -la \"C:\\\\projects\\\\cortex.weststar.com-2026\\\\app\\\\Console\"\" 2>/dev/null || echo \"Directory not found \")",
+      "Bash(php artisan migrate:*)",
+      "Bash(php:*)",
+      "Bash(php -l:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(git mv:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(del \"C:\\\\projects\\\\cortex.weststar.com-2026\\\\database\\\\migrations\\\\2026_02_04_222427_add_include_in_output_to_node_wave_table.php\")",
+      "WebFetch(domain:www.komando.com)",
+      "WebFetch(domain:ai.google.dev)",
+      "Bash(git log:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}
