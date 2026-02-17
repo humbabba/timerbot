@@ -1,6 +1,6 @@
 /**
  * Timer Runner — Meeting timer with per-speaker countdown and Web Audio API warnings.
- * Reads timerConfig global: { name, end_time, participant_count, warnings[] }
+ * Reads timerConfig global: { name, end_time, participant_count, warnings[], state_url, settings_url, csrf_token }
  */
 
 (function () {
@@ -17,19 +17,22 @@
     const btnStart           = document.getElementById('btn-start');
     const btnNext            = document.getElementById('btn-next');
     const btnPause           = document.getElementById('btn-pause');
+    const btnStop            = document.getElementById('btn-stop');
     const historySection     = document.getElementById('history-section');
     const historyBody        = document.getElementById('history-body');
     const completedSection   = document.getElementById('completed-section');
+    const timePerPersonDiv   = document.getElementById('time-per-person');
 
     // ── Config ──
     const config        = window.timerConfig;
-    const totalSpeakers = config.participant_count;
+    let totalSpeakers = config.participant_count;
 
     // end_time is a time-of-day string like "14:30" or "14:30:00" — combine with today's date
     const [h, m, s] = config.end_time.split(':').map(Number);
     const endDate = new Date();
     endDate.setHours(h, m, s || 0, 0);
-    const endTime = endDate.getTime();
+    let endTime = endDate.getTime();
+    let endTimeStr = config.end_time;
     const warnings     = (config.warnings || []).slice().sort((a, b) => b.seconds_before - a.seconds_before);
 
     // ── State ──
@@ -40,6 +43,7 @@
     let pauseStartMs         = 0;
     let totalPausedMs        = 0;
     let running              = false;
+    let completed            = false;
     let meetingTick          = null;
     let speakerTick          = null;
     let firedWarnings        = new Set();
@@ -68,6 +72,43 @@
         const speakersLeft = totalSpeakers - currentSpeaker;
         return speakersLeft > 0 ? Math.max(0, remaining / speakersLeft) : 0;
     }
+
+    // ── Server state sync ──
+    function syncState() {
+        if (!config.state_url) return;
+
+        let status = 'idle';
+        if (completed) status = 'completed';
+        else if (paused) status = 'paused';
+        else if (running) status = 'running';
+
+        const state = {
+            status,
+            current_speaker: running || completed ? currentSpeaker + 1 : 0,
+            total_speakers: totalSpeakers,
+            end_time: endTimeStr,
+            speaker_allotted_ms: speakerAllottedMs,
+            speaker_started_at: speakerStartMs,
+            total_paused_ms: totalPausedMs,
+            paused_at: paused ? pauseStartMs : null,
+            history,
+        };
+
+        fetch(config.state_url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': config.csrf_token,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({ state }),
+        }).catch(() => {});
+    }
+
+    // Heartbeat: sync state every 3 seconds while running
+    setInterval(() => {
+        if (running || paused) syncState();
+    }, 3000);
 
     // ── Web Audio API Sounds ──
     function getAudioCtx() {
@@ -189,9 +230,93 @@
         }
     }
 
-    function updatePreStartInfo() {
-        const perPerson = calcTimePerSpeaker();
-        timePerPersonLabel.textContent = `${formatTime(perPerson)} per person (${totalSpeakers} participants)`;
+    function updateTimePerPersonLabel(perPersonMs, forceOverTime) {
+        const overTime = forceOverTime ||
+            (running && !completed && speakerStartMs > 0 && speakerRemainingMs() < 0);
+
+        if (overTime) {
+            const futureCount = totalSpeakers - currentSpeaker - 1;
+            if (futureCount > 0) {
+                const nextTime = Math.max(0, remainingMeetingMs() / futureCount);
+                timePerPersonLabel.textContent = `${formatTime(nextTime)} per person (${futureCount} remaining)`;
+            } else {
+                timePerPersonLabel.textContent = 'Last speaker — no time to redistribute';
+            }
+        } else if (running) {
+            const remaining = totalSpeakers - currentSpeaker;
+            timePerPersonLabel.textContent = `${formatTime(perPersonMs)} per person (${remaining} remaining)`;
+        } else {
+            timePerPersonLabel.textContent = `${formatTime(perPersonMs)} per person (${totalSpeakers} participants)`;
+        }
+
+        timePerPersonDiv.classList.toggle('text-timerbot-red', overTime);
+        timePerPersonDiv.classList.toggle('text-text-muted', !overTime);
+    }
+
+    // ── Live settings controls ──
+    const settingEndTimeEl     = document.getElementById('setting-end-time');
+    const settingParticipants  = document.getElementById('setting-participants');
+
+    function updateSettings(newParticipants, newEndTimeStr) {
+        // Guard: can't reduce below speakers already done + 1 (current speaker)
+        const minParticipants = running ? currentSpeaker + 1 : 1;
+        if (newParticipants < minParticipants) {
+            newParticipants = minParticipants;
+            settingParticipants.value = minParticipants;
+        }
+
+        totalSpeakers = newParticipants;
+        speakerTotalEl.textContent = totalSpeakers;
+
+        // Parse new end time
+        const [nh, nm] = newEndTimeStr.split(':').map(Number);
+        const newEnd = new Date();
+        newEnd.setHours(nh, nm, 0, 0);
+        endTime = newEnd.getTime();
+        endTimeStr = newEndTimeStr;
+
+        // Recalculate current speaker's allotted time if running
+        if (running && !completed) {
+            speakerAllottedMs = calcTimePerSpeaker();
+        }
+
+        // Update label with current value
+        updateTimePerPersonLabel(running ? speakerAllottedMs : calcTimePerSpeaker());
+        updateMeetingCountdown();
+
+        // Persist to server
+        if (config.settings_url) {
+            fetch(config.settings_url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': config.csrf_token,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({
+                    participant_count: totalSpeakers,
+                    end_time: newEndTimeStr,
+                }),
+            }).catch(() => {});
+        }
+
+        // Sync run state so show page picks up changes
+        syncState();
+    }
+
+    if (settingEndTimeEl) {
+        settingEndTimeEl.addEventListener('change', () => {
+            updateSettings(totalSpeakers, settingEndTimeEl.value);
+        });
+    }
+
+    if (settingParticipants) {
+        settingParticipants.addEventListener('change', () => {
+            const val = parseInt(settingParticipants.value, 10);
+            if (!isNaN(val)) {
+                updateSettings(val, settingEndTimeEl.value);
+            }
+        });
     }
 
     // ── Speaker tick ──
@@ -216,6 +341,7 @@
         if (remainMs <= 0) {
             speakerStatusEl.textContent = 'Over time!';
             speakerCountdownEl.classList.add('animate-pulse');
+            updateTimePerPersonLabel(speakerAllottedMs, true);
         } else {
             speakerCountdownEl.classList.remove('animate-pulse');
             speakerStatusEl.textContent = '';
@@ -225,7 +351,7 @@
         const secsRemaining = remainMs / 1000;
         for (const w of warnings) {
             const key = `${currentSpeaker}-${w.seconds_before}`;
-            if (!firedWarnings.has(key) && secsRemaining <= w.seconds_before && secsRemaining > 0) {
+            if (!firedWarnings.has(key) && secsRemaining <= w.seconds_before && secsRemaining > w.seconds_before - 1) {
                 firedWarnings.add(key);
                 playSound(w.sound);
                 flashSpeakerPanel();
@@ -244,8 +370,23 @@
         speakerPanel.classList.remove('hidden');
         speakerCountdownEl.classList.remove('animate-pulse');
         speakerStatusEl.textContent = '';
+        updateTimePerPersonLabel(speakerAllottedMs);
 
         tickSpeaker();
+    }
+
+    function renderHistoryRow(entry) {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-timerbot-panel-light transition-colors';
+        tr.innerHTML = `
+            <td class="p-4 border-b border-gray/50">Speaker ${entry.speaker}</td>
+            <td class="p-4 border-b border-gray/50 text-text-muted">${formatTime(entry.allotted)}</td>
+            <td class="p-4 border-b border-gray/50 ${entry.over ? 'text-timerbot-red' : 'text-timerbot-green'}">${formatTime(entry.actual)}</td>
+            <td class="p-4 border-b border-gray/50">
+                <span class="badge ${entry.over ? 'badge-peach' : 'badge-lavender'}">${entry.over ? 'Over' : 'On time'}</span>
+            </td>
+        `;
+        historyBody.appendChild(tr);
     }
 
     function recordHistory() {
@@ -253,48 +394,131 @@
         const allotted = speakerAllottedMs;
         const over     = elapsed > allotted;
 
-        history.push({
-            speaker: currentSpeaker + 1,
-            allotted,
-            actual: elapsed,
-            over,
-        });
-
-        // Render row
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-timerbot-panel-light transition-colors';
-        tr.innerHTML = `
-            <td class="p-4 border-b border-gray/50">Speaker ${currentSpeaker + 1}</td>
-            <td class="p-4 border-b border-gray/50 text-text-muted">${formatTime(allotted)}</td>
-            <td class="p-4 border-b border-gray/50 ${over ? 'text-timerbot-red' : 'text-timerbot-green'}">${formatTime(elapsed)}</td>
-            <td class="p-4 border-b border-gray/50">
-                <span class="badge ${over ? 'badge-peach' : 'badge-lavender'}">${over ? 'Over' : 'On time'}</span>
-            </td>
-        `;
-        historyBody.appendChild(tr);
+        const entry = { speaker: currentSpeaker + 1, allotted, actual: elapsed, over };
+        history.push(entry);
+        renderHistoryRow(entry);
         historySection.classList.remove('hidden');
     }
 
     function finishMeeting() {
         running = false;
+        completed = true;
         clearInterval(speakerTick);
         speakerPanel.classList.add('hidden');
         btnNext.classList.add('hidden');
         btnPause.classList.add('hidden');
         completedSection.classList.remove('hidden');
+        syncState();
+    }
+
+    function showRunningUI() {
+        btnStart.classList.add('hidden');
+        btnNext.classList.remove('hidden');
+        btnPause.classList.remove('hidden');
+        btnStop.classList.remove('hidden');
+    }
+
+    function showIdleUI() {
+        btnStart.classList.remove('hidden');
+        btnNext.classList.add('hidden');
+        btnPause.classList.add('hidden');
+        btnStop.classList.add('hidden');
+        speakerPanel.classList.add('hidden');
+        completedSection.classList.add('hidden');
+        historySection.classList.add('hidden');
+    }
+
+    // ── Restore state from server on page load ──
+    async function restoreState() {
+        try {
+            const res = await fetch(config.state_url, {
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            if (!res.ok) return;
+
+            const state = await res.json();
+            if (!state || !state.status || state.status === 'idle') {
+                // Nothing to restore — sync current settings for show page
+                syncState();
+                return;
+            }
+
+            // Restore settings from state
+            if (state.total_speakers) {
+                totalSpeakers = state.total_speakers;
+                speakerTotalEl.textContent = totalSpeakers;
+                if (settingParticipants) settingParticipants.value = totalSpeakers;
+            }
+            if (state.end_time) {
+                const [rh, rm] = state.end_time.split(':').map(Number);
+                const d = new Date();
+                d.setHours(rh, rm, 0, 0);
+                endTime = d.getTime();
+                endTimeStr = state.end_time;
+                if (settingEndTimeEl) settingEndTimeEl.value = state.end_time;
+            }
+
+            // Restore history
+            if (state.history && state.history.length > 0) {
+                state.history.forEach(entry => {
+                    history.push(entry);
+                    renderHistoryRow(entry);
+                });
+                historySection.classList.remove('hidden');
+            }
+
+            if (state.status === 'completed') {
+                completed = true;
+                currentSpeaker = (state.current_speaker || 1) - 1;
+                btnStart.classList.add('hidden');
+                btnStop.classList.remove('hidden');
+                completedSection.classList.remove('hidden');
+                updateTimePerPersonLabel(calcTimePerSpeaker());
+                return;
+            }
+
+            // Running or paused — restore live state
+            running = true;
+            currentSpeaker = (state.current_speaker || 1) - 1;
+            speakerAllottedMs = state.speaker_allotted_ms || 0;
+            speakerStartMs = state.speaker_started_at || Date.now();
+            totalPausedMs = state.total_paused_ms || 0;
+
+            if (state.status === 'paused' && state.paused_at) {
+                paused = true;
+                pauseStartMs = state.paused_at;
+                btnPause.textContent = 'Resume';
+                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-cyan');
+                btnPause.classList.add('bg-timerbot-orange', 'text-timerbot-black');
+                speakerStatusEl.textContent = 'Paused';
+            }
+
+            // Show running UI
+            showRunningUI();
+            speakerPanel.classList.remove('hidden');
+            speakerNumberEl.textContent = currentSpeaker + 1;
+            speakerCountdownEl.classList.remove('animate-pulse');
+            updateTimePerPersonLabel(speakerAllottedMs);
+
+            // Start ticking
+            tickSpeaker();
+            speakerTick = setInterval(tickSpeaker, 100);
+        } catch (e) {
+            // Failed to restore — sync idle for show page
+            syncState();
+        }
     }
 
     // ── Public API (attached to window) ──
     window.timerApp = {
         start() {
             running = true;
-            btnStart.classList.add('hidden');
-            btnNext.classList.remove('hidden');
-            btnPause.classList.remove('hidden');
+            showRunningUI();
 
             currentSpeaker = 0;
             startSpeaker();
             speakerTick = setInterval(tickSpeaker, 100);
+            syncState();
         },
 
         nextSpeaker() {
@@ -310,15 +534,21 @@
             clearInterval(speakerTick);
             startSpeaker();
             speakerTick = setInterval(tickSpeaker, 100);
+            syncState();
         },
 
         togglePause() {
             if (!running) return;
 
             if (paused) {
-                // Resume
+                // Resume — account for pause duration
                 totalPausedMs += Date.now() - pauseStartMs;
                 paused = false;
+
+                // Recalculate: meeting time kept ticking during pause
+                speakerAllottedMs = calcTimePerSpeaker();
+                updateTimePerPersonLabel(speakerAllottedMs);
+
                 btnPause.textContent = 'Pause';
                 btnPause.classList.remove('bg-timerbot-orange', 'text-timerbot-black');
                 btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-cyan');
@@ -332,14 +562,49 @@
                 btnPause.classList.add('bg-timerbot-orange', 'text-timerbot-black');
                 speakerStatusEl.textContent = 'Paused';
             }
+            syncState();
         },
+
+        stop() {
+            // Reset all state
+            running = false;
+            completed = false;
+            paused = false;
+            currentSpeaker = 0;
+            speakerStartMs = 0;
+            speakerAllottedMs = 0;
+            totalPausedMs = 0;
+            pauseStartMs = 0;
+            history.length = 0;
+            firedWarnings.clear();
+            clearInterval(speakerTick);
+
+            // Reset UI
+            showIdleUI();
+            historyBody.innerHTML = '';
+            btnPause.textContent = 'Pause';
+            btnPause.classList.remove('bg-timerbot-orange', 'text-timerbot-black');
+            btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-cyan');
+            speakerStatusEl.textContent = '';
+            speakerCountdownEl.classList.remove('animate-pulse');
+
+            updateTimePerPersonLabel(calcTimePerSpeaker());
+            syncState();
+        },
+
+        playSound,
     };
 
     // ── Init ──
     updateMeetingCountdown();
-    updatePreStartInfo();
+    updateTimePerPersonLabel(calcTimePerSpeaker());
     meetingTick = setInterval(() => {
         updateMeetingCountdown();
-        if (!running) updatePreStartInfo();
+        if (!running || paused) {
+            updateTimePerPersonLabel(calcTimePerSpeaker());
+        }
     }, 1000);
+
+    // Restore previous run state (or sync idle for show page)
+    restoreState();
 })();

@@ -50,6 +50,21 @@ class User extends Authenticatable
         ];
     }
 
+    public function groups(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Group::class)->withPivot('is_admin')->withTimestamps();
+    }
+
+    public function createdTimers(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Timer::class, 'created_by');
+    }
+
+    public function isAppAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
     protected function getRelationshipsForTrash(): array
     {
         return [

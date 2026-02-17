@@ -63,7 +63,7 @@
                                             <button
                                                 type="button"
                                                 x-data
-                                                class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-red hover:bg-timerbot-red hover:text-white transition-all text-xs uppercase tracking-wider"
+                                                class="px-3 py-1.5 rounded-none bg-timerbot-red text-white hover:bg-timerbot-red/80 transition-all text-xs uppercase tracking-wider"
                                                 style="font-family: var(--font-display);"
                                                 x-on:click="$dispatch('confirm-delete', {
                                                     title: 'Delete Role',

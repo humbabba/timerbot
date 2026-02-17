@@ -53,6 +53,11 @@
                             Send Magic Link
                         </button>
                     </form>
+
+                    <p class="mt-6 text-center text-text-muted text-sm">
+                        Don't have an account?
+                        <a href="{{ route('register') }}" class="text-timerbot-cyan hover:text-timerbot-blue">Register</a>
+                    </p>
                 </div>
             </div>
         </div>

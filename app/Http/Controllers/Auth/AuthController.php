@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use App\Notifications\MagicLinkNotification;
 use Illuminate\Http\Request;
@@ -80,11 +81,21 @@ class AuthController extends Controller
             'email' => $request->email,
         ]);
 
+        // Assign default "user" role
+        $userRole = Role::where('name', 'user')->first();
+        if ($userRole) {
+            $user->roles()->attach($userRole);
+        }
+
         $url = URL::temporarySignedRoute(
             'login.verify',
             now()->addMinutes(15),
             ['user' => $user->id]
         );
+
+        if (app()->environment('local')) {
+            return redirect()->route('login')->with('magic_link', $url);
+        }
 
         $user->notify(new MagicLinkNotification($url));
 

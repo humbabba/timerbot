@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AppSettingController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TimerController;
 use App\Http\Controllers\TrashController;
@@ -24,6 +25,8 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'sendMagicLink'])->name('login.send');
     Route::get('/login/verify/{user}', [AuthController::class, 'verify'])->name('login.verify');
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.store');
 });
 
 Route::middleware('auth')->group(function () {
@@ -47,16 +50,20 @@ Route::middleware('auth')->group(function () {
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('permission:roles.delete');
     Route::post('/roles/{role}/copy', [RoleController::class, 'copy'])->name('roles.copy')->middleware('permission:roles.create');
 
-    // Timer management
-    Route::get('/timers', [TimerController::class, 'index'])->name('timers.index')->middleware('permission:timers.view');
+    // Timer management (authorization handled in controller via group-based access)
+    Route::get('/timers', [TimerController::class, 'index'])->name('timers.index');
     Route::get('/timers/create', [TimerController::class, 'create'])->name('timers.create')->middleware('permission:timers.create');
     Route::post('/timers', [TimerController::class, 'store'])->name('timers.store')->middleware('permission:timers.create');
-    Route::get('/timers/{timer}', [TimerController::class, 'show'])->name('timers.show')->middleware('permission:timers.view');
-    Route::get('/timers/{timer}/edit', [TimerController::class, 'edit'])->name('timers.edit')->middleware('permission:timers.edit');
-    Route::put('/timers/{timer}', [TimerController::class, 'update'])->name('timers.update')->middleware('permission:timers.edit');
-    Route::delete('/timers/{timer}', [TimerController::class, 'destroy'])->name('timers.destroy')->middleware('permission:timers.delete');
+    Route::get('/timers/{timer}/edit', [TimerController::class, 'edit'])->name('timers.edit');
+    Route::put('/timers/{timer}', [TimerController::class, 'update'])->name('timers.update');
+    Route::delete('/timers/{timer}', [TimerController::class, 'destroy'])->name('timers.destroy');
     Route::post('/timers/{timer}/copy', [TimerController::class, 'copy'])->name('timers.copy')->middleware('permission:timers.create');
-    Route::get('/timers/{timer}/run', [TimerController::class, 'run'])->name('timers.run')->middleware('permission:timers.run');
+    Route::get('/timers/{timer}/run', [TimerController::class, 'run'])->name('timers.run');
+    Route::post('/timers/{timer}/state', [TimerController::class, 'updateState'])->name('timers.state.update');
+    Route::patch('/timers/{timer}/settings', [TimerController::class, 'updateSettings'])->name('timers.settings.update');
+
+    // Group member management (AJAX)
+    Route::get('/groups/search-users', [GroupController::class, 'searchUsers'])->name('groups.search-users');
 
     // Trash management
     Route::get('/trash', [TrashController::class, 'index'])->name('trash.index')->middleware('permission:trash.view');
@@ -73,3 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index')->middleware('permission:activity-logs.view');
     Route::get('/activity-logs/{activityLog}', [ActivityLogController::class, 'show'])->name('activity-logs.show')->middleware('permission:activity-logs.view');
 });
+
+// Public routes (no auth required) — must be after auth group so /timers/create matches first
+Route::get('/timers/{timer}', [TimerController::class, 'show'])->name('timers.show');
+Route::get('/timers/{timer}/state', [TimerController::class, 'getState'])->name('timers.state');

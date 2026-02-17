@@ -48,6 +48,8 @@
                         <th class="p-4 text-left border-b border-gray">Name</th>
                         <th class="p-4 text-left border-b border-gray">Email</th>
                         <th class="p-4 text-left border-b border-gray">Role</th>
+                        <th class="p-4 text-left border-b border-gray">Created</th>
+                        <th class="p-4 text-left border-b border-gray">Last Login</th>
                         <th class="p-4 text-left border-b border-gray w-48">Actions</th>
                     </tr>
                 </thead>
@@ -68,6 +70,12 @@
                                     </span>
                                 @endforeach
                             </td>
+                            <td class="p-4 border-b border-gray/50 text-text-muted text-sm">
+                                {{ $user->created_at?->format('M j, Y') ?? '—' }}
+                            </td>
+                            <td class="p-4 border-b border-gray/50 text-text-muted text-sm">
+                                {{ $user->last_login_at?->format('M j, Y g:i A') ?? 'Never' }}
+                            </td>
                             <td class="p-4 border-b border-gray/50">
                                 <div class="flex gap-2">
                                     @if(auth()->user()->hasPermission('users.edit') && !array_diff($user->roles->pluck('id')->toArray(), $assignableRoleIds))
@@ -82,7 +90,7 @@
                                             <button
                                                 type="button"
                                                 x-data
-                                                class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-red hover:bg-timerbot-red hover:text-white transition-all text-xs uppercase tracking-wider"
+                                                class="px-3 py-1.5 rounded-none bg-timerbot-red text-white hover:bg-timerbot-red/80 transition-all text-xs uppercase tracking-wider"
                                                 style="font-family: var(--font-display);"
                                                 x-on:click="$dispatch('confirm-delete', {
                                                     title: 'Delete User',

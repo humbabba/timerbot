@@ -21,12 +21,10 @@
         <div class="hidden md:flex items-center gap-1 ml-10" style="font-family: var(--font-display);">
 
             @auth
-                @if(auth()->user()->hasPermission('timers.view'))
-                    <a href="{{ route('timers.index') }}"
-                       class="flex items-center gap-2 px-4 py-2 rounded-none bg-timerbot-panel text-timerbot-orange hover:bg-timerbot-orange hover:text-timerbot-black transition-all duration-200 no-underline uppercase text-sm tracking-wider">
-                        Timers
-                    </a>
-                @endif
+                <a href="{{ route('timers.index') }}"
+                   class="flex items-center gap-2 px-4 py-2 rounded-none bg-timerbot-panel text-timerbot-orange hover:bg-timerbot-orange hover:text-timerbot-black transition-all duration-200 no-underline uppercase text-sm tracking-wider">
+                    Timers
+                </a>
 
                 @if(auth()->user()->hasPermission('users.view') || auth()->user()->hasPermission('roles.view') || auth()->user()->hasPermission('trash.view') || auth()->user()->hasPermission('settings.manage') || auth()->user()->hasPermission('activity-logs.view'))
                     <div class="relative group">
@@ -70,12 +68,15 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="px-4 py-2 rounded-none bg-timerbot-panel text-timerbot-peach hover:bg-timerbot-peach hover:text-timerbot-black transition-all duration-200 uppercase text-xs tracking-wider" style="font-family: var(--font-display);">
-                        Log Out
+                        Log out
                     </button>
                 </form>
             @else
                 <a href="{{ route('login') }}" class="px-4 py-2 rounded-none bg-timerbot-orange text-timerbot-black hover:shadow-lg hover:shadow-timerbot-orange/30 transition-all duration-200 no-underline uppercase text-sm tracking-wider" style="font-family: var(--font-display);">
-                    Log In
+                    Log in
+                </a>
+                <a href="{{ route('register') }}" class="px-4 py-2 rounded-none bg-timerbot-panel hover:shadow-lg transition-all duration-200 no-underline uppercase text-sm tracking-wider" style="font-family: var(--font-display);">
+                    Register
                 </a>
             @endauth
         </div>
@@ -105,15 +106,13 @@
 
         @auth
             {{-- Timers Section --}}
-            @if(auth()->user()->hasPermission('timers.view'))
-                <div class="py-2 border-b border-gray/50">
-                    <div class="text-timerbot-orange uppercase text-xs tracking-wider mb-2 px-2">Timers</div>
-                    <a href="{{ route('timers.index') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 text-text hover:bg-timerbot-orange hover:text-timerbot-black transition-colors no-underline text-sm rounded-sm">All Timers</a>
-                    @if(auth()->user()->hasPermission('timers.create'))
-                        <a href="{{ route('timers.create') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 text-text hover:bg-timerbot-orange hover:text-timerbot-black transition-colors no-underline text-sm rounded-sm">New Timer</a>
-                    @endif
-                </div>
-            @endif
+            <div class="py-2 border-b border-gray/50">
+                <div class="text-timerbot-orange uppercase text-xs tracking-wider mb-2 px-2">Timers</div>
+                <a href="{{ route('timers.index') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 text-text hover:bg-timerbot-orange hover:text-timerbot-black transition-colors no-underline text-sm rounded-sm">All Timers</a>
+                @if(auth()->user()->hasPermission('timers.create'))
+                    <a href="{{ route('timers.create') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 text-text hover:bg-timerbot-orange hover:text-timerbot-black transition-colors no-underline text-sm rounded-sm">New Timer</a>
+                @endif
+            </div>
 
             {{-- Utils Section --}}
             @if(auth()->user()->hasPermission('users.view') || auth()->user()->hasPermission('roles.view') || auth()->user()->hasPermission('trash.view') || auth()->user()->hasPermission('settings.manage') || auth()->user()->hasPermission('activity-logs.view'))

@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js', 'resources/js/timer-runner.js'],
+            input: ['resources/css/app.css', 'resources/js/app.js', 'resources/js/timer-runner.js', 'resources/js/timer-show.js'],
             refresh: true,
         }),
         tailwindcss(),
