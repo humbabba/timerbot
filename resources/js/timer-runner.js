@@ -27,14 +27,6 @@
     const config        = window.timerConfig;
     let totalSpeakers = config.participant_count;
 
-    // end_time is a time-of-day string like "14:30" or "14:30:00" — combine with today's date
-    const [h, m, s] = config.end_time.split(':').map(Number);
-    const endDate = new Date();
-    endDate.setHours(h, m, s || 0, 0);
-    let endTime = endDate.getTime();
-    let endTimeStr = config.end_time;
-    const warnings     = (config.warnings || []).slice().sort((a, b) => b.seconds_before - a.seconds_before);
-
     // ── State ──
     let currentSpeaker       = 0;   // 0-indexed
     let speakerStartMs       = 0;
@@ -44,6 +36,22 @@
     let totalPausedMs        = 0;
     let running              = false;
     let completed            = false;
+
+    // Parse a time-of-day string into a future timestamp.
+    // If the time is already past and the timer isn't actively running, assume tomorrow.
+    function parseEndTime(timeStr) {
+        const [ph, pm, ps] = timeStr.split(':').map(Number);
+        const d = new Date();
+        d.setHours(ph, pm, ps || 0, 0);
+        if (d.getTime() < Date.now() && !running && !completed) {
+            d.setDate(d.getDate() + 1);
+        }
+        return d.getTime();
+    }
+
+    let endTime = parseEndTime(config.end_time);
+    let endTimeStr = config.end_time;
+    const warnings     = (config.warnings || []).slice().sort((a, b) => b.seconds_before - a.seconds_before);
     let meetingTick          = null;
     let speakerTick          = null;
     let firedWarnings        = new Set();
@@ -87,6 +95,7 @@
             current_speaker: running || completed ? currentSpeaker + 1 : 0,
             total_speakers: totalSpeakers,
             end_time: endTimeStr,
+            end_time_ms: endTime,
             speaker_allotted_ms: speakerAllottedMs,
             speaker_started_at: speakerStartMs,
             total_paused_ms: totalPausedMs,
@@ -124,37 +133,37 @@
         const gain = ctx.createGain();
         osc.type = 'sine';
         osc.frequency.value = 880;
-        gain.gain.setValueAtTime(0.4, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        gain.gain.setValueAtTime(1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
         osc.connect(gain).connect(ctx.destination);
         osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.3);
+        osc.stop(ctx.currentTime + 0.8);
     }
 
-    function playBuzzer() {
+    function playDing() {
         const ctx = getAudioCtx();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'square';
         osc.frequency.value = 220;
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+        gain.gain.setValueAtTime(1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
         osc.connect(gain).connect(ctx.destination);
         osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.5);
+        osc.stop(ctx.currentTime + 0.8);
     }
 
     function playChime() {
         const ctx = getAudioCtx();
-        const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+        const notes = [523.25, 659.25, 783.99, 523.25, 659.25, 783.99]; // C5, E5, G5
         notes.forEach((freq, i) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'sine';
             osc.frequency.value = freq;
             const start = ctx.currentTime + i * 0.2;
-            gain.gain.setValueAtTime(0.3, start);
-            gain.gain.exponentialRampToValueAtTime(0.01, start + 0.3);
+            gain.gain.setValueAtTime(1, start);
+            gain.gain.exponentialRampToValueAtTime(0.1, start + 0.3);
             osc.connect(gain).connect(ctx.destination);
             osc.start(start);
             osc.stop(start + 0.3);
@@ -167,27 +176,81 @@
         const gain = ctx.createGain();
         osc.type = 'sine';
         osc.frequency.value = 1046;
-        gain.gain.setValueAtTime(0.5, ctx.currentTime);
+        gain.gain.setValueAtTime(1, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.0);
         osc.connect(gain).connect(ctx.destination);
         osc.start(ctx.currentTime);
         osc.stop(ctx.currentTime + 1.0);
     }
 
-    function playHorn() {
+    function playTwang() {
         const ctx = getAudioCtx();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sawtooth';
         osc.frequency.value = 150;
-        gain.gain.setValueAtTime(0.4, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+        gain.gain.setValueAtTime(1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.2);
         osc.connect(gain).connect(ctx.destination);
         osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.8);
+        osc.stop(ctx.currentTime + 1.2);
     }
 
-    const soundMap = { beep: playBeep, buzzer: playBuzzer, chime: playChime, bell: playBell, horn: playHorn };
+    function playAlarm() {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'square'; // Matches the harsh timbre
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        // Create the "Toggling" pitch effect
+        for (let i = 0; i < 8; i++) {
+            let time = now + (i * 0.15);
+            osc.frequency.setValueAtTime(1000, time);
+            osc.frequency.setValueAtTime(1200, time + 0.1);
+
+            // Rapid On/Off volume envelope
+            gain.gain.setValueAtTime(1, time);
+            gain.gain.setValueAtTime(0, time + 0.1);
+        }
+
+        osc.start(now);
+        osc.stop(now + 1.8);
+    }
+
+    function playWarning() {
+        const ctx = getAudioCtx();
+        const notes = [523.25, 659.25, 783.99, 1046.50, 523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 arpeggio
+        const now = ctx.currentTime;
+
+        notes.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'triangle'; // Smoother chime sound
+            osc.frequency.value = freq;
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            // Fade-in/out envelope
+            let startTime = now + (i * 0.12);
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(1, startTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.5);
+
+            osc.start(startTime);
+            osc.stop(startTime + 0.5);
+        });
+    }
+
+
+
+    const soundMap = { beep: playBeep, ding: playDing, chime: playChime, bell: playBell, twang: playTwang, alarm: playAlarm, warning: playWarning };
 
     function playSound(name) {
         const fn = soundMap[name];
@@ -207,12 +270,6 @@
         if (remainMs <= 0) {
             speakerCountdownEl.classList.add('text-timerbot-red');
             speakerPanel.classList.add('border-timerbot-red');
-        } else if (remainMs <= 10000) {
-            speakerCountdownEl.classList.add('text-timerbot-red');
-            speakerPanel.classList.add('border-timerbot-red');
-        } else if (remainMs <= 30000) {
-            speakerCountdownEl.classList.add('text-timerbot-orange');
-            speakerPanel.classList.add('border-timerbot-orange');
         } else {
             speakerCountdownEl.classList.add('text-timerbot-green');
             speakerPanel.classList.add('border-timerbot-green');
@@ -230,6 +287,9 @@
         }
     }
 
+    let lastTppText = '';
+    let tppFlashTimer = null;
+
     function updateTimePerPersonLabel(perPersonMs, forceOverTime) {
         const overTime = forceOverTime ||
             (running && !completed && speakerStartMs > 0 && speakerRemainingMs() < 0);
@@ -242,6 +302,18 @@
             } else {
                 timePerPersonLabel.textContent = 'Last speaker — no time to redistribute';
             }
+        } else if (paused && running) {
+            // Paused: show time for future speakers, minus current speaker's reserved time
+            // Cap reserved at meeting remaining (speaker can't have more than the meeting has)
+            const futureCount = totalSpeakers - currentSpeaker - 1;
+            const meetingMs = remainingMeetingMs();
+            const speakerReserved = Math.max(0, Math.min(speakerRemainingMs(), meetingMs));
+            if (futureCount > 0) {
+                const tpp = Math.max(0, (meetingMs - speakerReserved) / futureCount);
+                timePerPersonLabel.textContent = `${formatTime(tpp)} per person (${futureCount} remaining)`;
+            } else {
+                timePerPersonLabel.textContent = 'Last speaker — no time to redistribute';
+            }
         } else if (running) {
             const remaining = totalSpeakers - currentSpeaker;
             timePerPersonLabel.textContent = `${formatTime(perPersonMs)} per person (${remaining} remaining)`;
@@ -249,8 +321,23 @@
             timePerPersonLabel.textContent = `${formatTime(perPersonMs)} per person (${totalSpeakers} participants)`;
         }
 
-        timePerPersonDiv.classList.toggle('text-timerbot-red', overTime);
-        timePerPersonDiv.classList.toggle('text-text-muted', !overTime);
+        // Flash red briefly each time the value decrements while over time
+        const currentText = timePerPersonLabel.textContent;
+        if (overTime && currentText !== lastTppText) {
+            lastTppText = currentText;
+            clearTimeout(tppFlashTimer);
+            timePerPersonDiv.classList.remove('text-text-muted');
+            timePerPersonDiv.classList.add('text-timerbot-red');
+            tppFlashTimer = setTimeout(() => {
+                timePerPersonDiv.classList.remove('text-timerbot-red');
+                timePerPersonDiv.classList.add('text-text-muted');
+            }, 500);
+        } else if (!overTime) {
+            lastTppText = '';
+            clearTimeout(tppFlashTimer);
+            timePerPersonDiv.classList.remove('text-timerbot-red');
+            timePerPersonDiv.classList.add('text-text-muted');
+        }
     }
 
     // ── Live settings controls ──
@@ -268,11 +355,8 @@
         totalSpeakers = newParticipants;
         speakerTotalEl.textContent = totalSpeakers;
 
-        // Parse new end time
-        const [nh, nm] = newEndTimeStr.split(':').map(Number);
-        const newEnd = new Date();
-        newEnd.setHours(nh, nm, 0, 0);
-        endTime = newEnd.getTime();
+        // Parse new end time (bumps to tomorrow if past and not running)
+        endTime = parseEndTime(newEndTimeStr);
         endTimeStr = newEndTimeStr;
 
         // Recalculate current speaker's allotted time if running
@@ -450,12 +534,16 @@
                 if (settingParticipants) settingParticipants.value = totalSpeakers;
             }
             if (state.end_time) {
-                const [rh, rm] = state.end_time.split(':').map(Number);
-                const d = new Date();
-                d.setHours(rh, rm, 0, 0);
-                endTime = d.getTime();
                 endTimeStr = state.end_time;
                 if (settingEndTimeEl) settingEndTimeEl.value = state.end_time;
+                if (state.end_time_ms) {
+                    endTime = state.end_time_ms;
+                } else {
+                    const [rh, rm] = state.end_time.split(':').map(Number);
+                    const d = new Date();
+                    d.setHours(rh, rm, 0, 0);
+                    endTime = d.getTime();
+                }
             }
 
             // Restore history
@@ -541,12 +629,17 @@
             if (!running) return;
 
             if (paused) {
-                // Resume — account for pause duration
+                // Resume — account for pause duration, speaker keeps their frozen time
                 totalPausedMs += Date.now() - pauseStartMs;
                 paused = false;
 
-                // Recalculate: meeting time kept ticking during pause
-                speakerAllottedMs = calcTimePerSpeaker();
+                // Cap speaker time if meeting dropped below during pause
+                const meetingMs = remainingMeetingMs();
+                const remain = speakerRemainingMs();
+                if (meetingMs < remain) {
+                    speakerAllottedMs = speakerElapsedMs() + Math.max(0, meetingMs);
+                }
+
                 updateTimePerPersonLabel(speakerAllottedMs);
 
                 btnPause.textContent = 'Pause';
@@ -600,6 +693,31 @@
     updateTimePerPersonLabel(calcTimePerSpeaker());
     meetingTick = setInterval(() => {
         updateMeetingCountdown();
+        if (paused && running && speakerStartMs > 0) {
+            // If meeting time drops below speaker's frozen time, tick it down with warnings
+            const frozenMs = speakerRemainingMs();
+            const meetingMs = remainingMeetingMs();
+            const effective = meetingMs < frozenMs ? Math.max(0, meetingMs) : frozenMs;
+            speakerCountdownEl.textContent = formatTime(effective);
+            updateSpeakerColor(effective);
+            if (effective <= 0) {
+                speakerStatusEl.textContent = 'Over time!';
+                speakerCountdownEl.classList.add('animate-pulse');
+            } else {
+                speakerCountdownEl.classList.remove('animate-pulse');
+                speakerStatusEl.textContent = 'Paused';
+            }
+            // Fire warnings based on effective remaining
+            const secsRemaining = effective / 1000;
+            for (const w of warnings) {
+                const key = `${currentSpeaker}-${w.seconds_before}`;
+                if (!firedWarnings.has(key) && secsRemaining <= w.seconds_before && secsRemaining > w.seconds_before - 1) {
+                    firedWarnings.add(key);
+                    playSound(w.sound);
+                    flashSpeakerPanel();
+                }
+            }
+        }
         if (!running || paused) {
             updateTimePerPersonLabel(calcTimePerSpeaker());
         }

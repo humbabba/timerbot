@@ -38,14 +38,14 @@
                     <input type="number" id="setting-participants" value="{{ $timer->participant_count }}" min="1" max="999" class="bg-timerbot-panel border border-gray rounded px-2 py-1 text-text text-sm w-20 text-center">
                 </label>
             </div>
-            <div class="mt-3 flex flex-wrap justify-center items-center gap-2 text-text-muted text-xs">
-                <span>Test:</span>
-                <button type="button" onclick="timerApp.playSound('beep')" class="px-2 py-0.5 bg-timerbot-panel border border-gray rounded hover:border-timerbot-cyan transition-colors">Beep</button>
-                <button type="button" onclick="timerApp.playSound('buzzer')" class="px-2 py-0.5 bg-timerbot-panel border border-gray rounded hover:border-timerbot-cyan transition-colors">Buzzer</button>
-                <button type="button" onclick="timerApp.playSound('chime')" class="px-2 py-0.5 bg-timerbot-panel border border-gray rounded hover:border-timerbot-cyan transition-colors">Chime</button>
-                <button type="button" onclick="timerApp.playSound('bell')" class="px-2 py-0.5 bg-timerbot-panel border border-gray rounded hover:border-timerbot-cyan transition-colors">Bell</button>
-                <button type="button" onclick="timerApp.playSound('horn')" class="px-2 py-0.5 bg-timerbot-panel border border-gray rounded hover:border-timerbot-cyan transition-colors">Horn</button>
-            </div>
+            @php $timerSounds = collect($timer->warnings ?? [])->pluck('sound')->unique()->values(); @endphp
+            @if($timerSounds->count())
+                <div class="mt-3 flex flex-wrap justify-center items-center gap-2 text-text-muted text-xs">
+                    @foreach($timerSounds as $sound)
+                        <button type="button" onclick="timerApp.playSound('{{ $sound }}')" class="px-2 py-0.5 bg-timerbot-panel border border-gray rounded hover:border-timerbot-cyan transition-colors">{{ ucfirst($sound) }}</button>
+                    @endforeach
+                </div>
+            @endif
         </div>
 
         <!-- Current Speaker Panel -->

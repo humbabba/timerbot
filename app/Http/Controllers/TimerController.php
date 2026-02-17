@@ -59,7 +59,7 @@ class TimerController extends Controller
             'participant_count' => 'required|integer|min:1|max:999',
             'warnings' => 'nullable|array',
             'warnings.*.seconds_before' => 'required_with:warnings|integer|min:-3600|max:3600',
-            'warnings.*.sound' => 'required_with:warnings|in:beep,buzzer,chime,bell,horn',
+            'warnings.*.sound' => 'required_with:warnings|in:alarm,bell,beep,chime,ding,twang,warning',
             'message' => 'nullable|string|max:10000',
             'group_id' => 'nullable|exists:groups,id',
             'new_group_name' => 'nullable|string|max:255',
@@ -155,7 +155,7 @@ class TimerController extends Controller
             'participant_count' => 'required|integer|min:1|max:999',
             'warnings' => 'nullable|array',
             'warnings.*.seconds_before' => 'required_with:warnings|integer|min:-3600|max:3600',
-            'warnings.*.sound' => 'required_with:warnings|in:beep,buzzer,chime,bell,horn',
+            'warnings.*.sound' => 'required_with:warnings|in:alarm,bell,beep,chime,ding,twang,warning',
             'message' => 'nullable|string|max:10000',
             'group_id' => 'nullable|exists:groups,id',
             'new_group_name' => 'nullable|string|max:255',
@@ -213,8 +213,10 @@ class TimerController extends Controller
 
         $validated = $request->validate([
             'participant_count' => 'required|integer|min:1|max:999',
-            'end_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i,H:i:s',
         ]);
+        // Normalize to H:i for storage
+        $validated['end_time'] = substr($validated['end_time'], 0, 5);
 
         $timer->update($validated);
 
