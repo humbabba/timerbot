@@ -248,8 +248,37 @@
             </div>
 
             <div class="mb-6">
+                <label class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Participant Term</label>
+                <p class="text-text-muted text-sm mb-4">Customize the label used for participants (e.g. "speaker", "guy").</p>
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="block text-xs text-text-muted mb-1">Singular</label>
+                        <input
+                            type="text"
+                            name="participant_term"
+                            value="{{ old('participant_term', $timer->participant_term) }}"
+                            placeholder="speaker"
+                            maxlength="50"
+                            class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                        >
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs text-text-muted mb-1">Plural</label>
+                        <input
+                            type="text"
+                            name="participant_term_plural"
+                            value="{{ old('participant_term_plural', $timer->participant_term_plural) }}"
+                            placeholder="speakers"
+                            maxlength="50"
+                            class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
                 <label class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Warnings</label>
-                <p class="text-text-muted text-sm mb-4">Configure sound warnings before each speaker's time expires.</p>
+                <p class="text-text-muted text-sm mb-4">Configure sound warnings before each {{ old('participant_term', $timer->participant_term) }}'s time expires.</p>
 
                 <div class="space-y-3">
                     <template x-for="(warning, index) in warnings" :key="index">
@@ -297,8 +326,8 @@
             </div>
 
             <div class="mb-6">
-                <label for="message" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Participant Message</label>
-                <p class="text-text-muted text-sm mb-4">Displayed to participants on the timer view. HTML is supported.</p>
+                <label for="message" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">{{ ucfirst(old('participant_term', $timer->participant_term)) }} Message</label>
+                <p class="text-text-muted text-sm mb-4">Displayed to {{ old('participant_term_plural', $timer->participant_term_plural) }} on the timer view. HTML is supported.</p>
                 <textarea
                     id="message"
                     name="message"

@@ -57,6 +57,8 @@ class TimerController extends Controller
             'visibility' => 'required|in:public,private',
             'end_time' => 'required|date_format:H:i',
             'participant_count' => 'required|integer|min:1|max:999',
+            'participant_term' => 'nullable|string|max:50',
+            'participant_term_plural' => 'nullable|string|max:50',
             'warnings' => 'nullable|array',
             'warnings.*.seconds_before' => 'required_with:warnings|integer|min:-3600|max:3600',
             'warnings.*.sound' => 'required_with:warnings|in:alarm,bell,beep,chime,ding,twang,warning',
@@ -80,6 +82,8 @@ class TimerController extends Controller
             'created_by' => $user->id,
             'end_time' => $validated['end_time'],
             'participant_count' => $validated['participant_count'],
+            'participant_term' => $validated['participant_term'] ?? 'speaker',
+            'participant_term_plural' => $validated['participant_term_plural'] ?? 'speakers',
             'warnings' => $validated['warnings'] ?? null,
             'message' => $validated['message'] ?? null,
         ]);
@@ -106,6 +110,8 @@ class TimerController extends Controller
         // changes made via the edit page, not just the run page
         $state['end_time'] = $timer->end_time;
         $state['total_speakers'] = $timer->participant_count;
+        $state['participant_term'] = $timer->participant_term;
+        $state['participant_term_plural'] = $timer->participant_term_plural;
 
         return response()->json($state);
     }
@@ -165,6 +171,8 @@ class TimerController extends Controller
             'visibility' => 'required|in:public,private',
             'end_time' => 'required|date_format:H:i',
             'participant_count' => 'required|integer|min:1|max:999',
+            'participant_term' => 'nullable|string|max:50',
+            'participant_term_plural' => 'nullable|string|max:50',
             'warnings' => 'nullable|array',
             'warnings.*.seconds_before' => 'required_with:warnings|integer|min:-3600|max:3600',
             'warnings.*.sound' => 'required_with:warnings|in:alarm,bell,beep,chime,ding,twang,warning',
@@ -185,6 +193,8 @@ class TimerController extends Controller
             'group_id' => $groupId,
             'end_time' => $validated['end_time'],
             'participant_count' => $validated['participant_count'],
+            'participant_term' => $validated['participant_term'] ?? 'speaker',
+            'participant_term_plural' => $validated['participant_term_plural'] ?? 'speakers',
             'warnings' => $validated['warnings'] ?? null,
             'message' => $validated['message'] ?? null,
         ]);

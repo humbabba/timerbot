@@ -7,6 +7,8 @@
             'name' => $timer->name,
             'end_time' => $timer->end_time,
             'participant_count' => $timer->participant_count,
+            'participant_term' => $timer->participant_term,
+            'participant_term_plural' => $timer->participant_term_plural,
             'state_url' => route('timers.state', $timer),
         ];
     @endphp
@@ -42,7 +44,7 @@
 
         <!-- Stats Bar -->
         <div class="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm text-text-muted mb-2 tabular-nums">
-            <span><span id="total-participants">{{ $timer->participant_count }}</span> participants</span>
+            <span><span id="total-participants">{{ $timer->participant_count }}</span> {{ $timer->participant_term_plural }}</span>
             <span>Now: <span id="current-time">--:--</span></span>
             <span>Ends: <span id="end-time-display">{{ \Carbon\Carbon::parse($timer->end_time)->format('g:i A') }}</span></span>
             <span>Remaining: <span id="meeting-remaining">--:--</span></span>
@@ -53,7 +55,7 @@
             <div id="time-per-participant" class="text-3xl md:text-4xl font-bold text-timerbot-neon tabular-nums" style="font-family: var(--font-display);">
                 --:--
             </div>
-            <div class="text-text-muted text-sm mt-1">per participant</div>
+            <div class="text-text-muted text-sm mt-1">per {{ $timer->participant_term }}</div>
         </div>
 
         <hr class="border-dark-green mb-6">

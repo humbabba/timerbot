@@ -22,6 +22,8 @@ class Timer extends Model
         'created_by',
         'end_time',
         'participant_count',
+        'participant_term',
+        'participant_term_plural',
         'warnings',
         'message',
         'run_state',

@@ -7,6 +7,9 @@
     'use strict';
 
     const config = window.timerShowConfig;
+    const termSingular = config.participant_term || 'speaker';
+    const termPlural   = config.participant_term_plural || 'speakers';
+    const termSingularUc = termSingular.charAt(0).toUpperCase() + termSingular.slice(1);
 
     // Compute initial end time from config
     // If the end time is already past, assume tomorrow's meeting
@@ -199,7 +202,7 @@
         if (speakerRemaining !== null) {
             const speaker = serverState.current_speaker;
             const total = totalSpeakers;
-            speakerLabel.textContent = `Participant ${speaker} of ${total}`;
+            speakerLabel.textContent = `${termSingularUc} ${speaker} of ${total}`;
 
             // During pause, cap speaker time at meeting remaining
             const effectiveRemain = status === 'paused'
@@ -216,7 +219,7 @@
                 speakerTime.classList.add('text-timerbot-red', 'animate-pulse');
             }
         } else if (status === 'completed') {
-            speakerLabel.textContent = 'All participants finished';
+            speakerLabel.textContent = `All ${termPlural} finished`;
             speakerTime.textContent = '00:00';
             speakerTime.className = 'text-7xl md:text-9xl font-bold tabular-nums text-text-muted';
             speakerTime.style.fontFamily = 'var(--font-display)';

@@ -26,6 +26,9 @@
     // ── Config ──
     const config        = window.timerConfig;
     let totalSpeakers = config.participant_count;
+    const termSingular = config.participant_term || 'speaker';
+    const termPlural   = config.participant_term_plural || 'speakers';
+    const termSingularUc = termSingular.charAt(0).toUpperCase() + termSingular.slice(1);
 
     // ── State ──
     let currentSpeaker       = 0;   // 0-indexed
@@ -346,9 +349,9 @@
             const futureCount = totalSpeakers - currentSpeaker - 1;
             if (futureCount > 0) {
                 const nextTime = Math.max(0, remainingMeetingMs() / futureCount);
-                timePerPersonLabel.textContent = `${formatTime(nextTime)} per person (${futureCount} remaining)`;
+                timePerPersonLabel.textContent = `${formatTime(nextTime)} per ${termSingular} (${futureCount} remaining)`;
             } else {
-                timePerPersonLabel.textContent = 'Last speaker — no time to redistribute';
+                timePerPersonLabel.textContent = `Last ${termSingular} — no time to redistribute`;
             }
         } else if (paused && running) {
             // Paused: show time for future speakers, minus current speaker's reserved time
@@ -358,15 +361,15 @@
             const speakerReserved = Math.max(0, Math.min(speakerRemainingMs(), meetingMs));
             if (futureCount > 0) {
                 const tpp = Math.max(0, (meetingMs - speakerReserved) / futureCount);
-                timePerPersonLabel.textContent = `${formatTime(tpp)} per person (${futureCount} remaining)`;
+                timePerPersonLabel.textContent = `${formatTime(tpp)} per ${termSingular} (${futureCount} remaining)`;
             } else {
-                timePerPersonLabel.textContent = 'Last speaker — no time to redistribute';
+                timePerPersonLabel.textContent = `Last ${termSingular} — no time to redistribute`;
             }
         } else if (running) {
             const remaining = totalSpeakers - currentSpeaker;
-            timePerPersonLabel.textContent = `${formatTime(perPersonMs)} per person (${remaining} remaining)`;
+            timePerPersonLabel.textContent = `${formatTime(perPersonMs)} per ${termSingular} (${remaining} remaining)`;
         } else {
-            timePerPersonLabel.textContent = `${formatTime(perPersonMs)} per person (${totalSpeakers} participants)`;
+            timePerPersonLabel.textContent = `${formatTime(perPersonMs)} per ${termSingular} (${totalSpeakers} ${termPlural})`;
         }
 
         // Flash red briefly each time the value decrements while over time
@@ -511,7 +514,7 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-timerbot-panel-light transition-colors';
         tr.innerHTML = `
-            <td class="p-4 border-b border-dark-green/50">Speaker ${entry.speaker}</td>
+            <td class="p-4 border-b border-dark-green/50">${termSingularUc} ${entry.speaker}</td>
             <td class="p-4 border-b border-dark-green/50 text-text-muted">${formatTime(entry.allotted)}</td>
             <td class="p-4 border-b border-dark-green/50 ${entry.over ? 'text-timerbot-red' : 'text-timerbot-green'}">${formatTime(entry.actual)}</td>
             <td class="p-4 border-b border-dark-green/50">

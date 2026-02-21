@@ -34,7 +34,7 @@
                     <input type="time" id="setting-end-time" value="{{ $timer->end_time }}" class="bg-timerbot-panel border border-dark-green rounded px-2 py-1 text-text text-sm w-30">
                 </label>
                 <label class="flex items-center gap-2">
-                    Participants
+                    {{ ucfirst($timer->participant_term_plural) }}
                     <input type="number" id="setting-participants" value="{{ $timer->participant_count }}" min="1" max="999" class="bg-timerbot-panel border border-dark-green rounded px-2 py-1 text-text text-sm w-20 text-center">
                 </label>
             </div>
@@ -51,7 +51,7 @@
         <!-- Current Speaker Panel -->
         <div id="speaker-panel" class="hidden mb-8 p-4 md:p-8 bg-timerbot-panel-light rounded-sm text-center border-2 border-timerbot-green">
             <h2 class="text-timerbot-mint text-sm uppercase tracking-wider mb-1" style="font-family: var(--font-display);">
-                Speaker <span id="speaker-number">1</span> of <span id="speaker-total">{{ $timer->participant_count }}</span>
+                {{ ucfirst($timer->participant_term) }} <span id="speaker-number">1</span> of <span id="speaker-total">{{ $timer->participant_count }}</span>
             </h2>
             <div id="speaker-countdown" class="text-6xl md:text-8xl font-bold text-timerbot-green tabular-nums my-4" style="font-family: var(--font-display);">
                 --:--
@@ -65,7 +65,7 @@
                 Start
             </button>
             <button id="btn-next" onclick="timerApp.nextSpeaker()" class="hidden btn bg-timerbot-neon text-timerbot-black hover:bg-timerbot-lime text-lg px-6 md:px-8 py-3">
-                Next Speaker
+                Next {{ ucfirst($timer->participant_term) }}
             </button>
             <button id="btn-pause" onclick="timerApp.togglePause()" class="hidden btn bg-timerbot-panel text-timerbot-mint hover:bg-timerbot-mint hover:text-timerbot-black text-lg px-6 md:px-8 py-3">
                 Pause
@@ -77,12 +77,12 @@
 
         <!-- Speaker History Table -->
         <div id="history-section" class="hidden">
-            <h2 class="text-timerbot-mint text-sm uppercase tracking-wider mb-4" style="font-family: var(--font-display);">Speaker History</h2>
+            <h2 class="text-timerbot-mint text-sm uppercase tracking-wider mb-4" style="font-family: var(--font-display);">{{ ucfirst($timer->participant_term) }} History</h2>
             <div class="overflow-x-auto rounded-sm border border-dark-green">
                 <table class="w-full">
                     <thead>
                         <tr>
-                            <th class="p-4 text-left border-b border-dark-green">Speaker</th>
+                            <th class="p-4 text-left border-b border-dark-green">{{ ucfirst($timer->participant_term) }}</th>
                             <th class="p-4 text-left border-b border-dark-green">Allotted</th>
                             <th class="p-4 text-left border-b border-dark-green">Actual</th>
                             <th class="p-4 text-left border-b border-dark-green">Status</th>
@@ -97,7 +97,7 @@
         <!-- Completed Message -->
         <div id="completed-section" class="hidden mb-8 p-4 md:p-8 bg-timerbot-panel-light rounded-sm text-center border-2 border-timerbot-green">
             <h2 class="text-timerbot-green text-2xl font-bold mb-2" style="font-family: var(--font-display);">Meeting Complete</h2>
-            <p class="text-text-muted">All speakers have finished.</p>
+            <p class="text-text-muted">All {{ $timer->participant_term_plural }} have finished.</p>
         </div>
     </div>
 
@@ -106,6 +106,8 @@
             'name' => $timer->name,
             'end_time' => $timer->end_time,
             'participant_count' => $timer->participant_count,
+            'participant_term' => $timer->participant_term,
+            'participant_term_plural' => $timer->participant_term_plural,
             'warnings' => $timer->warnings ?? [],
             'state_url' => route('timers.state.update', $timer),
             'settings_url' => route('timers.settings.update', $timer),
