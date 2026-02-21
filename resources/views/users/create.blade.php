@@ -1,7 +1,7 @@
 <x-layouts.app>
     <div class="p-8 max-w-2xl">
         <div class="flex items-center gap-4 mb-8">
-            <div class="w-3 h-10 bg-timerbot-orange rounded-none"></div>
+            <div class="w-3 h-10 bg-timerbot-neon rounded-none"></div>
             <h1>Add User</h1>
         </div>
 
@@ -17,7 +17,7 @@
             @csrf
 
             <div class="mb-6">
-                <label for="name" class="block mb-2 font-semibold text-timerbot-lavender uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Name</label>
+                <label for="name" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Name</label>
                 <input
                     type="text"
                     id="name"
@@ -25,29 +25,29 @@
                     value="{{ old('name') }}"
                     required
                     autofocus
-                    class="w-full p-3 bg-timerbot-panel border border-gray rounded-sm text-text focus:border-timerbot-cyan"
+                    class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
                 >
             </div>
 
             <div class="mb-6">
-                <label for="email" class="block mb-2 font-semibold text-timerbot-lavender uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Email</label>
+                <label for="email" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Email</label>
                 <input
                     type="email"
                     id="email"
                     name="email"
                     value="{{ old('email') }}"
                     required
-                    class="w-full p-3 bg-timerbot-panel border border-gray rounded-sm text-text focus:border-timerbot-cyan"
+                    class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
                 >
             </div>
 
             <div class="mb-8">
-                <label for="role" class="block mb-2 font-semibold text-timerbot-lavender uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Role</label>
+                <label for="role" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Role</label>
                 <select
                     id="role"
                     name="role"
                     required
-                    class="w-full p-3 bg-timerbot-panel border border-gray rounded-sm text-text focus:border-timerbot-cyan"
+                    class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
                 >
                     <option value="">Select a role...</option>
                     @foreach($roles as $role)
@@ -62,7 +62,7 @@
                 <button type="submit" class="btn btn-primary">
                     Create User
                 </button>
-                <a href="{{ route('users.index') }}" class="btn bg-timerbot-panel-light text-text hover:bg-gray no-underline">
+                <a href="{{ route('users.index') }}" class="btn bg-timerbot-panel-light text-text hover:bg-dark-green no-underline">
                     Cancel
                 </a>
             </div>

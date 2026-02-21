@@ -15,36 +15,36 @@
             </div>
         @endif
 
-        <div class="overflow-x-auto rounded-sm border border-gray">
+        <div class="overflow-x-auto rounded-sm border border-dark-green">
             <table class="w-full">
                 <thead>
                     <tr>
-                        <th class="p-4 text-left border-b border-gray">Name</th>
-                        <th class="p-4 text-left border-b border-gray">Description</th>
-                        <th class="p-4 text-left border-b border-gray">Permissions</th>
-                        <th class="p-4 text-left border-b border-gray w-48">Actions</th>
+                        <th class="p-4 text-left border-b border-dark-green">Name</th>
+                        <th class="p-4 text-left border-b border-dark-green">Description</th>
+                        <th class="p-4 text-left border-b border-dark-green">Permissions</th>
+                        <th class="p-4 text-left border-b border-dark-green w-48">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($roles as $role)
                         <tr class="hover:bg-timerbot-panel-light transition-colors">
-                            <td class="p-4 border-b border-gray/50">
-                                <span class="text-timerbot-orange font-semibold">{{ $role->name }}</span>
+                            <td class="p-4 border-b border-dark-green/50">
+                                <span class="text-timerbot-neon font-semibold">{{ $role->name }}</span>
                             </td>
-                            <td class="p-4 border-b border-gray/50 text-text-muted">{{ $role->description }}</td>
-                            <td class="p-4 border-b border-gray/50">
+                            <td class="p-4 border-b border-dark-green/50 text-text-muted">{{ $role->description }}</td>
+                            <td class="p-4 border-b border-dark-green/50">
                                 <div class="flex flex-wrap gap-1">
                                     @foreach($role->permissions as $permission)
-                                        <span class="badge badge-blue">
+                                        <span class="badge badge-lime">
                                             {{ $permission->name }}
                                         </span>
                                     @endforeach
                                 </div>
                             </td>
-                            <td class="p-4 border-b border-gray/50">
+                            <td class="p-4 border-b border-dark-green/50">
                                 <div class="flex gap-2">
                                     @if(auth()->user()->hasPermission('roles.edit'))
-                                        <a href="{{ route('roles.edit', $role) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-cyan hover:bg-timerbot-cyan hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
+                                        <a href="{{ route('roles.edit', $role) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-mint hover:bg-timerbot-mint hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                             Edit
                                         </a>
                                     @endif

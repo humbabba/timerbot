@@ -18,15 +18,12 @@
     --color-timerbot-panel: #0a120a;
     --color-timerbot-panel-light: #0f1a0f;
 
-    /* Green accent colors (replacing LCARS multi-color) */
-    --color-timerbot-orange: #33ff33;
-    --color-timerbot-peach: #66ff66;
-    --color-timerbot-gold: #00cc66;
-    --color-timerbot-lavender: #00ff88;
-    --color-timerbot-purple: #33ff99;
-    --color-timerbot-blue: #66ff66;
-    --color-timerbot-cyan: #00ff88;
-    --color-timerbot-teal: #00cc66;
+    /* Green accent colors */
+    --color-timerbot-neon: #33ff33;
+    --color-timerbot-lime: #66ff66;
+    --color-timerbot-emerald: #00cc66;
+    --color-timerbot-mint: #00ff88;
+    --color-timerbot-seafoam: #33ff99;
 
     /* Semantic colors */
     --color-primary: #33ff33;
@@ -37,8 +34,8 @@
     --color-tertiary-dark: #33cc33;
 
     /* UI colors */
-    --color-gray: #1a331a;
-    --color-light-gray: #264026;
+    --color-dark-green: #1a331a;
+    --color-dim-green: #3a5c3a;
     --color-red: #ff4444;
     --color-green: #33ff33;
     --color-timerbot-red: #ff4444;
@@ -64,23 +61,23 @@
     h1 {
         @apply text-3xl font-semibold tracking-wide;
         font-family: var(--font-display);
-        color: var(--color-timerbot-orange);
+        color: var(--color-timerbot-neon);
         text-shadow: 0 0 10px rgba(51, 255, 51, 0.5), 0 0 20px rgba(51, 255, 51, 0.2);
     }
     h2 {
         @apply text-2xl font-semibold tracking-wide;
         font-family: var(--font-display);
-        color: var(--color-timerbot-peach);
+        color: var(--color-timerbot-lime);
         text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
     }
     h3 {
         @apply text-xl font-semibold;
-        color: var(--color-timerbot-lavender);
+        color: var(--color-timerbot-mint);
         text-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
     }
     h4 {
         @apply text-lg font-medium;
-        color: var(--color-timerbot-blue);
+        color: var(--color-timerbot-lime);
     }
     h5 {
         @apply text-base font-medium;
@@ -90,12 +87,12 @@
     }
 
     a {
-        color: var(--color-timerbot-cyan);
+        color: var(--color-timerbot-mint);
         transition: color 0.2s, text-shadow 0.2s;
     }
     a:hover {
-        color: var(--color-timerbot-blue);
-        text-shadow: 0 0 8px var(--color-timerbot-cyan);
+        color: var(--color-timerbot-lime);
+        text-shadow: 0 0 8px var(--color-timerbot-mint);
     }
 
     /* Form elements */
@@ -106,7 +103,7 @@
     textarea,
     select {
         background-color: var(--color-timerbot-panel);
-        border: 1px solid var(--color-gray);
+        border: 1px solid var(--color-dark-green);
         border-radius: 2px;
         color: var(--color-text);
         padding: 0.5rem 0.75rem;
@@ -116,7 +113,7 @@
     textarea:focus,
     select:focus {
         outline: none;
-        border-color: var(--color-timerbot-cyan);
+        border-color: var(--color-timerbot-mint);
         box-shadow: 0 0 0 2px rgba(51, 255, 51, 0.15);
     }
 
@@ -127,7 +124,7 @@
     }
     th {
         background-color: var(--color-timerbot-panel);
-        color: var(--color-timerbot-orange);
+        color: var(--color-timerbot-neon);
         font-family: var(--font-display);
         font-weight: 500;
         letter-spacing: 0.05em;
@@ -136,7 +133,7 @@
         min-width: 180px;
     }
     td {
-        border-bottom: 1px solid var(--color-gray);
+        border-bottom: 1px solid var(--color-dark-green);
     }
 }
 
@@ -155,21 +152,21 @@
     }
     .btn-primary {
         background: transparent;
-        color: var(--color-timerbot-orange);
-        border-color: var(--color-timerbot-orange);
+        color: var(--color-timerbot-neon);
+        border-color: var(--color-timerbot-neon);
     }
     .btn-primary:hover {
-        background: var(--color-timerbot-orange);
+        background: var(--color-timerbot-neon);
         color: var(--color-timerbot-black);
         box-shadow: 0 0 12px rgba(51, 255, 51, 0.4);
     }
     .btn-secondary {
         background: transparent;
-        color: var(--color-timerbot-lavender);
-        border-color: var(--color-timerbot-lavender);
+        color: var(--color-timerbot-mint);
+        border-color: var(--color-timerbot-mint);
     }
     .btn-secondary:hover {
-        background: var(--color-timerbot-lavender);
+        background: var(--color-timerbot-mint);
         color: var(--color-timerbot-black);
     }
     .btn-danger {
@@ -203,21 +200,17 @@
         letter-spacing: 0.05em;
         background: transparent;
     }
-    .badge-orange {
-        color: var(--color-timerbot-orange);
-        border: 1px solid var(--color-timerbot-orange);
+    .badge-neon {
+        color: var(--color-timerbot-neon);
+        border: 1px solid var(--color-timerbot-neon);
     }
-    .badge-lavender {
-        color: var(--color-timerbot-lavender);
-        border: 1px solid var(--color-timerbot-lavender);
+    .badge-mint {
+        color: var(--color-timerbot-mint);
+        border: 1px solid var(--color-timerbot-mint);
     }
-    .badge-blue {
-        color: var(--color-timerbot-blue);
-        border: 1px solid var(--color-timerbot-blue);
-    }
-    .badge-peach {
-        color: var(--color-timerbot-peach);
-        border: 1px solid var(--color-timerbot-peach);
+    .badge-lime {
+        color: var(--color-timerbot-lime);
+        border: 1px solid var(--color-timerbot-lime);
     }
     .badge-green {
         color: var(--color-timerbot-green);
@@ -239,7 +232,7 @@
     background: var(--color-timerbot-dark);
 }
 ::-webkit-scrollbar-thumb {
-    background: var(--color-gray);
+    background: var(--color-dark-green);
     border-radius: 0;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -283,8 +276,8 @@
 
 .save-indicator--saving {
     background: transparent;
-    color: var(--color-timerbot-orange);
-    border: 1px solid var(--color-timerbot-orange);
+    color: var(--color-timerbot-neon);
+    border: 1px solid var(--color-timerbot-neon);
 }
 
 @keyframes pulse-unsaved {
@@ -299,7 +292,7 @@
 /* Date input styling */
 input[type="date"] {
     background-color: var(--color-timerbot-panel);
-    border: 1px solid var(--color-gray);
+    border: 1px solid var(--color-dark-green);
     border-radius: 2px;
     color: var(--color-text);
     padding: 0.5rem 0.75rem;
@@ -308,7 +301,7 @@ input[type="date"] {
 
 input[type="date"]:focus {
     outline: none;
-    border-color: var(--color-timerbot-cyan);
+    border-color: var(--color-timerbot-mint);
     box-shadow: 0 0 0 2px rgba(51, 255, 51, 0.15);
 }
 
@@ -320,7 +313,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* Trix Editor - Dark theme styling */
 trix-toolbar {
     background-color: var(--color-timerbot-panel);
-    border: 1px solid var(--color-gray);
+    border: 1px solid var(--color-dark-green);
     border-bottom: none;
     border-radius: 2px 2px 0 0;
     padding: 0.5rem;
@@ -341,11 +334,11 @@ trix-toolbar .trix-button {
 }
 
 trix-toolbar .trix-button:hover {
-    background-color: var(--color-gray);
+    background-color: var(--color-dark-green);
 }
 
 trix-toolbar .trix-button.trix-active {
-    background-color: var(--color-timerbot-cyan);
+    background-color: var(--color-timerbot-mint);
     color: var(--color-timerbot-black);
 }
 
@@ -359,7 +352,7 @@ trix-toolbar .trix-button.trix-active::before {
 
 trix-editor {
     background-color: var(--color-timerbot-panel);
-    border: 1px solid var(--color-gray);
+    border: 1px solid var(--color-dark-green);
     border-radius: 0 0 2px 2px;
     color: var(--color-text);
     min-height: 150px;
@@ -368,12 +361,12 @@ trix-editor {
 
 trix-editor:focus {
     outline: none;
-    border-color: var(--color-timerbot-cyan);
+    border-color: var(--color-timerbot-mint);
     box-shadow: 0 0 0 2px rgba(51, 255, 51, 0.15);
 }
 
 trix-editor a {
-    color: var(--color-timerbot-cyan);
+    color: var(--color-timerbot-mint);
 }
 
 /* Hide file upload button in Trix */

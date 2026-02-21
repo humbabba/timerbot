@@ -18,7 +18,8 @@
       "WebFetch(domain:ai.google.dev)",
       "Bash(git log:*)",
       "Bash(grep:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(find:*)"
     ]
   }
 }

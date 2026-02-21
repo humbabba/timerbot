@@ -13,6 +13,8 @@ class Timer extends Model
 {
     use Copyable, Loggable, Searchable, Trashable;
 
+    const LOCK_TIMEOUT_SECONDS = 30;
+
     protected $fillable = [
         'name',
         'visibility',
@@ -23,6 +25,8 @@ class Timer extends Model
         'warnings',
         'message',
         'run_state',
+        'locked_by',
+        'lock_refreshed_at',
     ];
 
     protected function casts(): array
@@ -31,12 +35,13 @@ class Timer extends Model
             'participant_count' => 'integer',
             'warnings' => 'array',
             'run_state' => 'array',
+            'lock_refreshed_at' => 'datetime',
         ];
     }
 
     public function getLoggableExcludedFields(): array
     {
-        return ['updated_at', 'run_state'];
+        return ['updated_at', 'run_state', 'locked_by', 'lock_refreshed_at'];
     }
 
     public function group(): BelongsTo
@@ -47,6 +52,49 @@ class Timer extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function lockedByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'locked_by');
+    }
+
+    public function isLocked(): bool
+    {
+        if (!$this->locked_by) {
+            return false;
+        }
+
+        if (!$this->lock_refreshed_at) {
+            return false;
+        }
+
+        return $this->lock_refreshed_at->diffInSeconds(now()) < self::LOCK_TIMEOUT_SECONDS;
+    }
+
+    public function isLockedByOther(User $user): bool
+    {
+        return $this->isLocked() && $this->locked_by !== $user->id;
+    }
+
+    public function acquireLock(User $user): void
+    {
+        $this->update([
+            'locked_by' => $user->id,
+            'lock_refreshed_at' => now(),
+        ]);
+    }
+
+    public function releaseLock(?User $user = null): void
+    {
+        if ($user && $this->locked_by !== $user->id) {
+            return;
+        }
+
+        $this->update([
+            'locked_by' => null,
+            'lock_refreshed_at' => null,
+        ]);
     }
 
     public function isPublic(): bool

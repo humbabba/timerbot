@@ -81,6 +81,32 @@
         return speakersLeft > 0 ? Math.max(0, remaining / speakersLeft) : 0;
     }
 
+    // ── Lock Lost overlay ──
+    let lockLost = false;
+
+    function handleLockLost(lockedByName) {
+        if (lockLost) return;
+        lockLost = true;
+
+        // Stop all timers
+        running = false;
+        paused = false;
+        clearInterval(speakerTick);
+
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'fixed inset-0 bg-timerbot-black/90 flex items-center justify-center z-50 p-4';
+        overlay.innerHTML = `
+            <div class="bg-timerbot-panel-light rounded-sm border border-dark-green p-8 max-w-md text-center">
+                <h2 class="text-2xl font-bold text-timerbot-red mb-4" style="font-family: var(--font-display);">Lock Lost</h2>
+                <p class="text-text mb-2">Another user has taken over this timer.</p>
+                ${lockedByName ? `<p class="text-text-muted text-sm mb-6">Now being run by <span class="text-timerbot-mint">${lockedByName}</span>.</p>` : '<p class="text-text-muted text-sm mb-6">Your session has expired.</p>'}
+                <a href="${window.location.href}" class="btn btn-primary no-underline px-6 py-3">Try Again</a>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+
     // ── Server state sync ──
     function syncState() {
         if (!config.state_url) return;
@@ -111,12 +137,34 @@
                 'X-Requested-With': 'XMLHttpRequest',
             },
             body: JSON.stringify({ state }),
+        }).then(res => {
+            if (res.status === 423) {
+                res.json().then(data => handleLockLost(data.locked_by_name));
+            }
         }).catch(() => {});
     }
 
-    // Heartbeat: sync state every 3 seconds while running
+    // Heartbeat: sync state every 3 seconds (also keeps lock alive when idle)
     setInterval(() => {
-        if (running || paused) syncState();
+        if (lockLost) return;
+        if (running || paused) {
+            syncState();
+        } else {
+            // Idle heartbeat — minimal POST to keep the lock alive
+            fetch(config.state_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': config.csrf_token,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ state: { status: 'idle' } }),
+            }).then(res => {
+                if (res.status === 423) {
+                    res.json().then(data => handleLockLost(data.locked_by_name));
+                }
+            }).catch(() => {});
+        }
     }, 3000);
 
     // ── Web Audio API Sounds ──
@@ -264,8 +312,8 @@
     }
 
     function updateSpeakerColor(remainMs) {
-        speakerCountdownEl.classList.remove('text-timerbot-green', 'text-timerbot-orange', 'text-timerbot-red');
-        speakerPanel.classList.remove('border-timerbot-green', 'border-timerbot-orange', 'border-timerbot-red');
+        speakerCountdownEl.classList.remove('text-timerbot-green', 'text-timerbot-neon', 'text-timerbot-red');
+        speakerPanel.classList.remove('border-timerbot-green', 'border-timerbot-neon', 'border-timerbot-red');
 
         if (remainMs <= 0) {
             speakerCountdownEl.classList.add('text-timerbot-red');
@@ -463,11 +511,11 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-timerbot-panel-light transition-colors';
         tr.innerHTML = `
-            <td class="p-4 border-b border-gray/50">Speaker ${entry.speaker}</td>
-            <td class="p-4 border-b border-gray/50 text-text-muted">${formatTime(entry.allotted)}</td>
-            <td class="p-4 border-b border-gray/50 ${entry.over ? 'text-timerbot-red' : 'text-timerbot-green'}">${formatTime(entry.actual)}</td>
-            <td class="p-4 border-b border-gray/50">
-                <span class="badge ${entry.over ? 'badge-peach' : 'badge-lavender'}">${entry.over ? 'Over' : 'On time'}</span>
+            <td class="p-4 border-b border-dark-green/50">Speaker ${entry.speaker}</td>
+            <td class="p-4 border-b border-dark-green/50 text-text-muted">${formatTime(entry.allotted)}</td>
+            <td class="p-4 border-b border-dark-green/50 ${entry.over ? 'text-timerbot-red' : 'text-timerbot-green'}">${formatTime(entry.actual)}</td>
+            <td class="p-4 border-b border-dark-green/50">
+                <span class="badge ${entry.over ? 'badge-lime' : 'badge-mint'}">${entry.over ? 'Over' : 'On time'}</span>
             </td>
         `;
         historyBody.appendChild(tr);
@@ -576,8 +624,8 @@
                 paused = true;
                 pauseStartMs = state.paused_at;
                 btnPause.textContent = 'Resume';
-                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-cyan');
-                btnPause.classList.add('bg-timerbot-orange', 'text-timerbot-black');
+                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-mint');
+                btnPause.classList.add('bg-timerbot-neon', 'text-timerbot-black');
                 speakerStatusEl.textContent = 'Paused';
             }
 
@@ -643,16 +691,16 @@
                 updateTimePerPersonLabel(speakerAllottedMs);
 
                 btnPause.textContent = 'Pause';
-                btnPause.classList.remove('bg-timerbot-orange', 'text-timerbot-black');
-                btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-cyan');
+                btnPause.classList.remove('bg-timerbot-neon', 'text-timerbot-black');
+                btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-mint');
                 speakerStatusEl.textContent = '';
             } else {
                 // Pause
                 pauseStartMs = Date.now();
                 paused = true;
                 btnPause.textContent = 'Resume';
-                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-cyan');
-                btnPause.classList.add('bg-timerbot-orange', 'text-timerbot-black');
+                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-mint');
+                btnPause.classList.add('bg-timerbot-neon', 'text-timerbot-black');
                 speakerStatusEl.textContent = 'Paused';
             }
             syncState();
@@ -676,17 +724,38 @@
             showIdleUI();
             historyBody.innerHTML = '';
             btnPause.textContent = 'Pause';
-            btnPause.classList.remove('bg-timerbot-orange', 'text-timerbot-black');
-            btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-cyan');
+            btnPause.classList.remove('bg-timerbot-neon', 'text-timerbot-black');
+            btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-mint');
             speakerStatusEl.textContent = '';
             speakerCountdownEl.classList.remove('animate-pulse');
 
             updateTimePerPersonLabel(calcTimePerSpeaker());
             syncState();
+
+            // Release lock
+            if (config.lock_release_url) {
+                fetch(config.lock_release_url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': config.csrf_token,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                }).catch(() => {});
+            }
         },
 
         playSound,
     };
+
+    // ── Release lock on page unload ──
+    window.addEventListener('beforeunload', () => {
+        if (config.lock_release_url && !lockLost) {
+            const data = new FormData();
+            data.append('_token', config.csrf_token);
+            navigator.sendBeacon(config.lock_release_url, data);
+        }
+    });
 
     // ── Init ──
     updateMeetingCountdown();

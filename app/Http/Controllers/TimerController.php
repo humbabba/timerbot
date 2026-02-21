@@ -112,9 +112,21 @@ class TimerController extends Controller
 
     public function updateState(Request $request, Timer $timer)
     {
-        if (!$timer->canRun(auth()->user())) {
+        $user = auth()->user();
+
+        if (!$timer->canRun($user)) {
             abort(403);
         }
+
+        if ($timer->isLockedByOther($user)) {
+            $timer->load('lockedByUser');
+            return response()->json([
+                'locked' => true,
+                'locked_by_name' => $timer->lockedByUser?->name ?? 'another user',
+            ], 423);
+        }
+
+        $timer->acquireLock($user);
 
         $state = $request->input('state');
         $state['synced_at'] = round(microtime(true) * 1000);
@@ -199,16 +211,35 @@ class TimerController extends Controller
 
     public function copy(Timer $timer)
     {
+        $user = auth()->user();
+
         $copy = $timer->duplicate();
-        $copy->update(['created_by' => auth()->id()]);
+
+        // Create a new group for the copy and make the user its admin
+        $group = Group::create([
+            'name' => $copy->name,
+            'created_by' => $user->id,
+        ]);
+        $group->members()->attach($user->id, ['is_admin' => true]);
+
+        $copy->update([
+            'created_by' => $user->id,
+            'group_id' => $group->id,
+        ]);
 
         return redirect()->route('timers.edit', $copy)->with('status', 'Timer copied successfully.');
     }
 
     public function updateSettings(Request $request, Timer $timer)
     {
-        if (!$timer->canRun(auth()->user())) {
+        $user = auth()->user();
+
+        if (!$timer->canRun($user)) {
             abort(403);
+        }
+
+        if ($timer->isLockedByOther($user)) {
+            return response()->json(['locked' => true], 423);
         }
 
         $validated = $request->validate([
@@ -235,7 +266,27 @@ class TimerController extends Controller
             abort(403, 'You do not have permission to run this timer.');
         }
 
+        if ($timer->isLockedByOther($user)) {
+            $timer->load('lockedByUser');
+            return response()->view('timers.locked', compact('timer'), 423);
+        }
+
+        $timer->acquireLock($user);
+
         return view('timers.run', compact('timer'));
+    }
+
+    public function releaseLock(Request $request, Timer $timer)
+    {
+        $user = auth()->user();
+
+        if (!$timer->canRun($user)) {
+            abort(403);
+        }
+
+        $timer->releaseLock($user);
+
+        return response()->json(['success' => true]);
     }
 
     /**

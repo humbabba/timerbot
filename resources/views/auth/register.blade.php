@@ -7,7 +7,7 @@
 
                 <div class="p-8">
                     <div class="text-center mb-8">
-                        <h1 class="text-timerbot-orange">Register</h1>
+                        <h1 class="text-timerbot-neon">Register</h1>
                     </div>
 
                     @if ($errors->any())
@@ -21,7 +21,7 @@
                     <form method="POST" action="{{ route('register.store') }}">
                         @csrf
                         <div class="mb-6">
-                            <label for="name" class="block mb-2 font-semibold text-timerbot-lavender uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Name</label>
+                            <label for="name" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Name</label>
                             <input
                                 type="text"
                                 id="name"
@@ -29,30 +29,30 @@
                                 value="{{ old('name') }}"
                                 required
                                 autofocus
-                                class="w-full p-4 bg-timerbot-panel border border-gray rounded-sm text-text focus:border-timerbot-cyan focus:ring-2 focus:ring-timerbot-cyan/20"
+                                class="w-full p-4 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint focus:ring-2 focus:ring-timerbot-mint/20"
                             >
                         </div>
 
                         <div class="mb-6">
-                            <label for="email" class="block mb-2 font-semibold text-timerbot-lavender uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Email Address</label>
+                            <label for="email" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Email Address</label>
                             <input
                                 type="email"
                                 id="email"
                                 name="email"
                                 value="{{ old('email') }}"
                                 required
-                                class="w-full p-4 bg-timerbot-panel border border-gray rounded-sm text-text focus:border-timerbot-cyan focus:ring-2 focus:ring-timerbot-cyan/20"
+                                class="w-full p-4 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint focus:ring-2 focus:ring-timerbot-mint/20"
                             >
                         </div>
 
-                        <button type="submit" class="w-full py-4 rounded-none bg-timerbot-green text-timerbot-black font-bold uppercase tracking-wider transition-all hover:shadow-lg hover:shadow-timerbot-orange/30" style="font-family: var(--font-display);">
+                        <button type="submit" class="w-full py-4 rounded-none bg-timerbot-green text-timerbot-black font-bold uppercase tracking-wider transition-all hover:shadow-lg hover:shadow-timerbot-neon/30" style="font-family: var(--font-display);">
                             Create Account
                         </button>
                     </form>
 
                     <p class="mt-6 text-center text-text-muted text-sm">
                         Already have an account?
-                        <a href="{{ route('login') }}" class="text-timerbot-cyan hover:text-timerbot-blue">Log in</a>
+                        <a href="{{ route('login') }}" class="text-timerbot-mint hover:text-timerbot-lime">Log in</a>
                     </p>
                 </div>
             </div>

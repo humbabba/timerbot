@@ -12,12 +12,12 @@ document.addEventListener('trix-before-initialize', () => {
 
     Trix.config.blockAttributes.alignCenter = {
         tagName: 'align-center',
-        exclusive: true,
+        nestable: true,
     };
 
     Trix.config.blockAttributes.alignRight = {
         tagName: 'align-right',
-        exclusive: true,
+        nestable: true,
     };
 });
 

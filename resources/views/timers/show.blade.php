@@ -22,7 +22,7 @@
                         </a>
                     @endif
                     @if($timer->canManage(auth()->user()))
-                        <a href="{{ route('timers.edit', $timer) }}" class="btn bg-timerbot-cyan text-timerbot-black hover:bg-timerbot-cyan/80 text-lg px-8 py-3 no-underline">
+                        <a href="{{ route('timers.edit', $timer) }}" class="btn bg-timerbot-mint text-timerbot-black hover:bg-timerbot-mint/80 text-lg px-8 py-3 no-underline">
                             Edit Timer
                         </a>
                     @endif
@@ -50,17 +50,17 @@
 
         <!-- Time Per Participant -->
         <div class="text-center mb-6">
-            <div id="time-per-participant" class="text-3xl md:text-4xl font-bold text-timerbot-orange tabular-nums" style="font-family: var(--font-display);">
+            <div id="time-per-participant" class="text-3xl md:text-4xl font-bold text-timerbot-neon tabular-nums" style="font-family: var(--font-display);">
                 --:--
             </div>
             <div class="text-text-muted text-sm mt-1">per participant</div>
         </div>
 
-        <hr class="border-gray mb-6">
+        <hr class="border-dark-green mb-6">
 
         <!-- Current Speaker -->
         <div id="speaker-section" class="text-center mb-6">
-            <div id="speaker-label" class="text-xl text-timerbot-lavender uppercase tracking-wider mb-2" style="font-family: var(--font-display);">
+            <div id="speaker-label" class="text-xl text-timerbot-mint uppercase tracking-wider mb-2" style="font-family: var(--font-display);">
                 —
             </div>
             <div id="speaker-time" class="text-7xl md:text-9xl font-bold tabular-nums text-text-muted" style="font-family: var(--font-display);">
@@ -68,11 +68,11 @@
             </div>
         </div>
 
-        <hr class="border-gray mb-6">
+        <hr class="border-dark-green mb-6">
 
         <!-- Message -->
         @if($timer->message)
-            <div class="mb-6 p-4 bg-timerbot-panel rounded-sm border border-gray prose prose-invert max-w-none text-text text-sm">
+            <div class="mb-6 p-4 bg-timerbot-panel rounded-sm border border-dark-green prose prose-invert max-w-none text-text text-sm">
                 {!! $timer->message !!}
             </div>
         @endif

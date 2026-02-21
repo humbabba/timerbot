@@ -35,19 +35,19 @@
                     <input type="hidden" name="all" value="1">
                 @endif
                 <div>
-                    <label class="block font-semibold text-timerbot-lavender uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">Search</label>
+                    <label class="block font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">Search</label>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
-                           class="bg-timerbot-panel border border-gray rounded-sm px-4 py-2 text-text min-w-[200px]">
+                           class="bg-timerbot-panel border border-dark-green rounded-sm px-4 py-2 text-text min-w-[200px]">
                 </div>
                 <div>
-                    <label class="block font-semibold text-timerbot-lavender uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">From</label>
+                    <label class="block font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">From</label>
                     <input type="date" name="from" value="{{ request('from') }}"
-                           class="bg-timerbot-panel border border-gray rounded-sm px-4 py-2 text-text">
+                           class="bg-timerbot-panel border border-dark-green rounded-sm px-4 py-2 text-text">
                 </div>
                 <div>
-                    <label class="block font-semibold text-timerbot-lavender uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">To</label>
+                    <label class="block font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">To</label>
                     <input type="date" name="to" value="{{ request('to') }}"
-                           class="bg-timerbot-panel border border-gray rounded-sm px-4 py-2 text-text">
+                           class="bg-timerbot-panel border border-dark-green rounded-sm px-4 py-2 text-text">
                 </div>
                 <div class="flex gap-2">
                     <button type="submit" class="btn btn-secondary">Filter</button>
@@ -58,59 +58,59 @@
             </form>
         </div>
 
-        <div class="overflow-x-auto rounded-sm border border-gray">
+        <div class="overflow-x-auto rounded-sm border border-dark-green">
             <table class="w-full">
                 <thead>
                     <tr>
-                        <th class="p-4 text-left border-b border-gray">Name</th>
-                        <th class="p-4 text-left border-b border-gray">Visibility</th>
-                        <th class="p-4 text-left border-b border-gray">End Time</th>
-                        <th class="p-4 text-left border-b border-gray">Participants</th>
-                        <th class="p-4 text-left border-b border-gray">Group</th>
-                        <th class="p-4 text-left border-b border-gray w-80">Actions</th>
+                        <th class="p-4 text-left border-b border-dark-green">Name</th>
+                        <th class="p-4 text-left border-b border-dark-green">Visibility</th>
+                        <th class="p-4 text-left border-b border-dark-green">End Time</th>
+                        <th class="p-4 text-left border-b border-dark-green">Participants</th>
+                        <th class="p-4 text-left border-b border-dark-green">Group</th>
+                        <th class="p-4 text-left border-b border-dark-green w-80">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($timers as $timer)
                         <tr class="hover:bg-timerbot-panel-light transition-colors">
-                            <td class="p-4 border-b border-gray/50">
-                                <a href="{{ route('timers.show', $timer) }}" class="text-timerbot-orange hover:text-timerbot-peach font-semibold">{{ $timer->name }}</a>
+                            <td class="p-4 border-b border-dark-green/50">
+                                <a href="{{ route('timers.show', $timer) }}" class="text-timerbot-neon hover:text-timerbot-lime font-semibold">{{ $timer->name }}</a>
                             </td>
-                            <td class="p-4 border-b border-gray/50">
+                            <td class="p-4 border-b border-dark-green/50">
                                 @if($timer->isPublic())
                                     <span class="badge badge-green text-xs">Public</span>
                                 @else
-                                    <span class="badge badge-peach text-xs">Private</span>
+                                    <span class="badge badge-lime text-xs">Private</span>
                                 @endif
                             </td>
-                            <td class="p-4 border-b border-gray/50 text-text-muted">
+                            <td class="p-4 border-b border-dark-green/50 text-text-muted">
                                 {{ \Carbon\Carbon::parse($timer->end_time)->format('g:i A') }}
                             </td>
-                            <td class="p-4 border-b border-gray/50 text-text-muted">
+                            <td class="p-4 border-b border-dark-green/50 text-text-muted">
                                 {{ $timer->participant_count }}
                             </td>
-                            <td class="p-4 border-b border-gray/50 text-text-muted">
+                            <td class="p-4 border-b border-dark-green/50 text-text-muted">
                                 {{ $timer->group?->name ?? '—' }}
                             </td>
-                            <td class="p-4 border-b border-gray/50">
+                            <td class="p-4 border-b border-dark-green/50">
                                 <div class="flex gap-2">
                                     @if($timer->canRun(auth()->user()))
                                         <a href="{{ route('timers.run', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-green text-timerbot-black hover:bg-timerbot-green/80 transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                             Run
                                         </a>
                                     @endif
-                                    <a href="{{ route('timers.show', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-lavender hover:bg-timerbot-lavender hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
+                                    <a href="{{ route('timers.show', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-mint hover:bg-timerbot-mint hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                         View
                                     </a>
                                     @if($timer->canManage(auth()->user()))
-                                        <a href="{{ route('timers.edit', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-cyan hover:bg-timerbot-cyan hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
+                                        <a href="{{ route('timers.edit', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-mint hover:bg-timerbot-mint hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                             Edit
                                         </a>
                                     @endif
                                     @if(auth()->user()->hasPermission('timers.create'))
                                         <form method="POST" action="{{ route('timers.copy', $timer) }}" class="inline">
                                             @csrf
-                                            <button type="submit" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-blue hover:bg-timerbot-blue hover:text-timerbot-black transition-all text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
+                                            <button type="submit" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-lime hover:bg-timerbot-lime hover:text-timerbot-black transition-all text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
                                                 Copy
                                             </button>
                                         </form>

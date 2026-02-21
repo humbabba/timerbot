@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/timers/{timer}/run', [TimerController::class, 'run'])->name('timers.run');
     Route::post('/timers/{timer}/state', [TimerController::class, 'updateState'])->name('timers.state.update');
     Route::patch('/timers/{timer}/settings', [TimerController::class, 'updateSettings'])->name('timers.settings.update');
+    Route::post('/timers/{timer}/release-lock', [TimerController::class, 'releaseLock'])->name('timers.lock.release');
 
     // Group member management (AJAX)
     Route::get('/groups/search-users', [GroupController::class, 'searchUsers'])->name('groups.search-users');
@@ -82,5 +83,6 @@ Route::middleware('auth')->group(function () {
 });
 
 // Public routes (no auth required) — must be after auth group so /timers/create matches first
+Route::get('/manual', fn () => view('manual'))->name('manual');
 Route::get('/timers/{timer}', [TimerController::class, 'show'])->name('timers.show');
 Route::get('/timers/{timer}/state', [TimerController::class, 'getState'])->name('timers.state');
