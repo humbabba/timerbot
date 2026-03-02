@@ -1,15 +1,29 @@
 <x-layouts.app>
+    @if(auth()->user()?->isAppAdmin())
+        <script>
+            (function() {
+                var pref = localStorage.getItem('timers_show_all');
+                if (pref === '1' && !new URLSearchParams(window.location.search).has('all')) {
+                    var url = new URL(window.location);
+                    url.searchParams.set('all', '1');
+                    window.location.replace(url);
+                }
+            })();
+        </script>
+    @endif
     <div class="p-8">
         <div class="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-8">
             <h1>Timers</h1>
             <div class="flex gap-2 items-center">
-                @if(auth()->user()->isAppAdmin())
+                @if(auth()->user()?->isAppAdmin())
                     <a href="{{ route('timers.index', array_merge(request()->except('all'), $showAll ? [] : ['all' => 1])) }}"
-                       class="btn btn-secondary whitespace-nowrap">
+                       class="btn btn-secondary whitespace-nowrap"
+                       x-data
+                       x-on:click="localStorage.setItem('timers_show_all', '{{ $showAll ? '0' : '1' }}')">
                         {{ $showAll ? 'My Timers' : 'All Timers' }}
                     </a>
                 @endif
-                @if(auth()->user()->hasPermission('timers.create'))
+                @if(auth()->user()?->hasPermission('timers.create'))
                     <a href="{{ route('timers.create') }}" class="btn btn-primary">
                         Add Timer
                     </a>
@@ -94,7 +108,7 @@
                             </td>
                             <td class="p-4 border-b border-dark-green/50">
                                 <div class="flex gap-2">
-                                    @if($timer->canRun(auth()->user()))
+                                    @if(auth()->check() && $timer->canRun(auth()->user()))
                                         <a href="{{ route('timers.run', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-green text-timerbot-black hover:bg-timerbot-green/80 transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                             Run
                                         </a>
@@ -102,12 +116,12 @@
                                     <a href="{{ route('timers.show', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-mint hover:bg-timerbot-mint hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                         View
                                     </a>
-                                    @if($timer->canManage(auth()->user()))
+                                    @if(auth()->check() && $timer->canManage(auth()->user()))
                                         <a href="{{ route('timers.edit', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-mint hover:bg-timerbot-mint hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                             Edit
                                         </a>
                                     @endif
-                                    @if(auth()->user()->hasPermission('timers.create'))
+                                    @if(auth()->user()?->hasPermission('timers.create'))
                                         <form method="POST" action="{{ route('timers.copy', $timer) }}" class="inline">
                                             @csrf
                                             <button type="submit" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-lime hover:bg-timerbot-lime hover:text-timerbot-black transition-all text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
@@ -115,7 +129,7 @@
                                             </button>
                                         </form>
                                     @endif
-                                    @if($timer->canManage(auth()->user()))
+                                    @if(auth()->check() && $timer->canManage(auth()->user()))
                                         <form method="POST" action="{{ route('timers.destroy', $timer) }}" id="delete-timer-{{ $timer->id }}">
                                             @csrf
                                             @method('DELETE')
@@ -126,7 +140,7 @@
                                                 style="font-family: var(--font-display);"
                                                 x-on:click="$dispatch('confirm-delete', {
                                                     title: 'Delete Timer',
-                                                    message: 'Are you sure you want to delete Timer #{{ $timer->id }} ({{ $timer->name }})? This will move it to the trash.',
+                                                    message: 'Are you sure you want to delete Timer #{{ $timer->id }} (' + {{ Js::from($timer->name) }} + ')? This will move it to the trash.',
                                                     formId: 'delete-timer-{{ $timer->id }}'
                                                 })"
                                             >

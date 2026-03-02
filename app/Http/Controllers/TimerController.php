@@ -12,11 +12,11 @@ class TimerController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $showAll = $request->boolean('all') && $user->isAppAdmin();
+        $showAll = $user && $request->boolean('all') && $user->isAppAdmin();
 
         if ($showAll) {
             $query = Timer::with('group', 'creator')->orderBy('name');
-        } else {
+        } elseif ($user) {
             // Show timers the user is a group member of, plus all public timers
             $userGroupIds = $user->groups()->pluck('groups.id');
 
@@ -25,6 +25,11 @@ class TimerController extends Controller
                     $q->where('visibility', 'public')
                       ->orWhereIn('group_id', $userGroupIds);
                 })
+                ->orderBy('name');
+        } else {
+            // Guests see only public timers
+            $query = Timer::with('group', 'creator')
+                ->where('visibility', 'public')
                 ->orderBy('name');
         }
 

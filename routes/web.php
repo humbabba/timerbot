@@ -51,7 +51,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/roles/{role}/copy', [RoleController::class, 'copy'])->name('roles.copy')->middleware('permission:roles.create');
 
     // Timer management (authorization handled in controller via group-based access)
-    Route::get('/timers', [TimerController::class, 'index'])->name('timers.index');
     Route::get('/timers/create', [TimerController::class, 'create'])->name('timers.create')->middleware('permission:timers.create');
     Route::post('/timers', [TimerController::class, 'store'])->name('timers.store')->middleware('permission:timers.create');
     Route::get('/timers/{timer}/edit', [TimerController::class, 'edit'])->name('timers.edit');
@@ -84,5 +83,6 @@ Route::middleware('auth')->group(function () {
 
 // Public routes (no auth required) — must be after auth group so /timers/create matches first
 Route::get('/manual', fn () => view('manual'))->name('manual');
+Route::get('/timers', [TimerController::class, 'index'])->name('timers.index');
 Route::get('/timers/{timer}', [TimerController::class, 'show'])->name('timers.show');
 Route::get('/timers/{timer}/state', [TimerController::class, 'getState'])->name('timers.state');

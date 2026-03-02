@@ -10,6 +10,25 @@ class Trash extends Model
 {
     protected $table = 'trash';
 
+    protected static function booted(): void
+    {
+        static::deleted(function (Trash $trash) {
+            if ($trash->trashable_type === Timer::class) {
+                $groupId = $trash->data['group_id'] ?? null;
+                if ($groupId && ($group = Group::find($groupId))) {
+                    $hasActiveTimers = Timer::where('group_id', $groupId)->exists();
+                    $hasTrashedTimers = self::where('trashable_type', Timer::class)
+                        ->where('data->group_id', $groupId)
+                        ->exists();
+
+                    if (!$hasActiveTimers && !$hasTrashedTimers) {
+                        $group->delete();
+                    }
+                }
+            }
+        });
+    }
+
     protected $fillable = [
         'trashable_type',
         'trashable_id',

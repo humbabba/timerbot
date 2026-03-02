@@ -94,7 +94,7 @@
                                                 style="font-family: var(--font-display);"
                                                 x-on:click="$dispatch('confirm-delete', {
                                                     title: 'Delete User',
-                                                    message: 'Are you sure you want to delete User #{{ $user->id }} ({{ $user->name }})? This will move it to the trash.',
+                                                    message: 'Are you sure you want to delete User #{{ $user->id }} (' + {{ Js::from($user->name) }} + ')? This will move it to the trash.',
                                                     formId: 'delete-user-{{ $user->id }}'
                                                 })"
                                             >

@@ -67,7 +67,7 @@
                                                 style="font-family: var(--font-display);"
                                                 x-on:click="$dispatch('confirm-delete', {
                                                     title: 'Delete Role',
-                                                    message: 'Are you sure you want to delete Role #{{ $role->id }} ({{ $role->name }})? This will move it to the trash.',
+                                                    message: 'Are you sure you want to delete Role #{{ $role->id }} (' + {{ Js::from($role->name) }} + ')? This will move it to the trash.',
                                                     formId: 'delete-role-{{ $role->id }}'
                                                 })"
                                             >

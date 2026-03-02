@@ -46,7 +46,7 @@ class CleanupTrashCommand extends Command
             return self::SUCCESS;
         }
 
-        $query->delete();
+        $query->get()->each->delete();
 
         $this->info("Deleted {$count} trash item(s) older than {$days} days.");
 

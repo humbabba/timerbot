@@ -20,12 +20,12 @@
         <!-- Desktop Navigation Links -->
         <div class="hidden md:flex items-center gap-1 ml-10" style="font-family: var(--font-display);">
 
-            @auth
-                <a href="{{ route('timers.index') }}"
-                   class="flex items-center gap-2 px-4 py-2 rounded-none bg-timerbot-panel text-timerbot-neon hover:bg-timerbot-neon hover:text-timerbot-black transition-all duration-200 no-underline uppercase text-sm tracking-wider">
-                    Timers
-                </a>
+            <a href="{{ route('timers.index') }}"
+               class="flex items-center gap-2 px-4 py-2 rounded-none bg-timerbot-panel text-timerbot-neon hover:bg-timerbot-neon hover:text-timerbot-black transition-all duration-200 no-underline uppercase text-sm tracking-wider">
+                Timers
+            </a>
 
+            @auth
                 @if(auth()->user()->hasPermission('users.view') || auth()->user()->hasPermission('roles.view') || auth()->user()->hasPermission('trash.view') || auth()->user()->hasPermission('settings.manage') || auth()->user()->hasPermission('activity-logs.view'))
                     <div class="relative group">
                         <button class="flex items-center gap-2 px-4 py-2 rounded-none bg-timerbot-panel text-timerbot-lime hover:bg-timerbot-lime hover:text-timerbot-black transition-all duration-200 uppercase text-sm tracking-wider">
@@ -136,16 +136,16 @@
          class="md:hidden border-t border-dark-green bg-timerbot-dark px-4 pb-4"
          style="font-family: var(--font-display);">
 
-        @auth
-            {{-- Timers Section --}}
-            <div class="py-2 border-b border-dark-green/50">
-                <div class="text-timerbot-neon uppercase text-xs tracking-wider mb-2 px-2">Timers</div>
-                <a href="{{ route('timers.index') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 text-text hover:bg-timerbot-neon hover:text-timerbot-black transition-colors no-underline text-sm rounded-sm">All Timers</a>
-                @if(auth()->user()->hasPermission('timers.create'))
-                    <a href="{{ route('timers.create') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 text-text hover:bg-timerbot-neon hover:text-timerbot-black transition-colors no-underline text-sm rounded-sm">New Timer</a>
-                @endif
-            </div>
+        {{-- Timers Section --}}
+        <div class="py-2 border-b border-dark-green/50">
+            <div class="text-timerbot-neon uppercase text-xs tracking-wider mb-2 px-2">Timers</div>
+            <a href="{{ route('timers.index') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 text-text hover:bg-timerbot-neon hover:text-timerbot-black transition-colors no-underline text-sm rounded-sm">All Timers</a>
+            @if(auth()->user()?->hasPermission('timers.create'))
+                <a href="{{ route('timers.create') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 text-text hover:bg-timerbot-neon hover:text-timerbot-black transition-colors no-underline text-sm rounded-sm">New Timer</a>
+            @endif
+        </div>
 
+        @auth
             {{-- Utils Section --}}
             @if(auth()->user()->hasPermission('users.view') || auth()->user()->hasPermission('roles.view') || auth()->user()->hasPermission('trash.view') || auth()->user()->hasPermission('settings.manage') || auth()->user()->hasPermission('activity-logs.view'))
                 <div class="py-2 border-b border-dark-green/50">

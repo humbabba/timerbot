@@ -66,7 +66,7 @@
                             style="font-family: var(--font-display);"
                             x-on:click="$dispatch('confirm-delete', {
                                 title: 'Permanently Delete',
-                                message: 'Are you sure you want to permanently delete {{ $trash->model_name }} #{{ $trash->trashable_id }} ({{ $trash->display_name }})? This cannot be undone.',
+                                message: 'Are you sure you want to permanently delete {{ $trash->model_name }} #{{ $trash->trashable_id }} (' + {{ Js::from($trash->display_name) }} + ')? This cannot be undone.',
                                 formId: 'delete-trash-{{ $trash->id }}'
                             })"
                         >

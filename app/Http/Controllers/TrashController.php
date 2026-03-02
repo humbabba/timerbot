@@ -75,8 +75,9 @@ class TrashController extends Controller
             $query->ofType($request->type);
         }
 
-        $count = $query->count();
-        $query->delete();
+        $items = $query->get();
+        $count = $items->count();
+        $items->each->delete();
 
         return redirect()->route('trash.index')
             ->with('status', "{$count} item(s) have been permanently deleted.");

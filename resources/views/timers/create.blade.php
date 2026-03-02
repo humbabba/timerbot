@@ -13,7 +13,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('timers.store') }}" data-ajax-save class="bg-timerbot-panel-light rounded-sm p-6"
+        <form method="POST" action="{{ route('timers.store') }}" class="bg-timerbot-panel-light rounded-sm p-6"
               x-data="{
                   warnings: {{ json_encode(old('warnings', [
                       ['seconds_before' => 60, 'sound' => 'beep'],
