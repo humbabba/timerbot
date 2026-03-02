@@ -12,12 +12,25 @@ class TimerController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $showAll = $user && $request->boolean('all') && $user->isAppAdmin();
+        $showMine = $user && $request->boolean('mine');
 
-        if ($showAll) {
+        if (!$user) {
+            // Guests see only public timers
+            $query = Timer::with('group', 'creator')
+                ->where('visibility', 'public')
+                ->orderBy('name');
+        } elseif ($showMine) {
+            // My Timers: only timers the user is a group member of
+            $userGroupIds = $user->groups()->pluck('groups.id');
+
+            $query = Timer::with('group', 'creator')
+                ->whereIn('group_id', $userGroupIds)
+                ->orderBy('name');
+        } elseif ($user->isAppAdmin()) {
+            // Admin "All Timers": every timer in the database
             $query = Timer::with('group', 'creator')->orderBy('name');
-        } elseif ($user) {
-            // Show timers the user is a group member of, plus all public timers
+        } else {
+            // Member "All Timers": public timers + their group timers
             $userGroupIds = $user->groups()->pluck('groups.id');
 
             $query = Timer::with('group', 'creator')
@@ -25,11 +38,6 @@ class TimerController extends Controller
                     $q->where('visibility', 'public')
                       ->orWhereIn('group_id', $userGroupIds);
                 })
-                ->orderBy('name');
-        } else {
-            // Guests see only public timers
-            $query = Timer::with('group', 'creator')
-                ->where('visibility', 'public')
                 ->orderBy('name');
         }
 
@@ -43,7 +51,11 @@ class TimerController extends Controller
 
         $timers = $query->paginate(20)->withQueryString();
 
-        return view('timers.index', compact('timers', 'showAll'));
+        foreach ($timers as $timer) {
+            $timer->checkOvertimeReset();
+        }
+
+        return view('timers.index', compact('timers', 'showMine'));
     }
 
     public function create()
@@ -64,6 +76,7 @@ class TimerController extends Controller
             'participant_count' => 'required|integer|min:1|max:999',
             'participant_term' => 'nullable|string|max:50',
             'participant_term_plural' => 'nullable|string|max:50',
+            'overtime_reset_minutes' => 'required|integer|min:1|max:59',
             'warnings' => 'nullable|array',
             'warnings.*.seconds_before' => 'required_with:warnings|integer|min:-3600|max:3600',
             'warnings.*.sound' => 'required_with:warnings|in:alarm,bell,beep,chime,ding,twang,warning',
@@ -95,6 +108,7 @@ class TimerController extends Controller
             'participant_count' => $validated['participant_count'],
             'participant_term' => $validated['participant_term'] ?? 'speaker',
             'participant_term_plural' => $validated['participant_term_plural'] ?? 'speakers',
+            'overtime_reset_minutes' => $validated['overtime_reset_minutes'],
             'warnings' => $warnings,
             'message' => $validated['message'] ?? null,
         ]);
@@ -109,12 +123,15 @@ class TimerController extends Controller
     public function show(Timer $timer)
     {
         $timer->load('group.members', 'creator');
+        $timer->checkOvertimeReset();
 
         return view('timers.show', compact('timer'));
     }
 
     public function getState(Timer $timer)
     {
+        $timer->checkOvertimeReset();
+
         $state = $timer->run_state ?? ['status' => 'idle'];
 
         // Always return current model values so show page picks up
@@ -184,6 +201,7 @@ class TimerController extends Controller
             'participant_count' => 'required|integer|min:1|max:999',
             'participant_term' => 'nullable|string|max:50',
             'participant_term_plural' => 'nullable|string|max:50',
+            'overtime_reset_minutes' => 'required|integer|min:1|max:59',
             'warnings' => 'nullable|array',
             'warnings.*.seconds_before' => 'required_with:warnings|integer|min:-3600|max:3600',
             'warnings.*.sound' => 'required_with:warnings|in:alarm,bell,beep,chime,ding,twang,warning',
@@ -212,6 +230,7 @@ class TimerController extends Controller
             'participant_count' => $validated['participant_count'],
             'participant_term' => $validated['participant_term'] ?? 'speaker',
             'participant_term_plural' => $validated['participant_term_plural'] ?? 'speakers',
+            'overtime_reset_minutes' => $validated['overtime_reset_minutes'],
             'warnings' => $warnings,
             'message' => $validated['message'] ?? null,
         ]);

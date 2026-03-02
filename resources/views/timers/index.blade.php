@@ -1,28 +1,28 @@
 <x-layouts.app>
-    @if(auth()->user()?->isAppAdmin())
+    @auth
         <script>
             (function() {
-                var pref = localStorage.getItem('timers_show_all');
-                if (pref === '1' && !new URLSearchParams(window.location.search).has('all')) {
+                var pref = localStorage.getItem('timers_show_mine');
+                if (pref === '1' && !new URLSearchParams(window.location.search).has('mine')) {
                     var url = new URL(window.location);
-                    url.searchParams.set('all', '1');
+                    url.searchParams.set('mine', '1');
                     window.location.replace(url);
                 }
             })();
         </script>
-    @endif
+    @endauth
     <div class="p-8">
         <div class="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-8">
             <h1>Timers</h1>
             <div class="flex gap-2 items-center">
-                @if(auth()->user()?->isAppAdmin())
-                    <a href="{{ route('timers.index', array_merge(request()->except('all'), $showAll ? [] : ['all' => 1])) }}"
+                @auth
+                    <a href="{{ route('timers.index', array_merge(request()->except('mine'), $showMine ? [] : ['mine' => 1])) }}"
                        class="btn btn-secondary whitespace-nowrap"
                        x-data
-                       x-on:click="localStorage.setItem('timers_show_all', '{{ $showAll ? '0' : '1' }}')">
-                        {{ $showAll ? 'My Timers' : 'All Timers' }}
+                       x-on:click="localStorage.setItem('timers_show_mine', '{{ $showMine ? '0' : '1' }}')">
+                        {{ $showMine ? 'All Timers' : 'My Timers' }}
                     </a>
-                @endif
+                @endauth
                 @if(auth()->user()?->hasPermission('timers.create'))
                     <a href="{{ route('timers.create') }}" class="btn btn-primary">
                         Add Timer
@@ -45,8 +45,8 @@
 
         <div class="mb-6 p-4 bg-timerbot-panel-light rounded-sm">
             <form method="GET" action="{{ route('timers.index') }}" class="flex flex-wrap gap-4 items-end">
-                @if($showAll)
-                    <input type="hidden" name="all" value="1">
+                @if($showMine)
+                    <input type="hidden" name="mine" value="1">
                 @endif
                 <div>
                     <label class="block font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">Search</label>
@@ -66,7 +66,7 @@
                 <div class="flex gap-2">
                     <button type="submit" class="btn btn-secondary">Filter</button>
                     @if(request()->hasAny(['search', 'from', 'to']))
-                        <a href="{{ route('timers.index', $showAll ? ['all' => 1] : []) }}" class="btn btn-secondary">Clear</a>
+                        <a href="{{ route('timers.index', $showMine ? ['mine' => 1] : []) }}" class="btn btn-secondary">Clear</a>
                     @endif
                 </div>
             </form>
@@ -77,6 +77,7 @@
                 <thead>
                     <tr>
                         <th class="p-4 text-left border-b border-dark-green">Name</th>
+                        <th class="p-4 text-left border-b border-dark-green">Status</th>
                         <th class="p-4 text-left border-b border-dark-green">Visibility</th>
                         <th class="p-4 text-left border-b border-dark-green">End Time</th>
                         <th class="p-4 text-left border-b border-dark-green">Participants</th>
@@ -89,6 +90,12 @@
                         <tr class="hover:bg-timerbot-panel-light transition-colors">
                             <td class="p-4 border-b border-dark-green/50">
                                 <a href="{{ route('timers.show', $timer) }}" class="text-timerbot-neon hover:text-timerbot-lime font-semibold">{{ $timer->name }}</a>
+                            </td>
+                            <td class="p-4 border-b border-dark-green/50"
+                                x-data="timerStatus({{ Js::from($timer->run_state) }}, {{ Js::from($timer->end_time) }}, {{ $timer->overtime_reset_minutes }})"
+                                x-init="start()"
+                            >
+                                <span x-text="display" :class="colorClass" class="font-mono text-sm"></span>
                             </td>
                             <td class="p-4 border-b border-dark-green/50">
                                 @if($timer->isPublic())
@@ -153,7 +160,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="p-8 text-center text-text-muted">
+                            <td colspan="7" class="p-8 text-center text-text-muted">
                                 No timers found. Create your first timer to get started.
                             </td>
                         </tr>
@@ -166,4 +173,82 @@
             {{ $timers->links() }}
         </div>
     </div>
+    <script>
+    function timerStatus(runState, endTime, overtimeMinutes) {
+        return {
+            display: '',
+            colorClass: 'text-text-muted',
+            interval: null,
+            runState: runState,
+            endTime: endTime,
+            overtimeLimitMs: overtimeMinutes * 60000,
+            start() {
+                this.tick();
+                this.interval = setInterval(() => this.tick(), 1000);
+            },
+            tick() {
+                const state = this.runState;
+                if (!state || !state.status || state.status === 'idle') {
+                    this.display = 'Idle';
+                    this.colorClass = 'text-text-muted';
+                    return;
+                }
+
+                const endMs = state.end_time_ms || this.endTimeToMs();
+                if (!endMs) {
+                    this.display = state.status === 'paused' ? 'Paused' : 'Running';
+                    this.colorClass = state.status === 'paused' ? 'text-timerbot-neon' : 'text-timerbot-green';
+                    return;
+                }
+
+                const now = Date.now();
+
+                // Check overtime reset limit
+                if (now > endMs + this.overtimeLimitMs) {
+                    this.runState = null;
+                    this.display = 'Idle';
+                    this.colorClass = 'text-text-muted';
+                    if (this.interval) clearInterval(this.interval);
+                    return;
+                }
+
+                let remainMs;
+
+                if (state.status === 'paused') {
+                    remainMs = state.paused_remaining_ms || (endMs - now);
+                    this.display = 'Paused | ' + this.fmt(remainMs);
+                    this.colorClass = 'text-timerbot-neon';
+                    return;
+                }
+
+                // Running
+                remainMs = endMs - now;
+                this.display = this.fmt(remainMs);
+                this.colorClass = remainMs >= 0 ? 'text-timerbot-green' : 'text-timerbot-red';
+            },
+            fmt(ms) {
+                const neg = ms < 0;
+                const total = Math.abs(Math.floor(ms / 1000));
+                const h = Math.floor(total / 3600);
+                const m = Math.floor((total % 3600) / 60);
+                const s = total % 60;
+                const pad = n => String(n).padStart(2, '0');
+                const time = h > 0
+                    ? h + ':' + pad(m) + ':' + pad(s)
+                    : pad(m) + ':' + pad(s);
+                return neg ? '-' + time : time;
+            },
+            endTimeToMs() {
+                if (!this.endTime) return null;
+                const parts = this.endTime.split(':');
+                const now = new Date();
+                now.setHours(parseInt(parts[0]), parseInt(parts[1]), parts[2] ? parseInt(parts[2]) : 0, 0);
+                return now.getTime();
+            },
+            destroy() {
+                if (this.interval) clearInterval(this.interval);
+            }
+        };
+    }
+    </script>
 </x-layouts.app>

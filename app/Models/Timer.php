@@ -24,6 +24,7 @@ class Timer extends Model
         'participant_count',
         'participant_term',
         'participant_term_plural',
+        'overtime_reset_minutes',
         'warnings',
         'message',
         'run_state',
@@ -35,6 +36,7 @@ class Timer extends Model
     {
         return [
             'participant_count' => 'integer',
+            'overtime_reset_minutes' => 'integer',
             'warnings' => 'array',
             'run_state' => 'array',
             'lock_refreshed_at' => 'datetime',
@@ -97,6 +99,32 @@ class Timer extends Model
             'locked_by' => null,
             'lock_refreshed_at' => null,
         ]);
+    }
+
+    public function checkOvertimeReset(): void
+    {
+        $state = $this->run_state;
+
+        if (!$state || !in_array($state['status'] ?? null, ['running', 'paused'])) {
+            return;
+        }
+
+        $endTimeMs = $state['end_time_ms'] ?? null;
+
+        if (!$endTimeMs) {
+            return;
+        }
+
+        $nowMs = round(microtime(true) * 1000);
+        $limitMs = $endTimeMs + ($this->overtime_reset_minutes * 60000);
+
+        if ($nowMs > $limitMs) {
+            $this->update([
+                'run_state' => null,
+                'locked_by' => null,
+                'lock_refreshed_at' => null,
+            ]);
+        }
     }
 
     public function isPublic(): bool
