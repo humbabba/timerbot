@@ -60,6 +60,23 @@
 
         <!-- Desktop User Section -->
         <div class="hidden md:flex ml-auto items-center gap-4">
+            <!-- Theme Toggle -->
+            <button
+                x-data="{ dark: document.documentElement.getAttribute('data-theme') !== 'light' }"
+                @click="dark = !dark; document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light'); localStorage.setItem('theme', dark ? 'dark' : 'light')"
+                class="p-2 rounded-none text-text-muted hover:text-text transition-colors"
+                title="Toggle theme"
+            >
+                {{-- Sun icon (shown in dark mode → click to go light) --}}
+                <svg x-show="dark" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                {{-- Moon icon (shown in light mode → click to go dark) --}}
+                <svg x-show="!dark" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+            </button>
+
             @auth
                 <a href="{{ route('users.show', Auth::user()) }}" class="flex items-center gap-3 no-underline hover:opacity-80 transition-opacity">
                     <x-avatar :user="Auth::user()" :size="8" />
@@ -81,15 +98,30 @@
             @endauth
         </div>
 
-        <!-- Mobile Hamburger Button -->
-        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden ml-auto p-2 text-timerbot-neon hover:text-timerbot-lime transition-colors" style="font-family: var(--font-display);">
-            <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-            <svg x-show="mobileMenuOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-        </button>
+        <!-- Mobile Theme Toggle + Hamburger -->
+        <div class="md:hidden ml-auto flex items-center gap-1">
+            <button
+                x-data="{ dark: document.documentElement.getAttribute('data-theme') !== 'light' }"
+                @click="dark = !dark; document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light'); localStorage.setItem('theme', dark ? 'dark' : 'light')"
+                class="p-2 text-text-muted hover:text-text transition-colors"
+                title="Toggle theme"
+            >
+                <svg x-show="dark" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                <svg x-show="!dark" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+            </button>
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 text-timerbot-neon hover:text-timerbot-lime transition-colors" style="font-family: var(--font-display);">
+                <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                <svg x-show="mobileMenuOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
     </div>
 
     <!-- Mobile Dropdown Menu -->

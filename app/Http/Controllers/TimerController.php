@@ -75,6 +75,12 @@ class TimerController extends Controller
         // Handle group: use existing or create new
         $groupId = $this->resolveGroup($request, $user);
 
+        $warnings = $validated['warnings'] ?? null;
+        if ($warnings) {
+            usort($warnings, fn ($a, $b) => $b['seconds_before'] <=> $a['seconds_before']);
+            $warnings = array_values($warnings);
+        }
+
         $timer = Timer::create([
             'name' => $validated['name'],
             'visibility' => $validated['visibility'],
@@ -84,7 +90,7 @@ class TimerController extends Controller
             'participant_count' => $validated['participant_count'],
             'participant_term' => $validated['participant_term'] ?? 'speaker',
             'participant_term_plural' => $validated['participant_term_plural'] ?? 'speakers',
-            'warnings' => $validated['warnings'] ?? null,
+            'warnings' => $warnings,
             'message' => $validated['message'] ?? null,
         ]);
 
@@ -187,6 +193,12 @@ class TimerController extends Controller
         // Handle group: use existing or create new
         $groupId = $this->resolveGroup($request, $user);
 
+        $warnings = $validated['warnings'] ?? null;
+        if ($warnings) {
+            usort($warnings, fn ($a, $b) => $b['seconds_before'] <=> $a['seconds_before']);
+            $warnings = array_values($warnings);
+        }
+
         $timer->update([
             'name' => $validated['name'],
             'visibility' => $validated['visibility'],
@@ -195,7 +207,7 @@ class TimerController extends Controller
             'participant_count' => $validated['participant_count'],
             'participant_term' => $validated['participant_term'] ?? 'speaker',
             'participant_term_plural' => $validated['participant_term_plural'] ?? 'speakers',
-            'warnings' => $validated['warnings'] ?? null,
+            'warnings' => $warnings,
             'message' => $validated['message'] ?? null,
         ]);
 

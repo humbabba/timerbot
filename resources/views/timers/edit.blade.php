@@ -344,7 +344,7 @@
                     Cancel
                 </a>
                 @if($timer->canRun(auth()->user()))
-                    <a href="{{ route('timers.run', $timer) }}" class="btn bg-timerbot-neon text-timerbot-black hover:bg-timerbot-lime no-underline">
+                    <a href="{{ route('timers.run', $timer) }}" class="btn btn-primary no-underline">
                         Run Timer
                     </a>
                 @endif

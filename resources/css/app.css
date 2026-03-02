@@ -262,20 +262,20 @@
 }
 
 .save-indicator--unsaved {
-    background: transparent;
+    background: #000000;
     color: var(--color-timerbot-red);
     border: 1px solid var(--color-timerbot-red);
     animation: pulse-unsaved 2s ease-in-out infinite;
 }
 
 .save-indicator--saved {
-    background: transparent;
+    background: #000000;
     color: var(--color-timerbot-green);
     border: 1px solid var(--color-timerbot-green);
 }
 
 .save-indicator--saving {
-    background: transparent;
+    background: #000000;
     color: var(--color-timerbot-neon);
     border: 1px solid var(--color-timerbot-neon);
 }
@@ -431,4 +431,232 @@ body {
 /* Panel: green wireframe border */
 .bg-timerbot-panel-light {
     border: 1px solid var(--color-timerbot-green);
+}
+
+/* ===========================
+   LIGHT THEME
+   =========================== */
+[data-theme="light"] {
+    /* Backgrounds */
+    --color-timerbot-black: #ffffff;
+    --color-timerbot-dark: #f8fafc;
+    --color-timerbot-panel: #ffffff;
+    --color-timerbot-panel-light: #f1f5f9;
+
+    /* Accent colors - vibrant and readable on white */
+    --color-timerbot-neon: #16a34a;
+    --color-timerbot-lime: #65a30d;
+    --color-timerbot-emerald: #059669;
+    --color-timerbot-mint: #0891b2;
+    --color-timerbot-seafoam: #0d9488;
+
+    /* Semantic colors */
+    --color-primary: #16a34a;
+    --color-primary-dark: #15803d;
+    --color-secondary: #0891b2;
+    --color-secondary-dark: #0e7490;
+    --color-tertiary: #65a30d;
+    --color-tertiary-dark: #4d7c0f;
+
+    /* UI colors */
+    --color-dark-green: #e2e8f0;
+    --color-dim-green: #94a3b8;
+    --color-red: #ef4444;
+    --color-green: #16a34a;
+    --color-timerbot-red: #ef4444;
+    --color-timerbot-green: #16a34a;
+    --color-text: #0f172a;
+    --color-text-muted: #64748b;
+}
+
+/* Light theme - structural borders (black lines) */
+[data-theme="light"] .timerbot-panel {
+    border-color: #cbd5e1;
+}
+
+[data-theme="light"] .bg-timerbot-panel-light {
+    border-color: #cbd5e1;
+}
+
+[data-theme="light"] .timerbot-bar {
+    background: #1e293b;
+    box-shadow: none;
+}
+
+/* Light theme - remove glow effects from headings */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3 {
+    color: #0f172a;
+    text-shadow: none;
+}
+
+/* Light theme - links (exclude buttons so their text colors aren't overridden) */
+[data-theme="light"] a:not(.btn):not([class*="bg-timerbot-"]) {
+    color: #0891b2;
+}
+
+[data-theme="light"] a:not(.btn):not([class*="bg-timerbot-"]):hover {
+    color: #0e7490;
+    text-shadow: none;
+}
+
+/* Light theme - colorful filled buttons */
+[data-theme="light"] .btn:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .btn-primary {
+    background: #16a34a;
+    color: #ffffff;
+    border-color: #16a34a;
+}
+
+[data-theme="light"] .btn-primary:hover {
+    background: #15803d;
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.3);
+}
+
+[data-theme="light"] .btn-secondary {
+    background: #0891b2;
+    color: #ffffff;
+    border-color: #0891b2;
+}
+
+[data-theme="light"] .btn-secondary:hover {
+    background: #0e7490;
+    color: #ffffff;
+}
+
+[data-theme="light"] .btn-danger:hover {
+    background: #dc2626;
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+}
+
+/* Light theme - form elements */
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="email"],
+[data-theme="light"] input[type="number"],
+[data-theme="light"] input[type="password"],
+[data-theme="light"] input[type="time"],
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] textarea:focus,
+[data-theme="light"] select:focus {
+    border-color: #0891b2;
+    box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.15);
+}
+
+[data-theme="light"] input[type="date"] {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+[data-theme="light"] input[type="date"]:focus {
+    border-color: #0891b2;
+    box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.15);
+}
+
+[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: none;
+}
+
+/* Light theme - tables */
+[data-theme="light"] th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+[data-theme="light"] td {
+    border-bottom-color: #e2e8f0;
+}
+
+/* Light theme - scrollbar */
+[data-theme="light"] ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Light theme - save indicator */
+[data-theme="light"] .save-indicator--unsaved {
+    background: #ffffff;
+}
+
+[data-theme="light"] .save-indicator--saved {
+    background: #ffffff;
+}
+
+[data-theme="light"] .save-indicator--saving {
+    background: #ffffff;
+}
+
+/* Light theme - Trix editor */
+[data-theme="light"] trix-toolbar {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+[data-theme="light"] trix-toolbar .trix-button-group {
+    background-color: #f1f5f9;
+}
+
+[data-theme="light"] trix-toolbar .trix-button {
+    color: #0f172a;
+}
+
+[data-theme="light"] trix-toolbar .trix-button:hover {
+    background-color: #e2e8f0;
+}
+
+[data-theme="light"] trix-toolbar .trix-button.trix-active {
+    background-color: #0891b2;
+    color: #ffffff;
+}
+
+[data-theme="light"] trix-toolbar .trix-button::before {
+    filter: none;
+}
+
+[data-theme="light"] trix-toolbar .trix-button.trix-active::before {
+    filter: invert(1);
+}
+
+[data-theme="light"] trix-editor {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+[data-theme="light"] trix-editor:focus {
+    border-color: #0891b2;
+    box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.15);
+}
+
+[data-theme="light"] trix-editor a {
+    color: #0891b2;
+}
+
+/* Light theme - disable CRT effects */
+[data-theme="light"] body::after {
+    display: none;
+}
+
+[data-theme="light"] body {
+    animation: none;
 }
