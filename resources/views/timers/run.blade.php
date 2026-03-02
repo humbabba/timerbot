@@ -60,9 +60,12 @@
         </div>
 
         <!-- Controls -->
-        <div class="mb-8 flex flex-wrap justify-center gap-3 md:gap-4">
+        <div class="mb-2 flex flex-wrap justify-center gap-3 md:gap-4">
             <button id="btn-start" onclick="timerApp.start()" class="btn btn-primary text-lg px-6 md:px-8 py-3">
                 Start
+            </button>
+            <button id="btn-prev" onclick="timerApp.previousSpeaker()" class="hidden btn bg-timerbot-panel-light text-timerbot-neon hover:bg-timerbot-neon hover:text-timerbot-black text-lg px-6 md:px-8 py-3">
+                Prev {{ ucfirst($timer->participant_term) }}
             </button>
             <button id="btn-next" onclick="timerApp.nextSpeaker()" class="hidden btn bg-timerbot-neon text-timerbot-black hover:bg-timerbot-lime text-lg px-6 md:px-8 py-3">
                 Next {{ ucfirst($timer->participant_term) }}
@@ -72,6 +75,11 @@
             </button>
             <button id="btn-stop" onclick="timerApp.stop()" class="hidden btn bg-timerbot-red text-white hover:bg-timerbot-red/80 text-lg px-6 md:px-8 py-3">
                 Stop
+            </button>
+        </div>
+        <div class="mb-8 flex justify-center">
+            <button id="btn-undo" onclick="timerApp.undoNextSpeaker()" class="hidden btn bg-timerbot-panel-light text-text-muted hover:text-timerbot-lime hover:bg-timerbot-panel text-xs px-24 py-1.5 uppercase tracking-wider" style="font-family: var(--font-display);">
+                Undo
             </button>
         </div>
 
@@ -96,7 +104,7 @@
 
         <!-- Completed Message -->
         <div id="completed-section" class="hidden mb-8 p-4 md:p-8 bg-timerbot-panel-light rounded-sm text-center border-2 border-timerbot-green">
-            <h2 class="text-timerbot-green text-2xl font-bold mb-2" style="font-family: var(--font-display);">Meeting Complete</h2>
+            <h2 class="text-timerbot-green text-2xl font-bold mb-2" style="font-family: var(--font-display);">Meeting complete</h2>
             <p class="text-text-muted">All {{ $timer->participant_term_plural }} have finished.</p>
         </div>
     </div>
@@ -109,6 +117,7 @@
             'participant_term' => $timer->participant_term,
             'participant_term_plural' => $timer->participant_term_plural,
             'warnings' => $timer->warnings ?? [],
+            'overtime_reset_minutes' => $timer->overtime_reset_minutes,
             'state_url' => route('timers.state.update', $timer),
             'settings_url' => route('timers.settings.update', $timer),
             'lock_release_url' => route('timers.lock.release', $timer),

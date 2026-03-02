@@ -15,7 +15,9 @@
     const speakerCountdownEl = document.getElementById('speaker-countdown');
     const speakerStatusEl    = document.getElementById('speaker-status');
     const btnStart           = document.getElementById('btn-start');
+    const btnPrev            = document.getElementById('btn-prev');
     const btnNext            = document.getElementById('btn-next');
+    const btnUndo            = document.getElementById('btn-undo');
     const btnPause           = document.getElementById('btn-pause');
     const btnStop            = document.getElementById('btn-stop');
     const historySection     = document.getElementById('history-section');
@@ -39,6 +41,11 @@
     let totalPausedMs        = 0;
     let running              = false;
     let completed            = false;
+
+    // ── Undo state ──
+    let undoState                = null;
+    let undoTimeout              = null;
+    let undoCountdownInterval    = null;
 
     // Parse a time-of-day string into a future timestamp.
     // If the time is already past and the timer isn't actively running, assume tomorrow.
@@ -314,6 +321,30 @@
         setTimeout(() => speakerPanel.classList.remove('animate-pulse'), 600);
     }
 
+    function updatePrevBtnVisibility() {
+        if (running && !completed) {
+            btnPrev.classList.remove('hidden');
+            if (currentSpeaker > 0) {
+                btnPrev.disabled = false;
+                btnPrev.classList.remove('opacity-30', 'cursor-not-allowed');
+            } else {
+                btnPrev.disabled = true;
+                btnPrev.classList.add('opacity-30', 'cursor-not-allowed');
+            }
+        } else {
+            btnPrev.classList.add('hidden');
+        }
+    }
+
+    function clearUndo() {
+        clearTimeout(undoTimeout);
+        clearInterval(undoCountdownInterval);
+        undoState = null;
+        undoTimeout = null;
+        undoCountdownInterval = null;
+        btnUndo.classList.add('hidden');
+    }
+
     function updateSpeakerColor(remainMs) {
         speakerCountdownEl.classList.remove('text-timerbot-green', 'text-timerbot-neon', 'text-timerbot-red');
         speakerPanel.classList.remove('border-timerbot-green', 'border-timerbot-neon', 'border-timerbot-red');
@@ -539,7 +570,9 @@
         running = false;
         completed = true;
         clearInterval(speakerTick);
+        clearUndo();
         speakerPanel.classList.add('hidden');
+        btnPrev.classList.add('hidden');
         btnNext.classList.add('hidden');
         btnPause.classList.add('hidden');
         completedSection.classList.remove('hidden');
@@ -551,11 +584,14 @@
         btnNext.classList.remove('hidden');
         btnPause.classList.remove('hidden');
         btnStop.classList.remove('hidden');
+        updatePrevBtnVisibility();
     }
 
     function showIdleUI() {
         btnStart.classList.remove('hidden');
+        btnPrev.classList.add('hidden');
         btnNext.classList.add('hidden');
+        btnUndo.classList.add('hidden');
         btnPause.classList.add('hidden');
         btnStop.classList.add('hidden');
         speakerPanel.classList.add('hidden');
@@ -634,6 +670,7 @@
 
             // Show running UI
             showRunningUI();
+            updatePrevBtnVisibility();
             speakerPanel.classList.remove('hidden');
             speakerNumberEl.textContent = currentSpeaker + 1;
             speakerCountdownEl.classList.remove('animate-pulse');
@@ -662,6 +699,20 @@
 
         nextSpeaker() {
             if (!running) return;
+
+            // Save undo state before anything changes
+            clearUndo();
+            const undoWindowMs = Math.min(10000, speakerAllottedMs, Math.max(0, remainingMeetingMs()));
+            undoState = {
+                currentSpeaker,
+                speakerStartMs,
+                speakerAllottedMs,
+                totalPausedMs,
+                pauseStartMs,
+                paused,
+                firedWarningsSnapshot: new Set(firedWarnings),
+            };
+
             recordHistory();
 
             currentSpeaker++;
@@ -673,6 +724,99 @@
             clearInterval(speakerTick);
             startSpeaker();
             speakerTick = setInterval(tickSpeaker, 100);
+            updatePrevBtnVisibility();
+            syncState();
+
+            // Show undo button with countdown
+            let undoSecsLeft = Math.ceil(undoWindowMs / 1000);
+            btnUndo.textContent = `Undo (${undoSecsLeft})`;
+            btnUndo.classList.remove('hidden');
+            const undoExpiresAt = Date.now() + undoWindowMs;
+            undoCountdownInterval = setInterval(() => {
+                const secs = Math.ceil((undoExpiresAt - Date.now()) / 1000);
+                if (secs <= 0) {
+                    clearUndo();
+                    return;
+                }
+                btnUndo.textContent = `Undo (${secs})`;
+            }, 1000);
+            undoTimeout = setTimeout(() => clearUndo(), undoWindowMs);
+        },
+
+        previousSpeaker() {
+            if (!running || currentSpeaker === 0) return;
+
+            clearUndo();
+
+            // Pop last history entry (the speaker we're going back to)
+            history.pop();
+            if (historyBody.lastElementChild) {
+                historyBody.removeChild(historyBody.lastElementChild);
+            }
+            if (history.length === 0) historySection.classList.add('hidden');
+
+            // Clear fired warnings for both current speaker and the one we're going back to
+            const currIdx = currentSpeaker;
+            const prevIdx = currentSpeaker - 1;
+            firedWarnings = new Set([...firedWarnings].filter(k =>
+                !k.startsWith(`${currIdx}-`) && !k.startsWith(`${prevIdx}-`)
+            ));
+
+            currentSpeaker--;
+
+            // Start fresh with recalculated time
+            clearInterval(speakerTick);
+            startSpeaker();
+            speakerTick = setInterval(tickSpeaker, 100);
+            updatePrevBtnVisibility();
+            syncState();
+        },
+
+        undoNextSpeaker() {
+            if (!undoState) return;
+
+            // Pop the history entry that was just recorded
+            history.pop();
+            if (historyBody.lastElementChild) {
+                historyBody.removeChild(historyBody.lastElementChild);
+            }
+            if (history.length === 0) historySection.classList.add('hidden');
+
+            // Restore exact state
+            currentSpeaker    = undoState.currentSpeaker;
+            speakerStartMs    = undoState.speakerStartMs;
+            speakerAllottedMs = undoState.speakerAllottedMs;
+            totalPausedMs     = undoState.totalPausedMs;
+            firedWarnings     = undoState.firedWarningsSnapshot;
+
+            if (undoState.paused) {
+                paused = true;
+                pauseStartMs = undoState.pauseStartMs;
+                btnPause.textContent = 'Resume';
+                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-mint');
+                btnPause.classList.add('bg-timerbot-neon', 'text-timerbot-black');
+                speakerStatusEl.textContent = 'Paused';
+            } else {
+                paused = false;
+                btnPause.textContent = 'Pause';
+                btnPause.classList.remove('bg-timerbot-neon', 'text-timerbot-black');
+                btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-mint');
+                speakerStatusEl.textContent = '';
+            }
+
+            // Update UI
+            speakerNumberEl.textContent = currentSpeaker + 1;
+            speakerPanel.classList.remove('hidden');
+            speakerCountdownEl.classList.remove('animate-pulse');
+            updateTimePerPersonLabel(speakerAllottedMs);
+
+            // Restart ticking
+            clearInterval(speakerTick);
+            tickSpeaker();
+            speakerTick = setInterval(tickSpeaker, 100);
+
+            clearUndo();
+            updatePrevBtnVisibility();
             syncState();
         },
 
@@ -722,6 +866,7 @@
             history.length = 0;
             firedWarnings.clear();
             clearInterval(speakerTick);
+            clearUndo();
 
             // Reset UI
             showIdleUI();
@@ -763,8 +908,16 @@
     // ── Init ──
     updateMeetingCountdown();
     updateTimePerPersonLabel(calcTimePerSpeaker());
+    const overtimeLimitMs = (config.overtime_reset_minutes || 5) * 60000;
+
     meetingTick = setInterval(() => {
         updateMeetingCountdown();
+        // Auto-complete when overtime reset limit is reached
+        if (running && !completed && Date.now() > endTime + overtimeLimitMs) {
+            recordHistory();
+            finishMeeting();
+            return;
+        }
         if (paused && running && speakerStartMs > 0) {
             // If meeting time drops below speaker's frozen time, tick it down with warnings
             const frozenMs = speakerRemainingMs();

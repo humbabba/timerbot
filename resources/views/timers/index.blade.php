@@ -92,7 +92,7 @@
                                 <a href="{{ route('timers.show', $timer) }}" class="text-timerbot-neon hover:text-timerbot-lime font-semibold">{{ $timer->name }}</a>
                             </td>
                             <td class="p-4 border-b border-dark-green/50"
-                                x-data="timerStatus({{ Js::from($timer->run_state) }}, {{ Js::from($timer->end_time) }}, {{ $timer->overtime_reset_minutes }})"
+                                x-data="timerStatus({{ Js::from($timer->run_state) }}, {{ Js::from($timer->end_time) }}, {{ $timer->overtime_reset_minutes }}, '{{ route('timers.state', $timer) }}')"
                                 x-init="start()"
                             >
                                 <span x-text="display" :class="colorClass" class="font-mono text-sm"></span>
@@ -174,17 +174,30 @@
         </div>
     </div>
     <script>
-    function timerStatus(runState, endTime, overtimeMinutes) {
+    function timerStatus(runState, endTime, overtimeMinutes, stateUrl) {
         return {
             display: '',
             colorClass: 'text-text-muted',
             interval: null,
+            pollInterval: null,
             runState: runState,
             endTime: endTime,
             overtimeLimitMs: overtimeMinutes * 60000,
+            stateUrl: stateUrl,
             start() {
                 this.tick();
                 this.interval = setInterval(() => this.tick(), 1000);
+                this.pollInterval = setInterval(() => this.poll(), 5000);
+            },
+            async poll() {
+                try {
+                    const res = await fetch(this.stateUrl, {
+                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    });
+                    if (!res.ok) return;
+                    const state = await res.json();
+                    this.runState = (!state || !state.status || state.status === 'idle' || state.status === 'completed') ? null : state;
+                } catch (e) {}
             },
             tick() {
                 const state = this.runState;
@@ -247,6 +260,7 @@
             },
             destroy() {
                 if (this.interval) clearInterval(this.interval);
+                if (this.pollInterval) clearInterval(this.pollInterval);
             }
         };
     }
