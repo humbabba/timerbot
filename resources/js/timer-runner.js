@@ -42,6 +42,13 @@
     let running              = false;
     let completed            = false;
 
+    // ── Clock offset (server time sync) ──
+    let clockOffset = 0;
+    function serverNow() { return Date.now() + clockOffset; }
+    function updateClockOffset(serverTimeMs) {
+        if (serverTimeMs) clockOffset = serverTimeMs - Date.now();
+    }
+
     // ── Undo state ──
     let undoState                = null;
     let undoTimeout              = null;
@@ -53,7 +60,7 @@
         const [ph, pm, ps] = timeStr.split(':').map(Number);
         const d = new Date();
         d.setHours(ph, pm, ps || 0, 0);
-        if (d.getTime() < Date.now() && !running && !completed) {
+        if (d.getTime() < serverNow() && !running && !completed) {
             d.setDate(d.getDate() + 1);
         }
         return d.getTime();
@@ -82,7 +89,7 @@
     }
 
     function remainingMeetingMs() {
-        return endTime - Date.now();
+        return endTime - serverNow();
     }
 
     function calcTimePerSpeaker() {
@@ -184,7 +191,10 @@
             if (res.status === 423) {
                 res.json().then(data => handleLockLost(data.locked_by_name));
             } else if (res.ok) {
-                res.json().then(data => applySettingsFromServer(data));
+                res.json().then(data => {
+                    updateClockOffset(data.server_time_ms);
+                    applySettingsFromServer(data);
+                });
             }
         }).catch(() => {});
     }
@@ -208,7 +218,10 @@
                 if (res.status === 423) {
                     res.json().then(data => handleLockLost(data.locked_by_name));
                 } else if (res.ok) {
-                    res.json().then(data => applySettingsFromServer(data));
+                    res.json().then(data => {
+                        updateClockOffset(data.server_time_ms);
+                        applySettingsFromServer(data);
+                    });
                 }
             }).catch(() => {});
         }
@@ -549,7 +562,7 @@
         if (paused) {
             return pauseStartMs - speakerStartMs - totalPausedMs;
         }
-        return Date.now() - speakerStartMs - totalPausedMs;
+        return serverNow() - speakerStartMs - totalPausedMs;
     }
 
     function speakerRemainingMs() {
@@ -587,7 +600,7 @@
     // ── Actions ──
     function startSpeaker() {
         speakerAllottedMs = calcTimePerSpeaker();
-        speakerStartMs    = Date.now();
+        speakerStartMs    = serverNow();
         totalPausedMs     = 0;
         paused            = false;
 
@@ -667,6 +680,7 @@
             if (!res.ok) return;
 
             const state = await res.json();
+            updateClockOffset(state.server_time_ms);
             if (!state || !state.status || state.status === 'idle') {
                 // Nothing to restore — sync current settings for show page
                 syncState();
@@ -715,7 +729,7 @@
             running = true;
             currentSpeaker = (state.current_speaker || 1) - 1;
             speakerAllottedMs = state.speaker_allotted_ms || 0;
-            speakerStartMs = state.speaker_started_at || Date.now();
+            speakerStartMs = state.speaker_started_at || serverNow();
             totalPausedMs = state.total_paused_ms || 0;
 
             if (state.status === 'paused' && state.paused_at) {
@@ -884,7 +898,7 @@
 
             if (paused) {
                 // Resume — account for pause duration, speaker keeps their frozen time
-                totalPausedMs += Date.now() - pauseStartMs;
+                totalPausedMs += serverNow() - pauseStartMs;
                 paused = false;
 
                 // Cap speaker time if meeting dropped below during pause
@@ -902,7 +916,7 @@
                 speakerStatusEl.textContent = '';
             } else {
                 // Pause
-                pauseStartMs = Date.now();
+                pauseStartMs = serverNow();
                 paused = true;
                 btnPause.textContent = 'Resume';
                 btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-teal');
@@ -1011,7 +1025,7 @@
     meetingTick = setInterval(() => {
         updateMeetingCountdown();
         // Auto-complete when overtime reset limit is reached
-        if (running && !completed && Date.now() > endTime + overtimeLimitMs) {
+        if (running && !completed && serverNow() > endTime + overtimeLimitMs) {
             recordHistory();
             finishMeeting();
             return;

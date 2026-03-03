@@ -158,6 +158,8 @@ class TimerController extends Controller
             $state['locked_by_name'] = null;
         }
 
+        $state['server_time_ms'] = round(microtime(true) * 1000);
+
         return response()->json($state);
     }
 
@@ -190,6 +192,7 @@ class TimerController extends Controller
             'success' => true,
             'end_time' => $timer->end_time,
             'participant_count' => $timer->participant_count,
+            'server_time_ms' => round(microtime(true) * 1000),
         ]);
     }
 

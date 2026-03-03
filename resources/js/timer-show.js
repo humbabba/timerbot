@@ -11,12 +11,19 @@
     const termPlural   = config.participant_term_plural || 'speakers';
     const termSingularUc = termSingular.charAt(0).toUpperCase() + termSingular.slice(1);
 
+    // ── Clock offset (server time sync) ──
+    let clockOffset = 0;
+    function serverNow() { return Date.now() + clockOffset; }
+    function updateClockOffset(serverTimeMs) {
+        if (serverTimeMs) clockOffset = serverTimeMs - Date.now();
+    }
+
     // Compute initial end time from config
     // If the end time is already past, assume tomorrow's meeting
     const [h, m, s] = config.end_time.split(':').map(Number);
     const endDate = new Date();
     endDate.setHours(h, m, s || 0, 0);
-    if (endDate.getTime() < Date.now()) {
+    if (endDate.getTime() < serverNow()) {
         endDate.setDate(endDate.getDate() + 1);
     }
     let endTimeMs = endDate.getTime();
@@ -73,6 +80,7 @@
             });
             if (res.ok) {
                 const data = await res.json();
+                updateClockOffset(data.server_time_ms);
                 serverState = data;
 
                 // Update end time if changed from run page
@@ -82,7 +90,7 @@
                     const [ph, pm] = data.end_time.split(':').map(Number);
                     const d = new Date();
                     d.setHours(ph, pm, 0, 0);
-                    if (d.getTime() < Date.now() && (!data.status || data.status === 'idle')) {
+                    if (d.getTime() < serverNow() && (!data.status || data.status === 'idle')) {
                         d.setDate(d.getDate() + 1);
                     }
                     endTimeMs = d.getTime();
@@ -103,7 +111,7 @@
 
     // ── Render ──
     function render() {
-        const now = Date.now();
+        const now = serverNow();
 
         // Current time
         currentTimeEl.textContent = formatClock(new Date());
