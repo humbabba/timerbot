@@ -905,6 +905,45 @@
         }
     });
 
+    // ── Wake Lock ──
+    const wakeLockToggle = document.getElementById('wake-lock-toggle');
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+                wakeLock.addEventListener('release', () => {
+                    wakeLock = null;
+                    wakeLockToggle.checked = false;
+                });
+            }
+        } catch (e) {
+            wakeLockToggle.checked = false;
+        }
+    }
+
+    function releaseWakeLock() {
+        if (wakeLock) {
+            wakeLock.release();
+            wakeLock = null;
+        }
+    }
+
+    wakeLockToggle.addEventListener('change', () => {
+        if (wakeLockToggle.checked) {
+            requestWakeLock();
+        } else {
+            releaseWakeLock();
+        }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && wakeLockToggle.checked && !wakeLock) {
+            requestWakeLock();
+        }
+    });
+
     // ── Init ──
     updateMeetingCountdown();
     updateTimePerPersonLabel(calcTimePerSpeaker());

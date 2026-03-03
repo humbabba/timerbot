@@ -30,7 +30,7 @@
             </div>
             <div class="mt-4 flex flex-wrap justify-center items-center gap-4 md:gap-6 text-text-muted text-sm">
                 <label class="flex items-center gap-2">
-                    End Time
+                    End time
                     <input type="time" id="setting-end-time" value="{{ $timer->end_time }}" class="bg-timerbot-panel border border-divider rounded px-2 py-1 text-text text-sm w-30">
                 </label>
                 <label class="flex items-center gap-2">
@@ -106,6 +106,14 @@
         <div id="completed-section" class="hidden mb-8 p-4 md:p-8 bg-timerbot-panel-light rounded-sm text-center border-2 border-timerbot-green">
             <h2 class="text-timerbot-green text-2xl font-bold mb-2" style="font-family: var(--font-display);">Meeting complete</h2>
             <p class="text-text-muted">All {{ $timer->participant_term_plural }} have finished.</p>
+        </div>
+
+        <!-- Wake Lock -->
+        <div class="text-center mt-4">
+            <label class="inline-flex items-center gap-2 cursor-pointer text-text-muted text-sm">
+                <input type="checkbox" id="wake-lock-toggle" class="accent-timerbot-green">
+                <span>Keep screen awake</span>
+            </label>
         </div>
     </div>
 

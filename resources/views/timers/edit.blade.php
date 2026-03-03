@@ -222,7 +222,7 @@
             </div>
 
             <div class="mb-6">
-                <label for="end_time" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">End Time</label>
+                <label for="end_time" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">End time</label>
                 <input
                     type="time"
                     id="end_time"

@@ -149,7 +149,7 @@
                         </p>
                     @endauth
                     <p>
-                        Click any column header (Name, Visibility, End Time, or Participants) to sort the table.
+                        Click any column header (Name, Visibility, End time, or Participants) to sort the table.
                         Click the same header again to reverse the sort direction. The Status, Group, and Actions columns are not sortable.
                     </p>
 
@@ -162,7 +162,7 @@
                             <li><strong>Name</strong> &mdash; A descriptive name for the timer (required).</li>
                             <li><strong>Visibility</strong> &mdash; <em>Public</em> (anyone with the link can view) or <em>Private</em> (only group members and app admins).</li>
                             <li><strong>Group</strong> &mdash; Create a new group or select an existing one. Groups control who can run and manage the timer.</li>
-                            <li><strong>End Time</strong> &mdash; The time the meeting should end (HH:MM format).</li>
+                            <li><strong>End time</strong> &mdash; The time the meeting should end (HH:MM format).</li>
                             <li><strong>Participants</strong> &mdash; The number of participants (1&ndash;999).</li>
                             <li><strong>Participant Term</strong> &mdash; Custom labels for participants (singular and plural), e.g. "presenter" / "presenters". Defaults to "speaker" / "speakers".</li>
                             <li><strong>Overtime Limit</strong> &mdash; How many minutes past the meeting end time the timer is allowed to run before automatically resetting to idle (1&ndash;59 minutes). This prevents a forgotten timer from running indefinitely.</li>
@@ -233,7 +233,7 @@
                             While running, you can adjust settings on the fly:
                         </p>
                         <ul class="list-disc list-inside ml-4 space-y-1">
-                            <li><strong>End Time</strong> &mdash; Shift the meeting end time. The per-participant allocation recalculates instantly.</li>
+                            <li><strong>End time</strong> &mdash; Shift the meeting end time. The per-participant allocation recalculates instantly.</li>
                             <li><strong>Participant Count</strong> &mdash; Add or reduce participants (cannot reduce below the current participant + 1). Time is redistributed automatically.</li>
                         </ul>
 

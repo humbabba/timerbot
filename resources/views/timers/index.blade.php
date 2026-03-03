@@ -83,7 +83,7 @@
                         <x-sort-header column="name" label="Name" :sort="$sort" :direction="$direction" />
                         <th class="p-4 text-left border-b border-divider">Status</th>
                         <x-sort-header column="visibility" label="Visibility" :sort="$sort" :direction="$direction" />
-                        <x-sort-header column="end_time" label="End Time" :sort="$sort" :direction="$direction" />
+                        <x-sort-header column="end_time" label="End time" :sort="$sort" :direction="$direction" />
                         <x-sort-header column="participant_count" label="Participants" :sort="$sort" :direction="$direction" />
                         <th class="p-4 text-left border-b border-divider">Group</th>
                         <th class="p-4 text-left border-b border-divider w-80">Actions</th>
