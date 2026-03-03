@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'starting_view',
+        'theme',
         'last_login_at',
         'news_viewed_at',
     ];

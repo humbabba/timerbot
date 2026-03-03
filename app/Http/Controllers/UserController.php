@@ -136,6 +136,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'starting_view' => ['nullable', 'string', 'in:' . implode(',', array_keys(self::getStartingViewsForUser($user)))],
+            'theme' => ['nullable', 'in:light,dark'],
         ];
 
         // Only allow role changes if user has users.edit permission
@@ -153,6 +154,7 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'starting_view' => $validated['starting_view'] ?? null,
+            'theme' => $validated['theme'] ?? null,
         ]);
 
         if (auth()->user()->hasPermission('users.edit') && isset($validated['role'])) {
@@ -164,6 +166,17 @@ class UserController extends Controller
         }
 
         return redirect()->route('users.show', $user)->with('status', 'User updated successfully.');
+    }
+
+    public function updateTheme(Request $request)
+    {
+        $validated = $request->validate([
+            'theme' => 'required|in:light,dark',
+        ]);
+
+        $request->user()->update(['theme' => $validated['theme']]);
+
+        return response()->json(['success' => true]);
     }
 
     public function destroy(User $user)

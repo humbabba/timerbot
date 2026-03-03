@@ -64,6 +64,18 @@
                         @endforeach
                     </select>
                 </div>
+
+                <div class="mb-6">
+                    <label for="theme" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Theme</label>
+                    <select
+                        id="theme"
+                        name="theme"
+                        class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
+                    >
+                        <option value="light" {{ old('theme', $user->theme ?? 'light') === 'light' ? 'selected' : '' }}>Light</option>
+                        <option value="dark" {{ old('theme', $user->theme ?? 'light') === 'dark' ? 'selected' : '' }}>Dark</option>
+                    </select>
+                </div>
             @endif
 
             @if(auth()->user()->hasPermission('users.edit'))

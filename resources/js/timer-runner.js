@@ -120,27 +120,35 @@
     // ── Server state sync ──
     function applySettingsFromServer(data) {
         if (!data) return;
-        // Check if end_time or participant_count changed in DB (e.g. via edit page)
-        if (data.end_time && data.end_time !== endTimeStr) {
-            endTimeStr = data.end_time;
-            endTime = parseEndTime(data.end_time);
-            if (settingEndTimeEl) settingEndTimeEl.value = data.end_time;
-            updateMeetingCountdown();
-            if (running && !completed) {
-                speakerAllottedMs = calcTimePerSpeaker();
-            }
-            updateTimePerPersonLabel(running ? speakerAllottedMs : calcTimePerSpeaker());
+
+        const newEndTime = data.end_time;
+        const newCount = data.participant_count;
+
+        // Compare parsed ms value for end_time to avoid HH:MM vs HH:MM:SS format issues
+        const endTimeChanged = newEndTime && parseEndTime(newEndTime) !== endTime;
+        const countChanged = newCount && newCount !== totalSpeakers;
+
+        if (!endTimeChanged && !countChanged) return;
+
+        // Defer end time update only while the user is actively editing (input within last 3s)
+        const applyEndTime = endTimeChanged && !endTimeEditing;
+
+        if (!applyEndTime && !countChanged) return;
+
+        // Update setting inputs before applying
+        if (applyEndTime && settingEndTimeEl) {
+            settingEndTimeEl.value = newEndTime;
         }
-        if (data.participant_count && data.participant_count !== totalSpeakers) {
-            const minParticipants = running ? currentSpeaker + 1 : 1;
-            totalSpeakers = Math.max(data.participant_count, minParticipants);
-            speakerTotalEl.textContent = totalSpeakers;
-            if (settingParticipants) settingParticipants.value = totalSpeakers;
-            if (running && !completed) {
-                speakerAllottedMs = calcTimePerSpeaker();
-            }
-            updateTimePerPersonLabel(running ? speakerAllottedMs : calcTimePerSpeaker());
+        if (countChanged && settingParticipants) {
+            settingParticipants.value = newCount;
         }
+
+        // Apply via the same code path used for local changes (skip server persist)
+        updateSettings(
+            countChanged ? newCount : totalSpeakers,
+            applyEndTime ? newEndTime : endTimeStr,
+            false
+        );
     }
 
     function syncState() {
@@ -455,7 +463,9 @@
     const settingEndTimeEl     = document.getElementById('setting-end-time');
     const settingParticipants  = document.getElementById('setting-participants');
 
-    function updateSettings(newParticipants, newEndTimeStr) {
+    function updateSettings(newParticipants, newEndTimeStr, persistToServer) {
+        if (persistToServer === undefined) persistToServer = true;
+
         // Guard: can't reduce below speakers already done + 1 (current speaker)
         const minParticipants = running ? currentSpeaker + 1 : 1;
         if (newParticipants < minParticipants) {
@@ -479,6 +489,8 @@
         updateTimePerPersonLabel(running ? speakerAllottedMs : calcTimePerSpeaker());
         updateMeetingCountdown();
 
+        if (!persistToServer) return;
+
         // Persist to server
         if (config.settings_url) {
             fetch(config.settings_url, {
@@ -499,16 +511,34 @@
         syncState();
     }
 
+    // Apply settings only on blur so mid-edit intermediate values
+    // (e.g. :30 → :04 → :40) never get sent to the server.
+    // Track "actively editing" — true while the user has had input within the last 3s.
+    // Server updates are deferred while this flag is set, but once the user stops
+    // typing for 3s the flag clears and server updates flow through even if the
+    // field is still focused.
+    let endTimeEditing = false;
+    let endTimeEditTimer = null;
+
     if (settingEndTimeEl) {
-        settingEndTimeEl.addEventListener('change', () => {
-            updateSettings(totalSpeakers, settingEndTimeEl.value);
+        settingEndTimeEl.addEventListener('input', () => {
+            endTimeEditing = true;
+            clearTimeout(endTimeEditTimer);
+            endTimeEditTimer = setTimeout(() => { endTimeEditing = false; }, 3000);
+        });
+        settingEndTimeEl.addEventListener('blur', () => {
+            endTimeEditing = false;
+            clearTimeout(endTimeEditTimer);
+            if (parseEndTime(settingEndTimeEl.value) !== endTime) {
+                updateSettings(totalSpeakers, settingEndTimeEl.value);
+            }
         });
     }
 
     if (settingParticipants) {
-        settingParticipants.addEventListener('change', () => {
+        settingParticipants.addEventListener('blur', () => {
             const val = parseInt(settingParticipants.value, 10);
-            if (!isNaN(val)) {
+            if (!isNaN(val) && val !== totalSpeakers) {
                 updateSettings(val, settingEndTimeEl.value);
             }
         });

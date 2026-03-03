@@ -79,7 +79,8 @@ class TimerController extends Controller
             'participant_count' => 'required|integer|min:1|max:999',
             'participant_term' => 'nullable|string|max:50',
             'participant_term_plural' => 'nullable|string|max:50',
-            'overtime_reset_minutes' => 'required|integer|min:1|max:59',
+            'overtime_reset_minutes' => 'required|integer|min:1|max:60',
+            'undo_duration_seconds' => 'required|integer|min:1|max:60',
             'warnings' => 'nullable|array',
             'warnings.*.seconds_before' => 'required_with:warnings|integer|min:-3600|max:3600',
             'warnings.*.sound' => 'required_with:warnings|in:alarm,bell,beep,chime,ding,twang,warning',
@@ -112,6 +113,7 @@ class TimerController extends Controller
             'participant_term' => $validated['participant_term'] ?? 'speaker',
             'participant_term_plural' => $validated['participant_term_plural'] ?? 'speakers',
             'overtime_reset_minutes' => $validated['overtime_reset_minutes'],
+            'undo_duration_seconds' => $validated['undo_duration_seconds'],
             'warnings' => $warnings,
             'message' => $validated['message'] ?? null,
         ]);
@@ -148,6 +150,14 @@ class TimerController extends Controller
         $state['participant_term'] = $timer->participant_term;
         $state['participant_term_plural'] = $timer->participant_term_plural;
 
+        // Include lock info so edit page can show who's running
+        if ($timer->isLocked()) {
+            $timer->load('lockedByUser');
+            $state['locked_by_name'] = $timer->lockedByUser?->name;
+        } else {
+            $state['locked_by_name'] = null;
+        }
+
         return response()->json($state);
     }
 
@@ -172,6 +182,9 @@ class TimerController extends Controller
         $state = $request->input('state');
         $state['synced_at'] = round(microtime(true) * 1000);
         $timer->update(['run_state' => $state]);
+
+        // Refresh to pick up any changes made by the edit page since this request started
+        $timer->refresh();
 
         return response()->json([
             'success' => true,
@@ -215,7 +228,8 @@ class TimerController extends Controller
             'participant_count' => 'required|integer|min:1|max:999',
             'participant_term' => 'nullable|string|max:50',
             'participant_term_plural' => 'nullable|string|max:50',
-            'overtime_reset_minutes' => 'required|integer|min:1|max:59',
+            'overtime_reset_minutes' => 'required|integer|min:1|max:60',
+            'undo_duration_seconds' => 'required|integer|min:1|max:60',
             'warnings' => 'nullable|array',
             'warnings.*.seconds_before' => 'required_with:warnings|integer|min:-3600|max:3600',
             'warnings.*.sound' => 'required_with:warnings|in:alarm,bell,beep,chime,ding,twang,warning',
@@ -245,6 +259,7 @@ class TimerController extends Controller
             'participant_term' => $validated['participant_term'] ?? 'speaker',
             'participant_term_plural' => $validated['participant_term_plural'] ?? 'speakers',
             'overtime_reset_minutes' => $validated['overtime_reset_minutes'],
+            'undo_duration_seconds' => $validated['undo_duration_seconds'],
             'warnings' => $warnings,
             'message' => $validated['message'] ?? null,
         ]);

@@ -262,18 +262,36 @@
             </div>
 
             <div class="mb-6">
-                <label for="overtime_reset_minutes" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Overtime Reset</label>
-                <p class="text-text-muted text-sm mb-4">Automatically reset the timer if left running this many minutes past the end time.</p>
-                <input
-                    type="number"
-                    id="overtime_reset_minutes"
-                    name="overtime_reset_minutes"
-                    value="{{ old('overtime_reset_minutes', 5) }}"
-                    required
-                    min="1"
-                    max="59"
-                    class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
-                >
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label for="overtime_reset_minutes" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Overtime Reset (minutes)</label>
+                        <p class="text-text-muted text-sm mb-4">Auto-reset if left running this many minutes past the end time.</p>
+                        <input
+                            type="number"
+                            id="overtime_reset_minutes"
+                            name="overtime_reset_minutes"
+                            value="{{ old('overtime_reset_minutes', 5) }}"
+                            required
+                            min="1"
+                            max="60"
+                            class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
+                        >
+                    </div>
+                    <div class="flex-1">
+                        <label for="undo_duration_seconds" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Undo Duration (seconds)</label>
+                        <p class="text-text-muted text-sm mb-4">How long the undo button stays available after passing to the next participant.</p>
+                        <input
+                            type="number"
+                            id="undo_duration_seconds"
+                            name="undo_duration_seconds"
+                            value="{{ old('undo_duration_seconds', 10) }}"
+                            required
+                            min="1"
+                            max="60"
+                            class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
+                        >
+                    </div>
+                </div>
             </div>
 
             <div class="mb-6">

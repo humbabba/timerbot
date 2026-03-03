@@ -1,3 +1,4 @@
+<script>window.__auth = @json(auth()->check());</script>
 <nav class="bg-timerbot-dark border-b border-divider" x-data="{ mobileMenuOpen: false }">
     <div class="flex items-center h-16 px-4 md:px-6">
         <!-- Logo / Brand -->
@@ -63,7 +64,7 @@
             <!-- Theme Toggle -->
             <button
                 x-data="{ dark: document.documentElement.getAttribute('data-theme') === 'dark' }"
-                @click="dark = !dark; document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light'); localStorage.setItem('theme', dark ? 'dark' : 'light')"
+                @click="dark = !dark; document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light'); localStorage.setItem('theme', dark ? 'dark' : 'light'); if (window.__auth) fetch('/user/theme', { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }, body: JSON.stringify({ theme: dark ? 'dark' : 'light' }) })"
                 class="p-2 rounded-none text-text-muted hover:text-text transition-colors"
                 title="Toggle theme"
             >
@@ -102,7 +103,7 @@
         <div class="md:hidden ml-auto flex items-center gap-1">
             <button
                 x-data="{ dark: document.documentElement.getAttribute('data-theme') === 'dark' }"
-                @click="dark = !dark; document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light'); localStorage.setItem('theme', dark ? 'dark' : 'light')"
+                @click="dark = !dark; document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light'); localStorage.setItem('theme', dark ? 'dark' : 'light'); if (window.__auth) fetch('/user/theme', { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }, body: JSON.stringify({ theme: dark ? 'dark' : 'light' }) })"
                 class="p-2 text-text-muted hover:text-text transition-colors"
                 title="Toggle theme"
             >

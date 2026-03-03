@@ -10,8 +10,12 @@
 
     <script>
         (function() {
-            var theme = localStorage.getItem('theme') || 'light';
+            @auth
+                var dbTheme = @json(auth()->user()->theme);
+            @endauth
+            var theme = (typeof dbTheme !== 'undefined' && dbTheme) ? dbTheme : (localStorage.getItem('theme') || 'light');
             document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
         })();
     </script>
 

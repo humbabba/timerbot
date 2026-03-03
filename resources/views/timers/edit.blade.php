@@ -19,6 +19,16 @@
             </div>
         @endif
 
+        <div id="status-banner" class="mb-6 p-4 rounded-sm hidden">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span id="status-label"></span>
+                    <span id="runner-info" class="hidden"> &mdash; <span id="runner-name"></span> has the runner open</span>
+                </div>
+                <span id="status-countdown" class="font-mono text-sm"></span>
+            </div>
+        </div>
+
         @php
             $currentMembers = [];
             if ($timer->group) {
@@ -277,18 +287,36 @@
             </div>
 
             <div class="mb-6">
-                <label for="overtime_reset_minutes" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Overtime Reset</label>
-                <p class="text-text-muted text-sm mb-4">Automatically reset the timer if left running this many minutes past the end time.</p>
-                <input
-                    type="number"
-                    id="overtime_reset_minutes"
-                    name="overtime_reset_minutes"
-                    value="{{ old('overtime_reset_minutes', $timer->overtime_reset_minutes) }}"
-                    required
-                    min="1"
-                    max="59"
-                    class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
-                >
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label for="overtime_reset_minutes" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Overtime Reset (minutes)</label>
+                        <p class="text-text-muted text-sm mb-4">Auto-reset if left running this many minutes past the end time.</p>
+                        <input
+                            type="number"
+                            id="overtime_reset_minutes"
+                            name="overtime_reset_minutes"
+                            value="{{ old('overtime_reset_minutes', $timer->overtime_reset_minutes) }}"
+                            required
+                            min="1"
+                            max="60"
+                            class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
+                        >
+                    </div>
+                    <div class="flex-1">
+                        <label for="undo_duration_seconds" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Undo Duration (seconds)</label>
+                        <p class="text-text-muted text-sm mb-4">How long the undo button stays available after passing to the next participant.</p>
+                        <input
+                            type="number"
+                            id="undo_duration_seconds"
+                            name="undo_duration_seconds"
+                            value="{{ old('undo_duration_seconds', $timer->undo_duration_seconds) }}"
+                            required
+                            min="1"
+                            max="60"
+                            class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
+                        >
+                    </div>
+                </div>
             </div>
 
             <div class="mb-6">
@@ -366,6 +394,127 @@
             </div>
         </form>
     </div>
+    <script>
+    (function () {
+        const stateUrl = @json(route('timers.state', $timer));
+        const overtimeLimitMs = {{ $timer->overtime_reset_minutes }} * 60000;
+        const endTimeInput = document.getElementById('end_time');
+        const participantInput = document.getElementById('participant_count');
+        const statusBanner = document.getElementById('status-banner');
+        const statusLabel = document.getElementById('status-label');
+        const statusCountdown = document.getElementById('status-countdown');
+        const runnerInfo = document.getElementById('runner-info');
+        const runnerName = document.getElementById('runner-name');
+
+        // Track which fields the user has touched so we don't overwrite their edits
+        const dirty = { end_time: false, participant_count: false };
+        endTimeInput.addEventListener('input', () => { dirty.end_time = true; });
+        participantInput.addEventListener('input', () => { dirty.participant_count = true; });
+
+        // Reset dirty flags after form save (ajax-save reloads field values)
+        const form = document.querySelector('[data-ajax-save]');
+        if (form) {
+            form.addEventListener('ajax-save-success', () => {
+                dirty.end_time = false;
+                dirty.participant_count = false;
+            });
+        }
+
+        let serverState = null;
+
+        function fmt(ms) {
+            const neg = ms < 0;
+            const total = Math.abs(Math.floor(ms / 1000));
+            const h = Math.floor(total / 3600);
+            const m = Math.floor((total % 3600) / 60);
+            const s = total % 60;
+            const pad = n => String(n).padStart(2, '0');
+            const time = h > 0 ? h + ':' + pad(m) + ':' + pad(s) : pad(m) + ':' + pad(s);
+            return neg ? '-' + time : time;
+        }
+
+        function tickStatus() {
+            const st = serverState;
+            const status = st?.status || 'idle';
+            const lockedBy = st?.locked_by_name || null;
+
+            // Runner info
+            if (lockedBy) {
+                runnerName.textContent = lockedBy;
+                runnerInfo.classList.remove('hidden');
+            } else {
+                runnerInfo.classList.add('hidden');
+            }
+
+            if (status === 'running' || status === 'paused') {
+                const endMs = st.end_time_ms;
+                const now = Date.now();
+
+                // Check overtime reset
+                if (endMs && now > endMs + overtimeLimitMs) {
+                    serverState = null;
+                    tickStatus();
+                    return;
+                }
+
+                if (status === 'paused') {
+                    statusLabel.textContent = 'Paused';
+                    const remainMs = endMs ? endMs - now : 0;
+                    statusCountdown.textContent = endMs ? fmt(remainMs) : '';
+                    statusCountdown.className = 'font-mono text-sm text-timerbot-green';
+                    statusBanner.className = 'mb-6 p-4 rounded-sm bg-timerbot-green/20 border border-timerbot-green/50 text-timerbot-green';
+                } else {
+                    statusLabel.textContent = 'Running';
+                    const remainMs = endMs ? endMs - now : 0;
+                    statusCountdown.textContent = endMs ? fmt(remainMs) : '';
+                    const over = endMs && remainMs < 0;
+                    statusCountdown.className = 'font-mono text-sm ' + (over ? 'text-timerbot-red' : 'text-timerbot-green');
+                    statusBanner.className = 'mb-6 p-4 rounded-sm bg-timerbot-green/20 border border-timerbot-green/50 text-timerbot-green';
+                }
+                statusBanner.classList.remove('hidden');
+            } else if (lockedBy) {
+                // Idle but someone has the runner open
+                statusLabel.textContent = 'Idle';
+                statusCountdown.textContent = '';
+                statusBanner.className = 'mb-6 p-4 rounded-sm bg-timerbot-teal/20 border border-timerbot-teal/50 text-timerbot-teal';
+                statusBanner.classList.remove('hidden');
+            } else {
+                statusBanner.classList.add('hidden');
+            }
+        }
+
+        async function pollSettings() {
+            try {
+                const res = await fetch(stateUrl, {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                serverState = data;
+
+                if (data.end_time && !dirty.end_time) {
+                    const short = data.end_time.substring(0, 5);
+                    if (endTimeInput.value !== short) {
+                        endTimeInput.value = short;
+                    }
+                }
+                if (data.total_speakers && !dirty.participant_count) {
+                    const val = String(data.total_speakers);
+                    if (participantInput.value !== val) {
+                        participantInput.value = val;
+                    }
+                }
+
+                tickStatus();
+            } catch (e) {}
+        }
+
+        pollSettings();
+        setInterval(pollSettings, 3000);
+        setInterval(tickStatus, 1000);
+    })();
+    </script>
+
     <script>
     (function () {
         let ctx;

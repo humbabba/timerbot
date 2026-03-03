@@ -25,6 +25,7 @@ class Timer extends Model
         'participant_term',
         'participant_term_plural',
         'overtime_reset_minutes',
+        'undo_duration_seconds',
         'warnings',
         'message',
         'run_state',
@@ -37,6 +38,7 @@ class Timer extends Model
         return [
             'participant_count' => 'integer',
             'overtime_reset_minutes' => 'integer',
+            'undo_duration_seconds' => 'integer',
             'warnings' => 'array',
             'run_state' => 'array',
             'lock_refreshed_at' => 'datetime',
