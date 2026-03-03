@@ -86,7 +86,9 @@
                 <span>Keep screen awake</span>
             </label>
         </div>
-        <p class="mt-6 text-sm">Want a timer like this for your meeting? <a href="{{ route('register') }}">Register for free</a>.</p>
+        @guest
+        <p class="mt-6 text-sm">Want a timer like this for your meeting? <a href="{{ route('register') }}" target="_blank">Register for free</a>.</p>
+        @endguest
     </div>
 
     <script>

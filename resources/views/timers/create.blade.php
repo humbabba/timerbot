@@ -1,5 +1,5 @@
 <x-layouts.app>
-    <div class="p-8 max-w-4xl">
+    <div class="p-4 md:p-8 max-w-4xl">
         <div class="flex items-center gap-4 mb-8">
             <div class="w-3 h-10 bg-timerbot-green rounded-none"></div>
             <h1>Create Timer</h1>
@@ -235,7 +235,7 @@
             <div class="mb-6">
                 <label class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Participant Term</label>
                 <p class="text-text-muted text-sm mb-4">Customize the label used for participants (e.g. "speaker", "guy").</p>
-                <div class="flex gap-4">
+                <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex-1">
                         <label class="block text-xs text-text-muted mb-1">Singular</label>
                         <input
@@ -262,7 +262,7 @@
             </div>
 
             <div class="mb-6">
-                <div class="flex gap-4">
+                <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex-1">
                         <label for="overtime_reset_minutes" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Overtime Reset (minutes)</label>
                         <p class="text-text-muted text-sm mb-4">Auto-reset if left running this many minutes past the end time.</p>
@@ -300,7 +300,7 @@
 
                 <div class="space-y-3">
                     <template x-for="(warning, index) in warnings" :key="index">
-                        <div class="flex gap-3 items-center p-3 bg-timerbot-panel rounded-sm border border-divider">
+                        <div class="flex flex-col md:flex-row gap-3 md:items-center p-3 bg-timerbot-panel rounded-sm border border-divider">
                             <div class="flex-1">
                                 <label class="block text-xs text-text-muted mb-1">Countdown</label>
                                 <input
@@ -328,12 +328,14 @@
                                     <option value="warning">Warning</option>
                                 </select>
                             </div>
-                            <button type="button" @click="window.previewSound(warning.sound)" class="mt-4 px-3 py-2 rounded-none bg-timerbot-panel border border-divider text-text text-xs uppercase tracking-wider hover:border-timerbot-teal transition-colors" style="font-family: var(--font-display);">
-                                &#9654;
-                            </button>
-                            <button type="button" @click="removeWarning(index)" class="mt-4 px-3 py-2 rounded-none bg-timerbot-red text-white text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
-                                Remove
-                            </button>
+                            <div class="flex gap-2 md:mt-4">
+                                <button type="button" @click="window.previewSound(warning.sound)" class="px-3 py-2 rounded-none bg-timerbot-panel border border-divider text-text text-xs uppercase tracking-wider hover:border-timerbot-teal transition-colors" style="font-family: var(--font-display);">
+                                    &#9654;
+                                </button>
+                                <button type="button" @click="removeWarning(index)" class="px-3 py-2 rounded-none bg-timerbot-red text-white text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
+                                    Remove
+                                </button>
+                            </div>
                         </div>
                     </template>
                 </div>
@@ -354,11 +356,11 @@
                 >{{ old('message') }}</textarea>
             </div>
 
-            <div class="flex gap-4">
+            <div class="flex flex-col md:flex-row gap-4">
                 <button type="submit" class="btn btn-primary">
                     Create Timer
                 </button>
-                <a href="{{ route('timers.index') }}" class="btn bg-timerbot-panel text-text hover:bg-divider no-underline">
+                <a href="{{ route('timers.index') }}" class="btn bg-timerbot-panel text-text hover:bg-divider no-underline text-center">
                     Cancel
                 </a>
             </div>
