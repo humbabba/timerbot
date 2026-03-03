@@ -125,6 +125,10 @@ class TimerController extends Controller
 
     public function show(Timer $timer)
     {
+        if (!$timer->canView(auth()->user())) {
+            abort(403);
+        }
+
         $timer->load('group.members', 'creator');
         $timer->checkOvertimeReset();
 
@@ -177,7 +181,10 @@ class TimerController extends Controller
         $user = auth()->user();
 
         if (!$timer->canManage($user)) {
-            return redirect()->route('timers.show', $timer);
+            if ($timer->canView($user)) {
+                return redirect()->route('timers.show', $timer);
+            }
+            abort(403);
         }
 
         $timer->load('group.members');
@@ -312,7 +319,10 @@ class TimerController extends Controller
         $user = auth()->user();
 
         if (!$timer->canRun($user)) {
-            return redirect()->route('timers.show', $timer);
+            if ($timer->canView($user)) {
+                return redirect()->route('timers.show', $timer);
+            }
+            abort(403);
         }
 
         if ($timer->isLockedByOther($user)) {
