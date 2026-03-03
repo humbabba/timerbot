@@ -177,7 +177,7 @@ class TimerController extends Controller
         $user = auth()->user();
 
         if (!$timer->canManage($user)) {
-            abort(403, 'You do not have permission to edit this timer.');
+            return redirect()->route('timers.show', $timer);
         }
 
         $timer->load('group.members');
@@ -312,7 +312,7 @@ class TimerController extends Controller
         $user = auth()->user();
 
         if (!$timer->canRun($user)) {
-            abort(403, 'You do not have permission to run this timer.');
+            return redirect()->route('timers.show', $timer);
         }
 
         if ($timer->isLockedByOther($user)) {
