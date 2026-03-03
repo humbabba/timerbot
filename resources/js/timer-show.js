@@ -274,8 +274,8 @@
     pollState();
     render();
 
-    // Poll every 2 seconds
-    setInterval(pollState, 2000);
+    // Poll every second
+    setInterval(pollState, 1000);
 
     // Render every 200ms for smooth countdown
     setInterval(render, 200);

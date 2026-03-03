@@ -189,7 +189,7 @@
         }).catch(() => {});
     }
 
-    // Heartbeat: sync state every 3 seconds (also keeps lock alive when idle)
+    // Heartbeat: sync state every second (also keeps lock alive when idle)
     setInterval(() => {
         if (lockLost) return;
         if (running || paused) {
@@ -212,7 +212,7 @@
                 }
             }).catch(() => {});
         }
-    }, 3000);
+    }, 1000);
 
     // ── Web Audio API Sounds ──
     function getAudioCtx() {
