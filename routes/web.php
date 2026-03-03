@@ -53,11 +53,9 @@ Route::middleware('auth')->group(function () {
     // Timer management (authorization handled in controller via group-based access)
     Route::get('/timers/create', [TimerController::class, 'create'])->name('timers.create')->middleware('permission:timers.create');
     Route::post('/timers', [TimerController::class, 'store'])->name('timers.store')->middleware('permission:timers.create');
-    Route::get('/timers/{timer}/edit', [TimerController::class, 'edit'])->name('timers.edit');
     Route::put('/timers/{timer}', [TimerController::class, 'update'])->name('timers.update');
     Route::delete('/timers/{timer}', [TimerController::class, 'destroy'])->name('timers.destroy');
     Route::post('/timers/{timer}/copy', [TimerController::class, 'copy'])->name('timers.copy')->middleware('permission:timers.create');
-    Route::get('/timers/{timer}/run', [TimerController::class, 'run'])->name('timers.run');
     Route::post('/timers/{timer}/state', [TimerController::class, 'updateState'])->name('timers.state.update');
     Route::patch('/timers/{timer}/settings', [TimerController::class, 'updateSettings'])->name('timers.settings.update');
     Route::post('/timers/{timer}/release-lock', [TimerController::class, 'releaseLock'])->name('timers.lock.release');
@@ -85,4 +83,6 @@ Route::middleware('auth')->group(function () {
 Route::get('/manual', fn () => view('manual'))->name('manual');
 Route::get('/timers', [TimerController::class, 'index'])->name('timers.index');
 Route::get('/timers/{timer}', [TimerController::class, 'show'])->name('timers.show');
+Route::get('/timers/{timer}/edit', [TimerController::class, 'edit'])->name('timers.edit');
+Route::get('/timers/{timer}/run', [TimerController::class, 'run'])->name('timers.run');
 Route::get('/timers/{timer}/state', [TimerController::class, 'getState'])->name('timers.state');
