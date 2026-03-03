@@ -118,6 +118,31 @@
     }
 
     // ── Server state sync ──
+    function applySettingsFromServer(data) {
+        if (!data) return;
+        // Check if end_time or participant_count changed in DB (e.g. via edit page)
+        if (data.end_time && data.end_time !== endTimeStr) {
+            endTimeStr = data.end_time;
+            endTime = parseEndTime(data.end_time);
+            if (settingEndTimeEl) settingEndTimeEl.value = data.end_time;
+            updateMeetingCountdown();
+            if (running && !completed) {
+                speakerAllottedMs = calcTimePerSpeaker();
+            }
+            updateTimePerPersonLabel(running ? speakerAllottedMs : calcTimePerSpeaker());
+        }
+        if (data.participant_count && data.participant_count !== totalSpeakers) {
+            const minParticipants = running ? currentSpeaker + 1 : 1;
+            totalSpeakers = Math.max(data.participant_count, minParticipants);
+            speakerTotalEl.textContent = totalSpeakers;
+            if (settingParticipants) settingParticipants.value = totalSpeakers;
+            if (running && !completed) {
+                speakerAllottedMs = calcTimePerSpeaker();
+            }
+            updateTimePerPersonLabel(running ? speakerAllottedMs : calcTimePerSpeaker());
+        }
+    }
+
     function syncState() {
         if (!config.state_url) return;
 
@@ -150,6 +175,8 @@
         }).then(res => {
             if (res.status === 423) {
                 res.json().then(data => handleLockLost(data.locked_by_name));
+            } else if (res.ok) {
+                res.json().then(data => applySettingsFromServer(data));
             }
         }).catch(() => {});
     }
@@ -172,6 +199,8 @@
             }).then(res => {
                 if (res.status === 423) {
                     res.json().then(data => handleLockLost(data.locked_by_name));
+                } else if (res.ok) {
+                    res.json().then(data => applySettingsFromServer(data));
                 }
             }).catch(() => {});
         }

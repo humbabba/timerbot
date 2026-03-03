@@ -173,7 +173,11 @@ class TimerController extends Controller
         $state['synced_at'] = round(microtime(true) * 1000);
         $timer->update(['run_state' => $state]);
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'end_time' => $timer->end_time,
+            'participant_count' => $timer->participant_count,
+        ]);
     }
 
     public function edit(Timer $timer)
