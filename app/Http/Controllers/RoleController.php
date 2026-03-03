@@ -8,11 +8,15 @@ use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $roles = Role::with('permissions')->get();
+        $allowedSorts = ['name', 'description'];
+        $sort = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'name';
+        $direction = $request->input('direction') === 'desc' ? 'desc' : 'asc';
 
-        return view('roles.index', compact('roles'));
+        $roles = Role::with('permissions')->orderBy($sort, $direction)->get();
+
+        return view('roles.index', compact('roles', 'sort', 'direction'));
     }
 
     public function create()

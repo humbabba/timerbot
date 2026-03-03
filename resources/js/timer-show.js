@@ -124,7 +124,7 @@
             statusBadge.className = 'text-lg font-semibold text-timerbot-green';
         } else if (status === 'paused') {
             statusBadge.textContent = 'Event is paused';
-            statusBadge.className = 'text-lg font-semibold text-timerbot-neon';
+            statusBadge.className = 'text-lg font-semibold text-timerbot-green';
         } else if (status === 'completed') {
             statusBadge.textContent = 'Event has ended';
             statusBadge.className = 'text-lg font-semibold text-timerbot-red';
@@ -185,17 +185,17 @@
         if (speakerOverTime && currentTppText !== lastTppText) {
             lastTppText = currentTppText;
             clearTimeout(tppFlashTimer);
-            timePerParticipant.classList.remove('text-timerbot-neon');
+            timePerParticipant.classList.remove('text-timerbot-green');
             timePerParticipant.classList.add('text-timerbot-red');
             tppFlashTimer = setTimeout(() => {
                 timePerParticipant.classList.remove('text-timerbot-red');
-                timePerParticipant.classList.add('text-timerbot-neon');
+                timePerParticipant.classList.add('text-timerbot-green');
             }, 500);
         } else if (!speakerOverTime) {
             lastTppText = '';
             clearTimeout(tppFlashTimer);
             timePerParticipant.classList.remove('text-timerbot-red');
-            timePerParticipant.classList.add('text-timerbot-neon');
+            timePerParticipant.classList.add('text-timerbot-green');
         }
 
         // Speaker section

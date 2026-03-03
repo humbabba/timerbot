@@ -6,10 +6,10 @@
             <p class="text-text-muted text-lg">{{ $timer->name }}</p>
         </div>
 
-        <div class="p-6 bg-timerbot-panel-light rounded-sm border border-dark-green mb-8">
+        <div class="p-6 bg-timerbot-panel-light rounded-sm border border-divider mb-8">
             <p class="text-lg mb-2">
                 This timer is currently being run by
-                <span class="text-timerbot-mint font-semibold">{{ $timer->lockedByUser?->name ?? 'another user' }}</span>.
+                <span class="text-timerbot-teal font-semibold">{{ $timer->lockedByUser?->name ?? 'another user' }}</span>.
             </p>
             <p class="text-text-muted text-sm">
                 Only one person can run a timer at a time. The lock will automatically expire if the other user disconnects.
@@ -17,7 +17,7 @@
         </div>
 
         <div class="flex flex-wrap justify-center gap-4">
-            <a href="{{ route('timers.show', $timer) }}" class="btn bg-timerbot-panel-light text-text hover:bg-dark-green no-underline px-6 py-3">
+            <a href="{{ route('timers.show', $timer) }}" class="btn bg-timerbot-panel-light text-text hover:bg-divider no-underline px-6 py-3">
                 View Timer (Read-Only)
             </a>
             <a href="{{ route('timers.run', $timer) }}" class="btn btn-primary no-underline px-6 py-3">

@@ -17,69 +17,73 @@
 
         <div class="mb-6 p-4 bg-timerbot-panel-light rounded-sm">
             <form method="GET" action="{{ route('users.index') }}" class="flex flex-wrap gap-4 items-end">
+                @if(request('sort'))
+                    <input type="hidden" name="sort" value="{{ request('sort') }}">
+                    <input type="hidden" name="direction" value="{{ request('direction') }}">
+                @endif
                 <div>
-                    <label class="block font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">Search</label>
+                    <label class="block font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">Search</label>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
-                           class="bg-timerbot-panel border border-dark-green rounded-sm px-4 py-2 text-text min-w-[200px]">
+                           class="bg-timerbot-panel border border-divider rounded-sm px-4 py-2 text-text min-w-[200px]">
                 </div>
                 <div>
-                    <label class="block font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">From</label>
+                    <label class="block font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">From</label>
                     <input type="date" name="from" value="{{ request('from') }}"
-                           class="bg-timerbot-panel border border-dark-green rounded-sm px-4 py-2 text-text">
+                           class="bg-timerbot-panel border border-divider rounded-sm px-4 py-2 text-text">
                 </div>
                 <div>
-                    <label class="block font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">To</label>
+                    <label class="block font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">To</label>
                     <input type="date" name="to" value="{{ request('to') }}"
-                           class="bg-timerbot-panel border border-dark-green rounded-sm px-4 py-2 text-text">
+                           class="bg-timerbot-panel border border-divider rounded-sm px-4 py-2 text-text">
                 </div>
                 <div class="flex gap-2">
                     <button type="submit" class="btn btn-secondary">Filter</button>
-                    @if(request()->hasAny(['search', 'from', 'to']))
+                    @if(request()->hasAny(['search', 'from', 'to', 'sort']))
                         <a href="{{ route('users.index') }}" class="btn btn-secondary">Clear</a>
                     @endif
                 </div>
             </form>
         </div>
 
-        <div class="overflow-x-auto rounded-sm border border-dark-green">
+        <div class="overflow-x-auto rounded-sm border border-divider">
             <table class="w-full">
                 <thead>
                     <tr>
-                        <th class="p-4 text-left border-b border-dark-green">Name</th>
-                        <th class="p-4 text-left border-b border-dark-green">Email</th>
-                        <th class="p-4 text-left border-b border-dark-green">Role</th>
-                        <th class="p-4 text-left border-b border-dark-green">Created</th>
-                        <th class="p-4 text-left border-b border-dark-green">Last Login</th>
-                        <th class="p-4 text-left border-b border-dark-green w-48">Actions</th>
+                        <x-sort-header column="name" label="Name" :sort="$sort" :direction="$direction" />
+                        <x-sort-header column="email" label="Email" :sort="$sort" :direction="$direction" />
+                        <th class="p-4 text-left border-b border-divider">Role</th>
+                        <x-sort-header column="created_at" label="Created" :sort="$sort" :direction="$direction" />
+                        <x-sort-header column="last_login_at" label="Last Login" :sort="$sort" :direction="$direction" />
+                        <th class="p-4 text-left border-b border-divider w-48">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($users as $user)
                         <tr class="hover:bg-timerbot-panel-light transition-colors">
-                            <td class="p-4 border-b border-dark-green/50">
-                                <a href="{{ route('users.show', $user) }}" class="flex items-center gap-3 no-underline text-text hover:text-timerbot-mint transition-colors">
+                            <td class="p-4 border-b border-divider/50">
+                                <a href="{{ route('users.show', $user) }}" class="flex items-center gap-3 no-underline text-text hover:text-timerbot-teal transition-colors">
                                     <x-avatar :user="$user" :size="8" />
                                     {{ $user->name }}
                                 </a>
                             </td>
-                            <td class="p-4 border-b border-dark-green/50 text-text-muted">{{ $user->email }}</td>
-                            <td class="p-4 border-b border-dark-green/50">
+                            <td class="p-4 border-b border-divider/50 text-text-muted">{{ $user->email }}</td>
+                            <td class="p-4 border-b border-divider/50">
                                 @foreach($user->roles as $role)
-                                    <span class="badge badge-mint mr-1">
+                                    <span class="badge badge-teal mr-1">
                                         {{ $role->name }}
                                     </span>
                                 @endforeach
                             </td>
-                            <td class="p-4 border-b border-dark-green/50 text-text-muted text-sm">
+                            <td class="p-4 border-b border-divider/50 text-text-muted text-sm">
                                 {{ $user->created_at?->format('M j, Y') ?? '—' }}
                             </td>
-                            <td class="p-4 border-b border-dark-green/50 text-text-muted text-sm">
+                            <td class="p-4 border-b border-divider/50 text-text-muted text-sm">
                                 {{ $user->last_login_at?->format('M j, Y g:i A') ?? 'Never' }}
                             </td>
-                            <td class="p-4 border-b border-dark-green/50">
+                            <td class="p-4 border-b border-divider/50">
                                 <div class="flex gap-2">
                                     @if(auth()->user()->hasPermission('users.edit') && !array_diff($user->roles->pluck('id')->toArray(), $assignableRoleIds))
-                                        <a href="{{ route('users.edit', $user) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-mint hover:bg-timerbot-mint hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
+                                        <a href="{{ route('users.edit', $user) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-teal hover:bg-timerbot-teal hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                             Edit
                                         </a>
                                     @endif

@@ -1,7 +1,7 @@
 <x-layouts.app>
     <div class="p-8 max-w-2xl">
         <div class="flex items-center gap-4 mb-8">
-            <div class="w-3 h-10 bg-timerbot-mint rounded-none"></div>
+            <div class="w-3 h-10 bg-timerbot-teal rounded-none"></div>
             <h1>Edit User</h1>
         </div>
 
@@ -19,13 +19,13 @@
 
             <div class="mb-6 flex flex-col items-center">
                 <x-avatar :user="$user" :size="12" />
-                <a href="https://gravatar.com/profile" target="_blank" rel="noopener noreferrer" class="mt-2 text-timerbot-mint text-xs hover:underline">
+                <a href="https://gravatar.com/profile" target="_blank" rel="noopener noreferrer" class="mt-2 text-timerbot-teal text-xs hover:underline">
                     Edit Gravatar
                 </a>
             </div>
 
             <div class="mb-6">
-                <label for="name" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Name</label>
+                <label for="name" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Name</label>
                 <input
                     type="text"
                     id="name"
@@ -33,29 +33,29 @@
                     value="{{ old('name', $user->name) }}"
                     required
                     autofocus
-                    class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                    class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
                 >
             </div>
 
             <div class="mb-6">
-                <label for="email" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Email</label>
+                <label for="email" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Email</label>
                 <input
                     type="email"
                     id="email"
                     name="email"
                     value="{{ old('email', $user->email) }}"
                     required
-                    class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                    class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
                 >
             </div>
 
             @if(auth()->id() === $user->id)
                 <div class="mb-6">
-                    <label for="starting_view" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Starting View</label>
+                    <label for="starting_view" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Starting View</label>
                     <select
                         id="starting_view"
                         name="starting_view"
-                        class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                        class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
                     >
                         @foreach($startingViews as $value => $label)
                             <option value="{{ $value }}" {{ old('starting_view', $user->starting_view ?? '') == $value ? 'selected' : '' }}>
@@ -68,12 +68,12 @@
 
             @if(auth()->user()->hasPermission('users.edit'))
                 <div class="mb-8">
-                    <label for="role" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Role</label>
+                    <label for="role" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Role</label>
                     <select
                         id="role"
                         name="role"
                         required
-                        class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                        class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
                     >
                         <option value="">Select a role...</option>
                         @foreach($roles as $role)
@@ -89,7 +89,7 @@
                 <button type="submit" class="btn btn-primary">
                     Update User
                 </button>
-                <a href="{{ route('users.show', $user) }}" class="btn bg-timerbot-panel-light text-text hover:bg-dark-green no-underline">
+                <a href="{{ route('users.show', $user) }}" class="btn bg-timerbot-panel-light text-text hover:bg-divider no-underline">
                     Cancel
                 </a>
             </div>

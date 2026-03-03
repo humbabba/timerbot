@@ -9,11 +9,11 @@
             </div>
             <div class="flex gap-2 shrink-0">
                 @if($timer->canManage(auth()->user()))
-                    <a href="{{ route('timers.edit', $timer) }}" class="btn bg-timerbot-mint text-timerbot-black hover:bg-timerbot-mint/80 no-underline whitespace-nowrap">
+                    <a href="{{ route('timers.edit', $timer) }}" class="btn bg-timerbot-teal text-timerbot-black hover:bg-timerbot-teal/80 no-underline whitespace-nowrap">
                         Edit Timer
                     </a>
                 @endif
-                <a href="{{ route('timers.show', $timer) }}" class="btn bg-timerbot-panel-light text-text hover:bg-dark-green no-underline whitespace-nowrap">
+                <a href="{{ route('timers.show', $timer) }}" class="btn bg-timerbot-panel-light text-text hover:bg-divider no-underline whitespace-nowrap">
                     Back to Timer
                 </a>
             </div>
@@ -21,8 +21,8 @@
 
         <!-- Meeting Countdown -->
         <div class="mb-8 p-4 md:p-6 bg-timerbot-panel-light rounded-sm text-center">
-            <h2 class="text-timerbot-mint text-sm uppercase tracking-wider mb-2" style="font-family: var(--font-display);">Meeting Time Remaining</h2>
-            <div id="meeting-countdown" class="text-4xl md:text-5xl font-bold text-timerbot-neon tabular-nums" style="font-family: var(--font-display);">
+            <h2 class="text-timerbot-teal text-sm uppercase tracking-wider mb-2" style="font-family: var(--font-display);">Meeting Time Remaining</h2>
+            <div id="meeting-countdown" class="text-4xl md:text-5xl font-bold text-timerbot-green tabular-nums" style="font-family: var(--font-display);">
                 --:--:--
             </div>
             <div id="time-per-person" class="mt-2 text-text-muted text-sm">
@@ -31,18 +31,18 @@
             <div class="mt-4 flex flex-wrap justify-center items-center gap-4 md:gap-6 text-text-muted text-sm">
                 <label class="flex items-center gap-2">
                     End Time
-                    <input type="time" id="setting-end-time" value="{{ $timer->end_time }}" class="bg-timerbot-panel border border-dark-green rounded px-2 py-1 text-text text-sm w-30">
+                    <input type="time" id="setting-end-time" value="{{ $timer->end_time }}" class="bg-timerbot-panel border border-divider rounded px-2 py-1 text-text text-sm w-30">
                 </label>
                 <label class="flex items-center gap-2">
                     {{ ucfirst($timer->participant_term_plural) }}
-                    <input type="number" id="setting-participants" value="{{ $timer->participant_count }}" min="1" max="999" class="bg-timerbot-panel border border-dark-green rounded px-2 py-1 text-text text-sm w-20 text-center">
+                    <input type="number" id="setting-participants" value="{{ $timer->participant_count }}" min="1" max="999" class="bg-timerbot-panel border border-divider rounded px-2 py-1 text-text text-sm w-20 text-center">
                 </label>
             </div>
             @php $timerSounds = collect($timer->warnings ?? [])->pluck('sound')->unique()->values(); @endphp
             @if($timerSounds->count())
                 <div class="mt-3 flex flex-wrap justify-center items-center gap-2 text-text-muted text-xs">
                     @foreach($timerSounds as $sound)
-                        <button type="button" onclick="timerApp.playSound('{{ $sound }}')" class="px-2 py-0.5 bg-timerbot-panel border border-dark-green rounded hover:border-timerbot-mint transition-colors">{{ ucfirst($sound) }}</button>
+                        <button type="button" onclick="timerApp.playSound('{{ $sound }}')" class="px-2 py-0.5 bg-timerbot-panel border border-divider rounded hover:border-timerbot-teal transition-colors">{{ ucfirst($sound) }}</button>
                     @endforeach
                 </div>
             @endif
@@ -50,7 +50,7 @@
 
         <!-- Current Speaker Panel -->
         <div id="speaker-panel" class="hidden mb-8 p-4 md:p-8 bg-timerbot-panel-light rounded-sm text-center border-2 border-timerbot-green">
-            <h2 class="text-timerbot-mint text-sm uppercase tracking-wider mb-1" style="font-family: var(--font-display);">
+            <h2 class="text-timerbot-teal text-sm uppercase tracking-wider mb-1" style="font-family: var(--font-display);">
                 {{ ucfirst($timer->participant_term) }} <span id="speaker-number">1</span> of <span id="speaker-total">{{ $timer->participant_count }}</span>
             </h2>
             <div id="speaker-countdown" class="text-6xl md:text-8xl font-bold text-timerbot-green tabular-nums my-4" style="font-family: var(--font-display);">
@@ -64,13 +64,13 @@
             <button id="btn-start" onclick="timerApp.start()" class="btn btn-primary text-lg px-6 md:px-8 py-3">
                 Start
             </button>
-            <button id="btn-prev" onclick="timerApp.previousSpeaker()" class="hidden btn bg-timerbot-panel-light text-timerbot-neon hover:bg-timerbot-neon hover:text-timerbot-black text-lg px-6 md:px-8 py-3">
+            <button id="btn-prev" onclick="timerApp.previousSpeaker()" class="hidden btn bg-timerbot-panel-light text-timerbot-green hover:bg-timerbot-green hover:text-timerbot-black text-lg px-6 md:px-8 py-3">
                 Prev {{ ucfirst($timer->participant_term) }}
             </button>
-            <button id="btn-next" onclick="timerApp.nextSpeaker()" class="hidden btn bg-timerbot-neon text-timerbot-black hover:bg-timerbot-lime text-lg px-6 md:px-8 py-3">
+            <button id="btn-next" onclick="timerApp.nextSpeaker()" class="hidden btn bg-timerbot-green text-timerbot-black hover:bg-timerbot-lime text-lg px-6 md:px-8 py-3">
                 Next {{ ucfirst($timer->participant_term) }}
             </button>
-            <button id="btn-pause" onclick="timerApp.togglePause()" class="hidden btn bg-timerbot-panel text-timerbot-mint hover:bg-timerbot-mint hover:text-timerbot-black text-lg px-6 md:px-8 py-3">
+            <button id="btn-pause" onclick="timerApp.togglePause()" class="hidden btn bg-timerbot-panel text-timerbot-teal hover:bg-timerbot-teal hover:text-timerbot-black text-lg px-6 md:px-8 py-3">
                 Pause
             </button>
             <button id="btn-stop" onclick="timerApp.stop()" class="hidden btn bg-timerbot-red text-white hover:bg-timerbot-red/80 text-lg px-6 md:px-8 py-3">
@@ -85,15 +85,15 @@
 
         <!-- Speaker History Table -->
         <div id="history-section" class="hidden">
-            <h2 class="text-timerbot-mint text-sm uppercase tracking-wider mb-4" style="font-family: var(--font-display);">{{ ucfirst($timer->participant_term) }} History</h2>
-            <div class="overflow-x-auto rounded-sm border border-dark-green">
+            <h2 class="text-timerbot-teal text-sm uppercase tracking-wider mb-4" style="font-family: var(--font-display);">{{ ucfirst($timer->participant_term) }} History</h2>
+            <div class="overflow-x-auto rounded-sm border border-divider">
                 <table class="w-full">
                     <thead>
                         <tr>
-                            <th class="p-4 text-left border-b border-dark-green">{{ ucfirst($timer->participant_term) }}</th>
-                            <th class="p-4 text-left border-b border-dark-green">Allotted</th>
-                            <th class="p-4 text-left border-b border-dark-green">Actual</th>
-                            <th class="p-4 text-left border-b border-dark-green">Status</th>
+                            <th class="p-4 text-left border-b border-divider">{{ ucfirst($timer->participant_term) }}</th>
+                            <th class="p-4 text-left border-b border-divider">Allotted</th>
+                            <th class="p-4 text-left border-b border-divider">Actual</th>
+                            <th class="p-4 text-left border-b border-divider">Status</th>
                         </tr>
                     </thead>
                     <tbody id="history-body">

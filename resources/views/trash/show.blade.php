@@ -16,21 +16,21 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div class="lg:col-span-2 bg-timerbot-panel-light rounded-sm p-6">
                 <div class="flex items-center gap-4 mb-6">
-                    <div class="w-3 h-8 bg-timerbot-mint rounded-none"></div>
+                    <div class="w-3 h-8 bg-timerbot-teal rounded-none"></div>
                     <h2>Item Details</h2>
                 </div>
                 <dl class="space-y-4">
                     <div class="flex items-center">
                         <dt class="font-semibold text-timerbot-lime w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Type</dt>
                         <dd>
-                            <span class="badge badge-mint">
+                            <span class="badge badge-teal">
                                 {{ $trash->model_name }}
                             </span>
                         </dd>
                     </div>
                     <div class="flex items-center">
                         <dt class="font-semibold text-timerbot-lime w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Original ID</dt>
-                        <dd class="text-timerbot-neon font-mono">{{ $trash->trashable_id }}</dd>
+                        <dd class="text-timerbot-green font-mono">{{ $trash->trashable_id }}</dd>
                     </div>
                     <div class="flex items-center">
                         <dt class="font-semibold text-timerbot-lime w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Deleted By</dt>
@@ -79,11 +79,11 @@
 
         <div class="mb-8">
             <div class="flex items-center gap-4 mb-4">
-                <div class="w-3 h-8 bg-timerbot-neon rounded-none"></div>
+                <div class="w-3 h-8 bg-timerbot-green rounded-none"></div>
                 <h2>Stored Data</h2>
             </div>
-            <div class="bg-timerbot-dark border border-dark-green rounded-sm p-6 overflow-x-auto">
-                <pre class="text-sm text-timerbot-mint font-mono">{{ json_encode($trash->data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
+            <div class="bg-timerbot-dark border border-divider rounded-sm p-6 overflow-x-auto">
+                <pre class="text-sm text-timerbot-teal font-mono">{{ json_encode($trash->data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
             </div>
         </div>
 
@@ -93,8 +93,8 @@
                     <div class="w-3 h-8 bg-timerbot-lime rounded-none"></div>
                     <h2>Stored Relationships</h2>
                 </div>
-                <div class="bg-timerbot-dark border border-dark-green rounded-sm p-6 overflow-x-auto">
-                    <pre class="text-sm text-timerbot-mint font-mono">{{ json_encode($trash->relationships, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
+                <div class="bg-timerbot-dark border border-divider rounded-sm p-6 overflow-x-auto">
+                    <pre class="text-sm text-timerbot-teal font-mono">{{ json_encode($trash->relationships, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                 </div>
             </div>
         @endif

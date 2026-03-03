@@ -20,7 +20,9 @@
       "Bash(grep:*)",
       "Bash(test:*)",
       "Bash(find:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "WebFetch(domain:fonts.googleapis.com)",
+      "Bash(curl:*)"
     ]
   }
 }

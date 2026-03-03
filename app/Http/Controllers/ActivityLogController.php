@@ -10,7 +10,11 @@ class ActivityLogController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ActivityLog::orderBy('created_at', 'desc');
+        $allowedSorts = ['created_at', 'action', 'loggable_type', 'loggable_name', 'user_name'];
+        $sort = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'created_at';
+        $direction = $request->input('direction') === 'asc' ? 'asc' : 'desc';
+
+        $query = ActivityLog::orderBy($sort, $direction);
 
         if ($request->filled('type')) {
             $query->ofType($request->type);
@@ -42,7 +46,7 @@ class ActivityLogController extends Controller
         $users = User::orderBy('name')
             ->pluck('name', 'id');
 
-        return view('activity-logs.index', compact('logs', 'types', 'users'));
+        return view('activity-logs.index', compact('logs', 'types', 'users', 'sort', 'direction'));
     }
 
     public function show(ActivityLog $activityLog)

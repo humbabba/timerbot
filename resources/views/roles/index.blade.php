@@ -15,24 +15,24 @@
             </div>
         @endif
 
-        <div class="overflow-x-auto rounded-sm border border-dark-green">
+        <div class="overflow-x-auto rounded-sm border border-divider">
             <table class="w-full">
                 <thead>
                     <tr>
-                        <th class="p-4 text-left border-b border-dark-green">Name</th>
-                        <th class="p-4 text-left border-b border-dark-green">Description</th>
-                        <th class="p-4 text-left border-b border-dark-green">Permissions</th>
-                        <th class="p-4 text-left border-b border-dark-green w-48">Actions</th>
+                        <x-sort-header column="name" label="Name" :sort="$sort" :direction="$direction" />
+                        <x-sort-header column="description" label="Description" :sort="$sort" :direction="$direction" />
+                        <th class="p-4 text-left border-b border-divider">Permissions</th>
+                        <th class="p-4 text-left border-b border-divider w-48">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($roles as $role)
                         <tr class="hover:bg-timerbot-panel-light transition-colors">
-                            <td class="p-4 border-b border-dark-green/50">
-                                <span class="text-timerbot-neon font-semibold">{{ $role->name }}</span>
+                            <td class="p-4 border-b border-divider/50">
+                                <span class="text-timerbot-green font-semibold">{{ $role->name }}</span>
                             </td>
-                            <td class="p-4 border-b border-dark-green/50 text-text-muted">{{ $role->description }}</td>
-                            <td class="p-4 border-b border-dark-green/50">
+                            <td class="p-4 border-b border-divider/50 text-text-muted">{{ $role->description }}</td>
+                            <td class="p-4 border-b border-divider/50">
                                 <div class="flex flex-wrap gap-1">
                                     @foreach($role->permissions as $permission)
                                         <span class="badge badge-lime">
@@ -41,10 +41,10 @@
                                     @endforeach
                                 </div>
                             </td>
-                            <td class="p-4 border-b border-dark-green/50">
+                            <td class="p-4 border-b border-divider/50">
                                 <div class="flex gap-2">
                                     @if(auth()->user()->hasPermission('roles.edit'))
-                                        <a href="{{ route('roles.edit', $role) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-mint hover:bg-timerbot-mint hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
+                                        <a href="{{ route('roles.edit', $role) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-teal hover:bg-timerbot-teal hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                             Edit
                                         </a>
                                     @endif

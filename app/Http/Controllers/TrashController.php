@@ -9,8 +9,12 @@ class TrashController extends Controller
 {
     public function index(Request $request)
     {
+        $allowedSorts = ['trashable_type', 'deleted_at'];
+        $sort = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'deleted_at';
+        $direction = $request->input('direction') === 'asc' ? 'asc' : 'desc';
+
         $query = Trash::with('deletedByUser')
-            ->orderBy('deleted_at', 'desc');
+            ->orderBy($sort, $direction);
 
         if ($request->filled('type')) {
             $query->ofType($request->type);
@@ -31,7 +35,7 @@ class TrashController extends Controller
             ->pluck('trashable_type')
             ->mapWithKeys(fn($type) => [$type => class_basename($type)]);
 
-        return view('trash.index', compact('trashItems', 'types'));
+        return view('trash.index', compact('trashItems', 'types', 'sort', 'direction'));
     }
 
     public function show(Trash $trash)

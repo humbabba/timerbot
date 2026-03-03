@@ -107,10 +107,10 @@
         const overlay = document.createElement('div');
         overlay.className = 'fixed inset-0 bg-timerbot-black/90 flex items-center justify-center z-50 p-4';
         overlay.innerHTML = `
-            <div class="bg-timerbot-panel-light rounded-sm border border-dark-green p-8 max-w-md text-center">
+            <div class="bg-timerbot-panel-light rounded-sm border border-divider p-8 max-w-md text-center">
                 <h2 class="text-2xl font-bold text-timerbot-red mb-4" style="font-family: var(--font-display);">Lock Lost</h2>
                 <p class="text-text mb-2">Another user has taken over this timer.</p>
-                ${lockedByName ? `<p class="text-text-muted text-sm mb-6">Now being run by <span class="text-timerbot-mint">${lockedByName}</span>.</p>` : '<p class="text-text-muted text-sm mb-6">Your session has expired.</p>'}
+                ${lockedByName ? `<p class="text-text-muted text-sm mb-6">Now being run by <span class="text-timerbot-teal">${lockedByName}</span>.</p>` : '<p class="text-text-muted text-sm mb-6">Your session has expired.</p>'}
                 <a href="${window.location.href}" class="btn btn-primary no-underline px-6 py-3">Try Again</a>
             </div>
         `;
@@ -346,8 +346,8 @@
     }
 
     function updateSpeakerColor(remainMs) {
-        speakerCountdownEl.classList.remove('text-timerbot-green', 'text-timerbot-neon', 'text-timerbot-red');
-        speakerPanel.classList.remove('border-timerbot-green', 'border-timerbot-neon', 'border-timerbot-red');
+        speakerCountdownEl.classList.remove('text-timerbot-green', 'text-timerbot-green', 'text-timerbot-red');
+        speakerPanel.classList.remove('border-timerbot-green', 'border-timerbot-green', 'border-timerbot-red');
 
         if (remainMs <= 0) {
             speakerCountdownEl.classList.add('text-timerbot-red');
@@ -545,11 +545,11 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-timerbot-panel-light transition-colors';
         tr.innerHTML = `
-            <td class="p-4 border-b border-dark-green/50">${termSingularUc} ${entry.speaker}</td>
-            <td class="p-4 border-b border-dark-green/50 text-text-muted">${formatTime(entry.allotted)}</td>
-            <td class="p-4 border-b border-dark-green/50 ${entry.over ? 'text-timerbot-red' : 'text-timerbot-green'}">${formatTime(entry.actual)}</td>
-            <td class="p-4 border-b border-dark-green/50">
-                <span class="badge ${entry.over ? 'badge-lime' : 'badge-mint'}">${entry.over ? 'Over' : 'On time'}</span>
+            <td class="p-4 border-b border-divider/50">${termSingularUc} ${entry.speaker}</td>
+            <td class="p-4 border-b border-divider/50 text-text-muted">${formatTime(entry.allotted)}</td>
+            <td class="p-4 border-b border-divider/50 ${entry.over ? 'text-timerbot-red' : 'text-timerbot-green'}">${formatTime(entry.actual)}</td>
+            <td class="p-4 border-b border-divider/50">
+                <span class="badge ${entry.over ? 'badge-lime' : 'badge-teal'}">${entry.over ? 'Over' : 'On time'}</span>
             </td>
         `;
         historyBody.appendChild(tr);
@@ -663,8 +663,8 @@
                 paused = true;
                 pauseStartMs = state.paused_at;
                 btnPause.textContent = 'Resume';
-                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-mint');
-                btnPause.classList.add('bg-timerbot-neon', 'text-timerbot-black');
+                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-teal');
+                btnPause.classList.add('bg-timerbot-green', 'text-timerbot-black');
                 speakerStatusEl.textContent = 'Paused';
             }
 
@@ -793,14 +793,14 @@
                 paused = true;
                 pauseStartMs = undoState.pauseStartMs;
                 btnPause.textContent = 'Resume';
-                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-mint');
-                btnPause.classList.add('bg-timerbot-neon', 'text-timerbot-black');
+                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-teal');
+                btnPause.classList.add('bg-timerbot-green', 'text-timerbot-black');
                 speakerStatusEl.textContent = 'Paused';
             } else {
                 paused = false;
                 btnPause.textContent = 'Pause';
-                btnPause.classList.remove('bg-timerbot-neon', 'text-timerbot-black');
-                btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-mint');
+                btnPause.classList.remove('bg-timerbot-green', 'text-timerbot-black');
+                btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-teal');
                 speakerStatusEl.textContent = '';
             }
 
@@ -838,16 +838,16 @@
                 updateTimePerPersonLabel(speakerAllottedMs);
 
                 btnPause.textContent = 'Pause';
-                btnPause.classList.remove('bg-timerbot-neon', 'text-timerbot-black');
-                btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-mint');
+                btnPause.classList.remove('bg-timerbot-green', 'text-timerbot-black');
+                btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-teal');
                 speakerStatusEl.textContent = '';
             } else {
                 // Pause
                 pauseStartMs = Date.now();
                 paused = true;
                 btnPause.textContent = 'Resume';
-                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-mint');
-                btnPause.classList.add('bg-timerbot-neon', 'text-timerbot-black');
+                btnPause.classList.remove('bg-timerbot-panel', 'text-timerbot-teal');
+                btnPause.classList.add('bg-timerbot-green', 'text-timerbot-black');
                 speakerStatusEl.textContent = 'Paused';
             }
             syncState();
@@ -872,8 +872,8 @@
             showIdleUI();
             historyBody.innerHTML = '';
             btnPause.textContent = 'Pause';
-            btnPause.classList.remove('bg-timerbot-neon', 'text-timerbot-black');
-            btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-mint');
+            btnPause.classList.remove('bg-timerbot-green', 'text-timerbot-black');
+            btnPause.classList.add('bg-timerbot-panel', 'text-timerbot-teal');
             speakerStatusEl.textContent = '';
             speakerCountdownEl.classList.remove('animate-pulse');
 

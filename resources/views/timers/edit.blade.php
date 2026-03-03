@@ -1,7 +1,7 @@
 <x-layouts.app>
     <div class="p-8 max-w-4xl">
         <div class="flex items-center gap-4 mb-8">
-            <div class="w-3 h-10 bg-timerbot-mint rounded-none"></div>
+            <div class="w-3 h-10 bg-timerbot-teal rounded-none"></div>
             <h1>Edit Timer</h1>
         </div>
 
@@ -92,7 +92,7 @@
             @method('PUT')
 
             <div class="mb-6">
-                <label for="name" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Name</label>
+                <label for="name" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Name</label>
                 <input
                     type="text"
                     id="name"
@@ -100,13 +100,13 @@
                     value="{{ old('name', $timer->name) }}"
                     required
                     autofocus
-                    class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                    class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
                 >
             </div>
 
             <!-- Visibility -->
             <div class="mb-6">
-                <label class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Visibility</label>
+                <label class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Visibility</label>
                 <div class="flex gap-4">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" name="visibility" value="public" x-model="visibility" class="accent-timerbot-green">
@@ -122,8 +122,8 @@
             </div>
 
             <!-- Group Management -->
-            <div class="mb-6 p-4 bg-timerbot-panel rounded-sm border border-dark-green">
-                <label class="block mb-3 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Group</label>
+            <div class="mb-6 p-4 bg-timerbot-panel rounded-sm border border-divider">
+                <label class="block mb-3 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Group</label>
                 <p class="text-text-muted text-sm mb-4">Assign a group to control who can run and manage this timer.</p>
 
                 <div class="flex gap-4 mb-4">
@@ -146,7 +146,7 @@
                         name="new_group_name"
                         x-model="newGroupName"
                         placeholder="Group name..."
-                        class="w-full p-3 bg-timerbot-dark border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                        class="w-full p-3 bg-timerbot-dark border border-divider rounded-sm text-text focus:border-timerbot-teal"
                     >
                 </div>
 
@@ -156,7 +156,7 @@
                         name="group_id"
                         x-model="groupId"
                         @change="loadGroupMembers()"
-                        class="w-full p-3 bg-timerbot-dark border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                        class="w-full p-3 bg-timerbot-dark border border-divider rounded-sm text-text focus:border-timerbot-teal"
                     >
                         <option value="">Select a group...</option>
                         @foreach($groups as $group)
@@ -167,7 +167,7 @@
 
                 <!-- Member Management -->
                 <div class="mt-4">
-                    <label class="block mb-2 font-semibold text-timerbot-mint uppercase text-xs tracking-wider" style="font-family: var(--font-display);">Members</label>
+                    <label class="block mb-2 font-semibold text-timerbot-teal uppercase text-xs tracking-wider" style="font-family: var(--font-display);">Members</label>
                     <p class="text-text-muted text-xs mb-3">You are automatically added as a group admin.</p>
 
                     <!-- Search users -->
@@ -177,11 +177,11 @@
                             x-model="userSearch"
                             @input="searchUsers()"
                             placeholder="Search users by name or email..."
-                            class="w-full p-2 bg-timerbot-dark border border-dark-green rounded-sm text-text text-sm focus:border-timerbot-mint"
+                            class="w-full p-2 bg-timerbot-dark border border-divider rounded-sm text-text text-sm focus:border-timerbot-teal"
                         >
                         <!-- Search results dropdown -->
                         <div x-show="searchResults.length > 0" x-cloak
-                             class="absolute z-50 w-full mt-1 bg-timerbot-panel border border-dark-green rounded-sm max-h-48 overflow-y-auto">
+                             class="absolute z-50 w-full mt-1 bg-timerbot-panel border border-divider rounded-sm max-h-48 overflow-y-auto">
                             <template x-for="result in searchResults" :key="result.id">
                                 <button type="button"
                                         @click="addMember(result)"
@@ -196,7 +196,7 @@
                     <!-- Member list -->
                     <div class="space-y-2">
                         <template x-for="(member, index) in members" :key="member.user_id">
-                            <div class="flex items-center justify-between p-2 bg-timerbot-dark rounded-sm border border-dark-green">
+                            <div class="flex items-center justify-between p-2 bg-timerbot-dark rounded-sm border border-divider">
                                 <input type="hidden" :name="'members[' + index + '][user_id]'" :value="member.user_id">
                                 <div>
                                     <span x-text="member.name" class="text-text text-sm font-semibold"></span>
@@ -222,19 +222,19 @@
             </div>
 
             <div class="mb-6">
-                <label for="end_time" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">End Time</label>
+                <label for="end_time" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">End Time</label>
                 <input
                     type="time"
                     id="end_time"
                     name="end_time"
                     value="{{ old('end_time', \Illuminate\Support\Str::substr($timer->end_time, 0, 5)) }}"
                     required
-                    class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                    class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
                 >
             </div>
 
             <div class="mb-6">
-                <label for="participant_count" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Participants</label>
+                <label for="participant_count" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Participants</label>
                 <input
                     type="number"
                     id="participant_count"
@@ -243,12 +243,12 @@
                     required
                     min="1"
                     max="999"
-                    class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                    class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
                 >
             </div>
 
             <div class="mb-6">
-                <label class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Participant Term</label>
+                <label class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Participant Term</label>
                 <p class="text-text-muted text-sm mb-4">Customize the label used for participants (e.g. "speaker", "guy").</p>
                 <div class="flex gap-4">
                     <div class="flex-1">
@@ -259,7 +259,7 @@
                             value="{{ old('participant_term', $timer->participant_term) }}"
                             placeholder="speaker"
                             maxlength="50"
-                            class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                            class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
                         >
                     </div>
                     <div class="flex-1">
@@ -270,14 +270,14 @@
                             value="{{ old('participant_term_plural', $timer->participant_term_plural) }}"
                             placeholder="speakers"
                             maxlength="50"
-                            class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                            class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
                         >
                     </div>
                 </div>
             </div>
 
             <div class="mb-6">
-                <label for="overtime_reset_minutes" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Overtime Reset</label>
+                <label for="overtime_reset_minutes" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Overtime Reset</label>
                 <p class="text-text-muted text-sm mb-4">Automatically reset the timer if left running this many minutes past the end time.</p>
                 <input
                     type="number"
@@ -287,17 +287,17 @@
                     required
                     min="1"
                     max="59"
-                    class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                    class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
                 >
             </div>
 
             <div class="mb-6">
-                <label class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Warnings</label>
+                <label class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Warnings</label>
                 <p class="text-text-muted text-sm mb-4">Configure sound warnings before each {{ old('participant_term', $timer->participant_term) }}'s time expires.</p>
 
                 <div class="space-y-3">
                     <template x-for="(warning, index) in warnings" :key="index">
-                        <div class="flex gap-3 items-center p-3 bg-timerbot-panel rounded-sm border border-dark-green">
+                        <div class="flex gap-3 items-center p-3 bg-timerbot-panel rounded-sm border border-divider">
                             <div class="flex-1">
                                 <label class="block text-xs text-text-muted mb-1">Countdown</label>
                                 <input
@@ -306,7 +306,7 @@
                                     x-model.number="warning.seconds_before"
                                     min="-3600"
                                     max="3600"
-                                    class="w-full p-2 bg-timerbot-dark border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                                    class="w-full p-2 bg-timerbot-dark border border-divider rounded-sm text-text focus:border-timerbot-teal"
                                 >
                             </div>
                             <div class="flex-1">
@@ -314,7 +314,7 @@
                                 <select
                                     :name="'warnings[' + index + '][sound]'"
                                     x-model="warning.sound"
-                                    class="w-full p-2 bg-timerbot-dark border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                                    class="w-full p-2 bg-timerbot-dark border border-divider rounded-sm text-text focus:border-timerbot-teal"
                                 >
                                     <option value="alarm">Alarm</option>
                                     <option value="bell">Bell</option>
@@ -325,7 +325,7 @@
                                     <option value="warning">Warning</option>
                                 </select>
                             </div>
-                            <button type="button" @click="window.previewSound(warning.sound)" class="mt-4 px-3 py-2 rounded-none bg-timerbot-panel border border-dark-green text-text text-xs uppercase tracking-wider hover:border-timerbot-mint transition-colors" style="font-family: var(--font-display);">
+                            <button type="button" @click="window.previewSound(warning.sound)" class="mt-4 px-3 py-2 rounded-none bg-timerbot-panel border border-divider text-text text-xs uppercase tracking-wider hover:border-timerbot-teal transition-colors" style="font-family: var(--font-display);">
                                 &#9654;
                             </button>
                             <button type="button" @click="removeWarning(index)" class="mt-4 px-3 py-2 rounded-none bg-timerbot-red text-white text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
@@ -341,13 +341,13 @@
             </div>
 
             <div class="mb-6">
-                <label for="message" class="block mb-2 font-semibold text-timerbot-mint uppercase text-sm tracking-wider" style="font-family: var(--font-display);">{{ ucfirst(old('participant_term', $timer->participant_term)) }} Message</label>
+                <label for="message" class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">{{ ucfirst(old('participant_term', $timer->participant_term)) }} Message</label>
                 <p class="text-text-muted text-sm mb-4">Displayed to {{ old('participant_term_plural', $timer->participant_term_plural) }} on the timer view. HTML is supported.</p>
                 <textarea
                     id="message"
                     name="message"
                     rows="4"
-                    class="w-full p-3 bg-timerbot-panel border border-dark-green rounded-sm text-text focus:border-timerbot-mint"
+                    class="w-full p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal"
                 >{{ old('message', $timer->message) }}</textarea>
             </div>
 
@@ -355,7 +355,7 @@
                 <button type="submit" class="btn btn-primary">
                     Update Timer
                 </button>
-                <a href="{{ route('timers.show', $timer) }}" class="btn bg-timerbot-panel text-text hover:bg-dark-green no-underline">
+                <a href="{{ route('timers.show', $timer) }}" class="btn bg-timerbot-panel text-text hover:bg-divider no-underline">
                     Cancel
                 </a>
                 @if($timer->canRun(auth()->user()))

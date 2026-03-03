@@ -14,21 +14,23 @@ class TimerController extends Controller
         $user = auth()->user();
         $showMine = $user && $request->boolean('mine');
 
+        $allowedSorts = ['name', 'visibility', 'end_time', 'participant_count'];
+        $sort = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'name';
+        $direction = $request->input('direction') === 'desc' ? 'desc' : 'asc';
+
         if (!$user) {
             // Guests see only public timers
             $query = Timer::with('group', 'creator')
-                ->where('visibility', 'public')
-                ->orderBy('name');
+                ->where('visibility', 'public');
         } elseif ($showMine) {
             // My Timers: only timers the user is a group member of
             $userGroupIds = $user->groups()->pluck('groups.id');
 
             $query = Timer::with('group', 'creator')
-                ->whereIn('group_id', $userGroupIds)
-                ->orderBy('name');
+                ->whereIn('group_id', $userGroupIds);
         } elseif ($user->isAppAdmin()) {
             // Admin "All Timers": every timer in the database
-            $query = Timer::with('group', 'creator')->orderBy('name');
+            $query = Timer::with('group', 'creator');
         } else {
             // Member "All Timers": public timers + their group timers
             $userGroupIds = $user->groups()->pluck('groups.id');
@@ -37,9 +39,10 @@ class TimerController extends Controller
                 ->where(function ($q) use ($userGroupIds) {
                     $q->where('visibility', 'public')
                       ->orWhereIn('group_id', $userGroupIds);
-                })
-                ->orderBy('name');
+                });
         }
+
+        $query->orderBy($sort, $direction);
 
         if ($request->filled('search')) {
             $query->search($request->search, ['name']);
@@ -55,7 +58,7 @@ class TimerController extends Controller
             $timer->checkOvertimeReset();
         }
 
-        return view('timers.index', compact('timers', 'showMine'));
+        return view('timers.index', compact('timers', 'showMine', 'sort', 'direction'));
     }
 
     public function create()

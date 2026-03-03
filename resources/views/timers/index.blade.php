@@ -48,83 +48,87 @@
                 @if($showMine)
                     <input type="hidden" name="mine" value="1">
                 @endif
+                @if(request('sort'))
+                    <input type="hidden" name="sort" value="{{ request('sort') }}">
+                    <input type="hidden" name="direction" value="{{ request('direction') }}">
+                @endif
                 <div>
-                    <label class="block font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">Search</label>
+                    <label class="block font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">Search</label>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
-                           class="bg-timerbot-panel border border-dark-green rounded-sm px-4 py-2 text-text min-w-[200px]">
+                           class="bg-timerbot-panel border border-divider rounded-sm px-4 py-2 text-text min-w-[200px]">
                 </div>
                 <div>
-                    <label class="block font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">From</label>
+                    <label class="block font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">From</label>
                     <input type="date" name="from" value="{{ request('from') }}"
-                           class="bg-timerbot-panel border border-dark-green rounded-sm px-4 py-2 text-text">
+                           class="bg-timerbot-panel border border-divider rounded-sm px-4 py-2 text-text">
                 </div>
                 <div>
-                    <label class="block font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">To</label>
+                    <label class="block font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">To</label>
                     <input type="date" name="to" value="{{ request('to') }}"
-                           class="bg-timerbot-panel border border-dark-green rounded-sm px-4 py-2 text-text">
+                           class="bg-timerbot-panel border border-divider rounded-sm px-4 py-2 text-text">
                 </div>
                 <div class="flex gap-2">
                     <button type="submit" class="btn btn-secondary">Filter</button>
-                    @if(request()->hasAny(['search', 'from', 'to']))
+                    @if(request()->hasAny(['search', 'from', 'to', 'sort']))
                         <a href="{{ route('timers.index', $showMine ? ['mine' => 1] : []) }}" class="btn btn-secondary">Clear</a>
                     @endif
                 </div>
             </form>
         </div>
 
-        <div class="overflow-x-auto rounded-sm border border-dark-green">
+        <div class="overflow-x-auto rounded-sm border border-divider">
             <table class="w-full">
                 <thead>
                     <tr>
-                        <th class="p-4 text-left border-b border-dark-green">Name</th>
-                        <th class="p-4 text-left border-b border-dark-green">Status</th>
-                        <th class="p-4 text-left border-b border-dark-green">Visibility</th>
-                        <th class="p-4 text-left border-b border-dark-green">End Time</th>
-                        <th class="p-4 text-left border-b border-dark-green">Participants</th>
-                        <th class="p-4 text-left border-b border-dark-green">Group</th>
-                        <th class="p-4 text-left border-b border-dark-green w-80">Actions</th>
+                        <x-sort-header column="name" label="Name" :sort="$sort" :direction="$direction" />
+                        <th class="p-4 text-left border-b border-divider">Status</th>
+                        <x-sort-header column="visibility" label="Visibility" :sort="$sort" :direction="$direction" />
+                        <x-sort-header column="end_time" label="End Time" :sort="$sort" :direction="$direction" />
+                        <x-sort-header column="participant_count" label="Participants" :sort="$sort" :direction="$direction" />
+                        <th class="p-4 text-left border-b border-divider">Group</th>
+                        <th class="p-4 text-left border-b border-divider w-80">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($timers as $timer)
                         <tr class="hover:bg-timerbot-panel-light transition-colors">
-                            <td class="p-4 border-b border-dark-green/50">
-                                <a href="{{ route('timers.show', $timer) }}" class="text-timerbot-neon hover:text-timerbot-lime font-semibold">{{ $timer->name }}</a>
+                            <td class="p-4 border-b border-divider/50">
+                                <a href="{{ route('timers.show', $timer) }}" class="text-timerbot-green hover:text-timerbot-lime font-semibold">{{ $timer->name }}</a>
                             </td>
-                            <td class="p-4 border-b border-dark-green/50"
+                            <td class="p-4 border-b border-divider/50"
                                 x-data="timerStatus({{ Js::from($timer->run_state) }}, {{ Js::from($timer->end_time) }}, {{ $timer->overtime_reset_minutes }}, '{{ route('timers.state', $timer) }}')"
                                 x-init="start()"
                             >
                                 <span x-text="display" :class="colorClass" class="font-mono text-sm"></span>
                             </td>
-                            <td class="p-4 border-b border-dark-green/50">
+                            <td class="p-4 border-b border-divider/50">
                                 @if($timer->isPublic())
                                     <span class="badge badge-green text-xs">Public</span>
                                 @else
                                     <span class="badge badge-lime text-xs">Private</span>
                                 @endif
                             </td>
-                            <td class="p-4 border-b border-dark-green/50 text-text-muted">
+                            <td class="p-4 border-b border-divider/50 text-text-muted">
                                 {{ \Carbon\Carbon::parse($timer->end_time)->format('g:i A') }}
                             </td>
-                            <td class="p-4 border-b border-dark-green/50 text-text-muted">
+                            <td class="p-4 border-b border-divider/50 text-text-muted">
                                 {{ $timer->participant_count }}
                             </td>
-                            <td class="p-4 border-b border-dark-green/50 text-text-muted">
+                            <td class="p-4 border-b border-divider/50 text-text-muted">
                                 {{ $timer->group?->name ?? '—' }}
                             </td>
-                            <td class="p-4 border-b border-dark-green/50">
+                            <td class="p-4 border-b border-divider/50">
                                 <div class="flex gap-2">
                                     @if(auth()->check() && $timer->canRun(auth()->user()))
                                         <a href="{{ route('timers.run', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-green text-timerbot-black hover:bg-timerbot-green/80 transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                             Run
                                         </a>
                                     @endif
-                                    <a href="{{ route('timers.show', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-mint hover:bg-timerbot-mint hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
+                                    <a href="{{ route('timers.show', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-teal hover:bg-timerbot-teal hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                         View
                                     </a>
                                     @if(auth()->check() && $timer->canManage(auth()->user()))
-                                        <a href="{{ route('timers.edit', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-mint hover:bg-timerbot-mint hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
+                                        <a href="{{ route('timers.edit', $timer) }}" class="px-3 py-1.5 rounded-none bg-timerbot-panel-light text-timerbot-teal hover:bg-timerbot-teal hover:text-timerbot-black transition-all text-xs uppercase tracking-wider no-underline" style="font-family: var(--font-display);">
                                             Edit
                                         </a>
                                     @endif
@@ -210,7 +214,7 @@
                 const endMs = state.end_time_ms || this.endTimeToMs();
                 if (!endMs) {
                     this.display = state.status === 'paused' ? 'Paused' : 'Running';
-                    this.colorClass = state.status === 'paused' ? 'text-timerbot-neon' : 'text-timerbot-green';
+                    this.colorClass = state.status === 'paused' ? 'text-timerbot-green' : 'text-timerbot-green';
                     return;
                 }
 
@@ -230,7 +234,7 @@
                 if (state.status === 'paused') {
                     remainMs = state.paused_remaining_ms || (endMs - now);
                     this.display = 'Paused | ' + this.fmt(remainMs);
-                    this.colorClass = 'text-timerbot-neon';
+                    this.colorClass = 'text-timerbot-green';
                     return;
                 }
 

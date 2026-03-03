@@ -10,7 +10,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div class="lg:col-span-2 bg-timerbot-panel-light rounded-sm p-6">
                 <div class="flex items-center gap-4 mb-6">
-                    <div class="w-3 h-8 bg-timerbot-mint rounded-none"></div>
+                    <div class="w-3 h-8 bg-timerbot-teal rounded-none"></div>
                     <h2>Activity Details</h2>
                 </div>
                 <dl class="space-y-4">
@@ -32,7 +32,7 @@
                     <div class="flex items-center">
                         <dt class="font-semibold text-timerbot-lime w-36 uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Model Type</dt>
                         <dd>
-                            <span class="badge badge-mint">
+                            <span class="badge badge-teal">
                                 {{ $activityLog->getModelName() }}
                             </span>
                         </dd>
@@ -51,7 +51,7 @@
                                     $routeName = $modelRoutes[$activityLog->getModelName()] ?? null;
                                 @endphp
                                 @if($routeName)
-                                    <a href="{{ route($routeName, $activityLog->loggable_id) }}" class="text-timerbot-lime hover:text-timerbot-neon">
+                                    <a href="{{ route($routeName, $activityLog->loggable_id) }}" class="text-timerbot-lime hover:text-timerbot-green">
                                         {{ $activityLog->getLoggableDisplayName() }}
                                     </a>
                                 @else
@@ -70,7 +70,7 @@
                         <dd>
                             @if($activityLog->user_id)
                                 @if($activityLog->userExists())
-                                    <a href="{{ route('users.edit', $activityLog->user_id) }}" class="text-timerbot-mint hover:text-timerbot-lime">
+                                    <a href="{{ route('users.edit', $activityLog->user_id) }}" class="text-timerbot-teal hover:text-timerbot-lime">
                                         {{ $activityLog->user_name }}
                                     </a>
                                     <span class="text-text-muted">#{{ $activityLog->user_id }}</span>
@@ -90,7 +90,7 @@
 
         <div>
             <div class="flex items-center gap-4 mb-4">
-                <div class="w-3 h-8 bg-timerbot-neon rounded-none"></div>
+                <div class="w-3 h-8 bg-timerbot-green rounded-none"></div>
                 <h2>
                     @if($activityLog->action === 'updated')
                         Changes
@@ -108,7 +108,7 @@
                 <div class="space-y-4">
                     @if(isset($activityLog->changes['node']))
                         <div class="bg-timerbot-panel-light rounded-sm p-4">
-                            <div class="font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">
+                            <div class="font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-2" style="font-family: var(--font-display);">
                                 Step {{ $activityLog->changes['step'] ?? '?' }}: {{ $activityLog->changes['node'] }}
                             </div>
                         </div>
@@ -116,12 +116,12 @@
 
                     @if(!empty($activityLog->changes['inputs']))
                         <div class="bg-timerbot-panel-light rounded-sm p-4">
-                            <div class="font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-3" style="font-family: var(--font-display);">Inputs</div>
+                            <div class="font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-3" style="font-family: var(--font-display);">Inputs</div>
                             <div class="space-y-2">
                                 @foreach($activityLog->changes['inputs'] as $field => $value)
-                                    <div class="border-l-2 border-timerbot-mint pl-4">
-                                        <div class="text-timerbot-mint text-sm font-semibold">{{ str_replace('_', ' ', ucfirst($field)) }}</div>
-                                        <div class="bg-timerbot-dark border border-dark-green rounded-sm p-3 mt-1 overflow-x-auto">
+                                    <div class="border-l-2 border-timerbot-teal pl-4">
+                                        <div class="text-timerbot-teal text-sm font-semibold">{{ str_replace('_', ' ', ucfirst($field)) }}</div>
+                                        <div class="bg-timerbot-dark border border-divider rounded-sm p-3 mt-1 overflow-x-auto">
                                             <pre class="text-sm text-text font-mono whitespace-pre-wrap">{{ is_array($value) ? json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : $value }}</pre>
                                         </div>
                                     </div>
@@ -132,8 +132,8 @@
 
                     @if(isset($activityLog->changes['output']))
                         <div class="bg-timerbot-panel-light rounded-sm p-4">
-                            <div class="font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-3" style="font-family: var(--font-display);">Output</div>
-                            <div class="bg-timerbot-dark border border-dark-green rounded-sm p-3 overflow-x-auto">
+                            <div class="font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-3" style="font-family: var(--font-display);">Output</div>
+                            <div class="bg-timerbot-dark border border-divider rounded-sm p-3 overflow-x-auto">
                                 <pre class="text-sm text-text font-mono whitespace-pre-wrap">{{ $activityLog->changes['output'] }}</pre>
                             </div>
                         </div>
@@ -143,7 +143,7 @@
                 <div class="space-y-4">
                     @foreach($activityLog->changes as $field => $change)
                         <div class="bg-timerbot-panel-light rounded-sm p-4">
-                            <div class="font-semibold text-timerbot-mint uppercase text-sm tracking-wider mb-3" style="font-family: var(--font-display);">
+                            <div class="font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-3" style="font-family: var(--font-display);">
                                 {{ str_replace('_', ' ', ucfirst($field)) }}
                             </div>
                             @if(array_key_exists('old', $change) && array_key_exists('new', $change))
@@ -151,13 +151,13 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <div class="text-timerbot-red text-xs uppercase tracking-wider mb-1" style="font-family: var(--font-display);">Old Value</div>
-                                        <div class="bg-timerbot-dark border border-dark-green rounded-sm p-3 overflow-x-auto">
+                                        <div class="bg-timerbot-dark border border-divider rounded-sm p-3 overflow-x-auto">
                                             <pre class="text-sm text-text font-mono whitespace-pre-wrap">{{ is_array($change['old']) ? json_encode($change['old'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : ($change['old'] ?? '(empty)') }}</pre>
                                         </div>
                                     </div>
                                     <div>
                                         <div class="text-timerbot-green text-xs uppercase tracking-wider mb-1" style="font-family: var(--font-display);">New Value</div>
-                                        <div class="bg-timerbot-dark border border-dark-green rounded-sm p-3 overflow-x-auto">
+                                        <div class="bg-timerbot-dark border border-divider rounded-sm p-3 overflow-x-auto">
                                             <pre class="text-sm text-text font-mono whitespace-pre-wrap">{{ is_array($change['new']) ? json_encode($change['new'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : ($change['new'] ?? '(empty)') }}</pre>
                                         </div>
                                     </div>
@@ -167,24 +167,24 @@
                                 <div class="space-y-3">
                                     @foreach($change as $subKey => $subChange)
                                         <div class="border-l-2 border-timerbot-lime pl-4">
-                                            <div class="text-timerbot-mint text-sm font-semibold mb-2">[{{ $subKey }}]</div>
+                                            <div class="text-timerbot-teal text-sm font-semibold mb-2">[{{ $subKey }}]</div>
                                             @if(is_array($subChange) && array_key_exists('old', $subChange) && array_key_exists('new', $subChange))
                                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div>
                                                         <div class="text-timerbot-red text-xs uppercase tracking-wider mb-1" style="font-family: var(--font-display);">Old</div>
-                                                        <div class="bg-timerbot-dark border border-dark-green rounded-sm p-2 overflow-x-auto">
+                                                        <div class="bg-timerbot-dark border border-divider rounded-sm p-2 overflow-x-auto">
                                                             <pre class="text-sm text-text font-mono whitespace-pre-wrap">{{ is_array($subChange['old']) ? json_encode($subChange['old'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : ($subChange['old'] ?? '(empty)') }}</pre>
                                                         </div>
                                                     </div>
                                                     <div>
                                                         <div class="text-timerbot-green text-xs uppercase tracking-wider mb-1" style="font-family: var(--font-display);">New</div>
-                                                        <div class="bg-timerbot-dark border border-dark-green rounded-sm p-2 overflow-x-auto">
+                                                        <div class="bg-timerbot-dark border border-divider rounded-sm p-2 overflow-x-auto">
                                                             <pre class="text-sm text-text font-mono whitespace-pre-wrap">{{ is_array($subChange['new']) ? json_encode($subChange['new'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : ($subChange['new'] ?? '(empty)') }}</pre>
                                                         </div>
                                                     </div>
                                                 </div>
                                             @else
-                                                <div class="bg-timerbot-dark border border-dark-green rounded-sm p-2 overflow-x-auto">
+                                                <div class="bg-timerbot-dark border border-divider rounded-sm p-2 overflow-x-auto">
                                                     <pre class="text-sm text-text font-mono whitespace-pre-wrap">{{ json_encode($subChange, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                                                 </div>
                                             @endif
@@ -196,8 +196,8 @@
                     @endforeach
                 </div>
             @else
-                <div class="bg-timerbot-dark border border-dark-green rounded-sm p-6 overflow-x-auto">
-                    <pre class="text-sm text-timerbot-mint font-mono">{{ json_encode($activityLog->changes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
+                <div class="bg-timerbot-dark border border-divider rounded-sm p-6 overflow-x-auto">
+                    <pre class="text-sm text-timerbot-teal font-mono">{{ json_encode($activityLog->changes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                 </div>
             @endif
         </div>

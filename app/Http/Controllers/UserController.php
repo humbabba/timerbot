@@ -33,7 +33,11 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $query = User::with('roles')->orderBy('created_at', 'desc');
+        $allowedSorts = ['name', 'email', 'created_at', 'last_login_at'];
+        $sort = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'created_at';
+        $direction = $request->input('direction') === 'asc' ? 'asc' : 'desc';
+
+        $query = User::with('roles')->orderBy($sort, $direction);
 
         if ($request->filled('search')) {
             $query->search($request->search, ['name', 'email']);
@@ -46,7 +50,7 @@ class UserController extends Controller
         $users = $query->paginate(20)->withQueryString();
         $assignableRoleIds = $this->getAssignableRoles()->pluck('id')->toArray();
 
-        return view('users.index', compact('users', 'assignableRoleIds'));
+        return view('users.index', compact('users', 'assignableRoleIds', 'sort', 'direction'));
     }
 
     public function create()

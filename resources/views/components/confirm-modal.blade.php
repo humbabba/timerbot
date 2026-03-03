@@ -43,7 +43,7 @@
             x-transition:leave="ease-in duration-150"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            class="relative bg-timerbot-panel border border-dark-green rounded-sm shadow-2xl max-w-md w-full overflow-hidden"
+            class="relative bg-timerbot-panel border border-divider rounded-sm shadow-2xl max-w-md w-full overflow-hidden"
             x-on:click.stop
         >
             <!-- Header bar -->
@@ -57,7 +57,7 @@
                     <button
                         type="button"
                         x-on:click.prevent.stop="open = false"
-                        class="px-5 py-2 rounded-none bg-timerbot-panel-light text-text hover:bg-timerbot-mint hover:text-timerbot-black transition-all duration-200 uppercase text-sm tracking-wider"
+                        class="px-5 py-2 rounded-none bg-timerbot-panel-light text-text hover:bg-timerbot-teal hover:text-white transition-all duration-200 uppercase text-sm tracking-wider"
                         style="font-family: var(--font-display);"
                     >
                         Cancel

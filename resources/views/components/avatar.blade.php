@@ -15,7 +15,7 @@
 
 <div
     x-data="{ imgError: false }"
-    class="{{ $classes }} rounded-none overflow-hidden flex items-center justify-center bg-timerbot-mint"
+    class="{{ $classes }} rounded-none overflow-hidden flex items-center justify-center bg-timerbot-teal"
 >
     <img
         x-show="!imgError"
