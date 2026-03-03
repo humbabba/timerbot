@@ -22,7 +22,7 @@ class UserController extends Controller
 
     public static function getStartingViewsForUser($user): array
     {
-        $views = ['' => 'Home (default)'];
+        $views = ['' => 'Home (default)', '/timers' => 'Timers'];
         foreach (self::ALLOWED_STARTING_VIEWS as $path => $config) {
             if ($user->hasPermission($config['permission'])) {
                 $views[$path] = $config['label'];
