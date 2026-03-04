@@ -288,30 +288,20 @@ import { playSound } from './sounds';
         const overTime = forceOverTime ||
             (running && !completed && speakerStartMs > 0 && speakerRemainingMs() < 0);
 
-        if (overTime) {
+        if (running && !completed) {
+            // While running (normal, paused, or overtime): show what future speakers will get.
+            // Subtract current speaker's reserved time from meeting remaining, divide by future count.
             const futureCount = totalSpeakers - currentSpeaker - 1;
             if (futureCount > 0) {
-                const nextTime = Math.max(0, remainingMeetingMs() / futureCount);
-                timePerPersonLabel.textContent = `${formatTime(nextTime)} per ${termSingular} (${futureCount} remaining)`;
-            } else {
-                timePerPersonLabel.textContent = `Last ${termSingular} — no time to redistribute`;
-            }
-        } else if (paused && running) {
-            // Paused: show time for future speakers, minus current speaker's reserved time
-            // Cap reserved at meeting remaining (speaker can't have more than the meeting has)
-            const futureCount = totalSpeakers - currentSpeaker - 1;
-            const meetingMs = remainingMeetingMs();
-            const speakerReserved = Math.max(0, Math.min(speakerRemainingMs(), meetingMs));
-            if (futureCount > 0) {
+                const meetingMs = remainingMeetingMs();
+                const speakerReserved = Math.max(0, speakerRemainingMs());
                 const tpp = Math.max(0, (meetingMs - speakerReserved) / futureCount);
                 timePerPersonLabel.textContent = `${formatTime(tpp)} per ${termSingular} (${futureCount} remaining)`;
             } else {
                 timePerPersonLabel.textContent = `Last ${termSingular} — no time to redistribute`;
             }
-        } else if (running) {
-            const remaining = totalSpeakers - currentSpeaker;
-            timePerPersonLabel.textContent = `${formatTime(perPersonMs)} per ${termSingular} (${remaining} remaining)`;
-        } else {
+        } else if (!running || completed) {
+            // Idle or completed: equal share across all speakers
             timePerPersonLabel.textContent = `${formatTime(perPersonMs)} per ${termSingular} (${totalSpeakers} ${termPlural})`;
         }
 
@@ -763,10 +753,14 @@ import { playSound } from './sounds';
                 totalPausedMs += serverNow() - pauseStartMs;
                 paused = false;
 
-                // Recalculate allotted time for current speaker
-                speakerAllottedMs = speakerElapsedMs() + Math.max(0, calcTimePerSpeaker());
+                // Cap speaker time if meeting dropped below during pause
+                const meetingMs = remainingMeetingMs();
+                const remain = speakerRemainingMs();
+                if (meetingMs < remain) {
+                    speakerAllottedMs = speakerElapsedMs() + Math.max(0, meetingMs);
+                }
 
-                updateTimePerPersonLabel(speakerAllottedMs);
+                updateTimePerPersonLabel();
 
                 btnPause.textContent = 'Pause';
                 btnPause.classList.remove('bg-timerbot-green', 'text-timerbot-black');
@@ -913,9 +907,7 @@ import { playSound } from './sounds';
                 }
             }
         }
-        if (!running || paused) {
-            updateTimePerPersonLabel(calcTimePerSpeaker());
-        }
+        updateTimePerPersonLabel(calcTimePerSpeaker());
     }, 1000);
 
     // Restore previous run state (or sync idle for show page)
