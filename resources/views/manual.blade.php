@@ -224,7 +224,7 @@
                             If another user tries to run the same timer, they will see a message indicating who currently holds the lock.
                         </p>
                         <p>
-                            The lock is maintained with a heartbeat every 3 seconds. If your connection drops or you close the page,
+                            The lock is maintained with a heartbeat every second. If your connection drops or you close the page,
                             the lock expires after 30 seconds, allowing another operator to take over. If the lock is taken by
                             someone else while you are on the run page, a "Lock Lost" overlay appears with a link back to the timer.
                         </p>
@@ -280,7 +280,7 @@
 
                         <h3 class="text-timerbot-teal uppercase tracking-wide" style="font-family: var(--font-display);">State Persistence</h3>
                         <p>
-                            Timer state is saved to the server every 3 seconds. If you refresh the page or lose your connection,
+                            Timer state is saved to the server every second. If you refresh the page or lose your connection,
                             the timer will resume from its last saved state.
                         </p>
                     </div>
@@ -327,8 +327,9 @@
 
                     <h3 class="text-timerbot-teal uppercase tracking-wide" style="font-family: var(--font-display);">Real-Time Updates</h3>
                     <p>
-                        The participant view polls the server every 2 seconds for state changes and renders countdowns
-                        every 200ms for a smooth display. All time calculations are performed client-side for accuracy.
+                        The participant view polls the server every second for state changes and renders countdowns
+                        every 200ms for a smooth display. Time calculations are performed client-side but synchronized
+                        to server time to ensure accuracy across devices.
                     </p>
                 </div>
             </section>
