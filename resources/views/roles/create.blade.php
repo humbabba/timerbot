@@ -1,5 +1,5 @@
 <x-layouts.app>
-    <div class="p-8 max-w-2xl">
+    <div class="p-4 md:p-8 max-w-2xl">
         <div class="flex items-center gap-4 mb-8">
             <div class="w-3 h-10 bg-timerbot-green rounded-none"></div>
             <h1>Add Role</h1>

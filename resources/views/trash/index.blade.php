@@ -1,5 +1,5 @@
 <x-layouts.app>
-    <div class="p-8">
+    <div class="p-4 md:p-8">
         <div class="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-8">
             <h1>Trash</h1>
             @if($trashItems->count() > 0 && auth()->user()->hasPermission('trash.delete'))

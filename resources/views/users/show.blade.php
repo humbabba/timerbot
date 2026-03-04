@@ -1,5 +1,5 @@
 <x-layouts.app>
-    <div class="p-8 max-w-2xl">
+    <div class="p-4 md:p-8 max-w-2xl">
         <div class="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-8">
             <div class="flex items-center gap-4">
                 <div class="w-3 h-10 bg-timerbot-green rounded-none"></div>
