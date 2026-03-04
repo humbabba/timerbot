@@ -260,7 +260,9 @@
                         <p>
                             Configured warnings fire automatically at the specified countdown values during each participant's turn.
                             Sounds are generated using the Web Audio API &mdash; no external audio files are needed.
-                            Make sure your browser's sound is not muted.
+                        </p>
+                        <p>
+                            Warnings fire on the run page only. Make sure your browser's sound is not muted.
                         </p>
 
                         <h3 class="text-timerbot-teal uppercase tracking-wide" style="font-family: var(--font-display);">Overtime Auto-Reset</h3>

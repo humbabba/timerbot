@@ -763,12 +763,8 @@ import { playSound } from './sounds';
                 totalPausedMs += serverNow() - pauseStartMs;
                 paused = false;
 
-                // Cap speaker time if meeting dropped below during pause
-                const meetingMs = remainingMeetingMs();
-                const remain = speakerRemainingMs();
-                if (meetingMs < remain) {
-                    speakerAllottedMs = speakerElapsedMs() + Math.max(0, meetingMs);
-                }
+                // Recalculate allotted time for current speaker
+                speakerAllottedMs = speakerElapsedMs() + Math.max(0, calcTimePerSpeaker());
 
                 updateTimePerPersonLabel(speakerAllottedMs);
 
