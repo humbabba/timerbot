@@ -165,8 +165,9 @@
                             <li><strong>End time</strong> &mdash; The time the meeting should end (HH:MM format).</li>
                             <li><strong>Participants</strong> &mdash; The number of participants (1&ndash;999).</li>
                             <li><strong>Participant Term</strong> &mdash; Custom labels for participants (singular and plural), e.g. "presenter" / "presenters". Defaults to "speaker" / "speakers".</li>
-                            <li><strong>Overtime Limit</strong> &mdash; How many minutes past the meeting end time the timer is allowed to run before automatically resetting to idle (1&ndash;59 minutes). This prevents a forgotten timer from running indefinitely.</li>
-                            <li><strong>Warnings</strong> &mdash; Audio alerts that fire at configurable offsets relative to each participant's time running out. Choose from sounds like Alarm, Bell, Beep, Chime, Ding, Twang, and Warning. Use the preview button to hear each sound.</li>
+                            <li><strong>Overtime Limit</strong> &mdash; How many minutes past the meeting end time the timer is allowed to run before automatically resetting to idle (1&ndash;60 minutes). This prevents a forgotten timer from running indefinitely.</li>
+                            <li><strong>Undo Duration</strong> &mdash; How many seconds the Undo button stays available after advancing to the next participant (1&ndash;60 seconds, default 10).</li>
+                            <li><strong>Warnings</strong> &mdash; Audio alerts that fire at configurable offsets relative to each participant's time running out. Choose from sounds like Alarm, Bell, Beep, Chime, Clock radio, Dandelion, Ding, Twang, and Warning. Use the preview button to hear each sound.</li>
                             <li><strong>Participant Message</strong> &mdash; Optional rich-text message displayed to participants on the public view page.</li>
                         </ul>
 
@@ -211,8 +212,8 @@
                         <ul class="list-disc list-inside ml-4 space-y-1">
                             <li><strong>Start</strong> &mdash; Begins the timer and starts the first participant's countdown.</li>
                             <li><strong>Next</strong> &mdash; Records the current participant's time and advances to the next one. Remaining meeting time is redistributed equally among the remaining participants.</li>
-                            <li><strong>Previous</strong> &mdash; Goes back to the previous participant. Their entry is removed from the history and their countdown resumes where it left off.</li>
-                            <li><strong>Undo</strong> &mdash; After advancing to the next participant, an Undo button appears with a countdown (up to 10 seconds). Click it to reverse the advance and return to the previous participant as if Next was never pressed.</li>
+                            <li><strong>Previous</strong> &mdash; Goes back to the previous participant. Their entry is removed from the history and their countdown starts over at the newly calculated time per person.</li>
+                            <li><strong>Undo</strong> &mdash; After advancing to the next participant, an Undo button appears with a countdown. The duration is configurable per timer (default 10 seconds). Click it to reverse the advance and return to the previous participant as if Next was never pressed.</li>
                             <li><strong>Pause / Resume</strong> &mdash; Freezes the current participant's countdown. While paused, time does not count against the participant. Pause duration is tracked and accounted for.</li>
                             <li><strong>Stop</strong> &mdash; Ends the timer session and resets to idle state.</li>
                         </ul>
@@ -267,6 +268,12 @@
                             If the timer is still running after the meeting end time plus the configured <strong>overtime limit</strong>,
                             the timer automatically resets to idle. This prevents forgotten timers from running indefinitely.
                             The overtime limit is configurable per timer (1&ndash;59 minutes, default 5).
+                        </p>
+
+                        <h3 class="text-timerbot-teal uppercase tracking-wide" style="font-family: var(--font-display);">Keep Screen Awake</h3>
+                        <p>
+                            The run page includes a <strong>"Keep screen awake"</strong> checkbox, identical to the one on the participant view.
+                            Enabling it prevents the screen from dimming or locking while operating the timer.
                         </p>
 
                         <h3 class="text-timerbot-teal uppercase tracking-wide" style="font-family: var(--font-display);">State Persistence</h3>

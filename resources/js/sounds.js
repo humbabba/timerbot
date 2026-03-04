@@ -137,27 +137,11 @@ function playAlarm() {
         });
     }
 
-    function decayTail(startTime) {
-        [390, 920, 1440].forEach((freq, i) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(freq, startTime);
-            const vol = 0.03 - i * 0.008;
-            gain.gain.setValueAtTime(vol, startTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 1.2);
-            osc.connect(gain).connect(ctx.destination);
-            osc.start(startTime);
-            osc.stop(startTime + 1.3);
-        });
-    }
-
     const now = ctx.currentTime;
 
     beep(now);
     beep(now + 0.5);
     beep(now + 1.0);
-    decayTail(now + 1.27);
 }
 
 function playDandelion() {
@@ -189,7 +173,6 @@ function playWarning() {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
 
     function note(startTime, freq, duration, peakGain) {
-        // Each note is a rich tone with harmonics at ~4x and overtones
         const partials = [
             { ratio: 1, gain: peakGain },
             { ratio: 4, gain: peakGain * 0.25 },
@@ -203,7 +186,6 @@ function playWarning() {
             osc.type = "sine";
             osc.frequency.setValueAtTime(freq * ratio, startTime);
 
-            // Sharp attack, sustain, then decay
             gain.gain.setValueAtTime(0.0001, startTime);
             gain.gain.exponentialRampToValueAtTime(vol, startTime + 0.01);
             gain.gain.setValueAtTime(vol, startTime + duration * 0.3);
@@ -216,31 +198,14 @@ function playWarning() {
         });
     }
 
-    function decayTail(startTime) {
-        [520, 4200].forEach((freq, i) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(freq, startTime);
-            const vol = i === 0 ? 0.02 : 0.008;
-            gain.gain.setValueAtTime(vol, startTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 1.0);
-            osc.connect(gain).connect(ctx.destination);
-            osc.start(startTime);
-            osc.stop(startTime + 1.1);
-        });
-    }
-
     const now = ctx.currentTime;
 
-    //           start     freq    dur    peak
-    note(now + 0.05,  800,  0.16, 0.68);
+    note(now + 0.05,  800,  0.16, 0.78);
     note(now + 0.22, 1165,  0.16, 0.95);
-    note(now + 0.39, 1045,  0.15, 0.72);
+    note(now + 0.39, 1045,  0.15, 0.82);
     note(now + 0.55, 1400,  0.13, 0.98);
-    note(now + 0.72, 1045,  0.12, 0.75);
+    note(now + 0.72, 1045,  0.12, 0.85);
     note(now + 0.88, 2075,  0.10, 0.92);
-    decayTail(now + 1.0);
 }
 
 const soundMap = {
