@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -90,7 +91,7 @@ class UserController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $user->load('roles');
+        $user->load('roles', 'groups');
         $assignableRoleIds = $this->getAssignableRoles()->pluck('id')->toArray();
 
         return view('users.show', compact('user', 'assignableRoleIds'));
@@ -110,10 +111,15 @@ class UserController extends Controller
             return redirect()->route('users.show', $user);
         }
 
+        $user->load('groups');
         $userRoleIds = $user->roles->pluck('id')->toArray();
         $startingViews = self::getStartingViewsForUser($user);
+        $allGroups = Group::orderBy('name')->get();
+        $soleAdminGroupIds = $user->groups->filter(function ($group) {
+            return $group->pivot->is_admin && $group->admins()->count() === 1;
+        })->pluck('id')->values()->toArray();
 
-        return view('users.edit', compact('user', 'roles', 'userRoleIds', 'isOwnProfile', 'startingViews'));
+        return view('users.edit', compact('user', 'roles', 'userRoleIds', 'isOwnProfile', 'startingViews', 'allGroups', 'soleAdminGroupIds'));
     }
 
     public function update(Request $request, User $user)
@@ -159,6 +165,34 @@ class UserController extends Controller
 
         if (auth()->user()->hasPermission('users.edit') && isset($validated['role'])) {
             $user->roles()->sync([$validated['role']]);
+        }
+
+        // Sync group memberships
+        if (auth()->user()->hasPermission('users.edit')) {
+            if ($request->has('groups')) {
+                $syncData = [];
+                foreach ($request->input('groups', []) as $entry) {
+                    $syncData[(int) $entry['group_id']] = ['is_admin' => !empty($entry['is_admin'])];
+                }
+                $user->groups()->sync($syncData);
+            } else {
+                $user->groups()->sync([]);
+            }
+        } elseif ($isOwnProfile && $request->has('has_groups_section')) {
+            // Self-editing: can only remove groups, not add. Preserve is_admin.
+            // Cannot leave groups where user is the sole admin.
+            $currentGroupIds = $user->groups->pluck('id')->toArray();
+            $submittedIds = array_map(fn($e) => (int) $e['group_id'], $request->input('groups', []));
+            $keepIds = array_intersect($submittedIds, $currentGroupIds);
+            $soleAdminGroupIds = $user->groups->filter(function ($group) {
+                return $group->pivot->is_admin && $group->admins()->count() === 1;
+            })->pluck('id')->toArray();
+            $keepIds = array_unique(array_merge($keepIds, $soleAdminGroupIds));
+            $syncData = [];
+            foreach ($keepIds as $groupId) {
+                $syncData[$groupId] = ['is_admin' => $user->groups->find($groupId)->pivot->is_admin];
+            }
+            $user->groups()->sync($syncData);
         }
 
         if ($request->ajax() || $request->wantsJson()) {

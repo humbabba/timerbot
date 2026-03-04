@@ -50,6 +50,22 @@
                     </div>
 
                     <div>
+                        <label class="block font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-1" style="font-family: var(--font-display);">Groups</label>
+                        <div>
+                            @forelse($user->groups as $group)
+                                <span class="badge badge-teal mr-1">
+                                    {{ $group->name }}
+                                    @if($group->pivot->is_admin)
+                                        <span class="text-timerbot-green ml-1">Admin</span>
+                                    @endif
+                                </span>
+                            @empty
+                                <span class="text-text-muted">None</span>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <div>
                         <label class="block font-semibold text-timerbot-teal uppercase text-sm tracking-wider mb-1" style="font-family: var(--font-display);">Last Login</label>
                         <p class="text-text-muted">{{ $user->last_login_at ? $user->last_login_at->format('F j, Y g:i A') : 'Never' }}</p>
                     </div>

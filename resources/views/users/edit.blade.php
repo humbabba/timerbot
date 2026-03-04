@@ -97,6 +97,85 @@
                 </div>
             @endif
 
+            @if($user->groups->count() > 0 || auth()->user()->hasPermission('users.edit'))
+            <!-- Groups -->
+            <div class="mb-8" x-data="{
+                groups: {{ Js::from($user->groups->map(fn($g) => ['group_id' => $g->id, 'name' => $g->name, 'is_admin' => (bool) $g->pivot->is_admin])) }},
+                soleAdminGroupIds: {{ Js::from($soleAdminGroupIds) }},
+                @if(auth()->user()->hasPermission('users.edit'))
+                allGroups: {{ Js::from($allGroups->map(fn($g) => ['id' => $g->id, 'name' => $g->name])) }},
+                selectedGroupId: '',
+                get availableGroups() {
+                    const currentIds = this.groups.map(g => g.group_id);
+                    return this.allGroups.filter(g => !currentIds.includes(g.id));
+                },
+                addGroup() {
+                    if (!this.selectedGroupId) return;
+                    const group = this.allGroups.find(g => g.id == this.selectedGroupId);
+                    if (group && !this.groups.find(g => g.group_id == group.id)) {
+                        this.groups.push({ group_id: group.id, name: group.name, is_admin: false });
+                    }
+                    this.selectedGroupId = '';
+                },
+                @endif
+                removeGroup(index) {
+                    this.groups.splice(index, 1);
+                }
+            }">
+                <input type="hidden" name="has_groups_section" value="1">
+                <label class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Groups</label>
+
+                @if(auth()->user()->hasPermission('users.edit'))
+                <!-- Add group -->
+                <div class="flex gap-2 mb-3">
+                    <select x-model="selectedGroupId" class="flex-1 p-3 bg-timerbot-panel border border-divider rounded-sm text-text focus:border-timerbot-teal">
+                        <option value="">Select a group...</option>
+                        <template x-for="group in availableGroups" :key="group.id">
+                            <option :value="group.id" x-text="group.name"></option>
+                        </template>
+                    </select>
+                    <button type="button" @click="addGroup()" class="btn bg-timerbot-teal text-timerbot-black hover:bg-timerbot-teal/80">Add</button>
+                </div>
+                @endif
+
+                <!-- Group list -->
+                <div class="space-y-2">
+                    <template x-for="(group, index) in groups" :key="group.group_id">
+                        <div class="flex items-center justify-between p-2 bg-timerbot-panel rounded-sm border border-divider">
+                            <input type="hidden" :name="'groups[' + index + '][group_id]'" :value="group.group_id">
+                            <input type="hidden" :name="'groups[' + index + '][is_admin]'" :value="group.is_admin ? 1 : 0">
+                            <span x-text="group.name" class="text-text text-sm font-semibold"></span>
+                            <div class="flex items-center gap-3">
+                                @if(auth()->user()->hasPermission('users.edit'))
+                                    <label class="flex items-center gap-1 cursor-pointer">
+                                        <input type="checkbox" x-model="group.is_admin" class="accent-timerbot-green">
+                                        <span class="text-text-muted text-xs">Admin</span>
+                                    </label>
+                                @else
+                                    <span x-show="group.is_admin" class="text-timerbot-green text-xs font-semibold">Admin</span>
+                                @endif
+                                @if(auth()->user()->hasPermission('users.edit'))
+                                    <button type="button" @click="removeGroup(index)" class="text-timerbot-red hover:text-timerbot-red/80 text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
+                                        Remove
+                                    </button>
+                                @else
+                                    <template x-if="!soleAdminGroupIds.includes(group.group_id)">
+                                        <button type="button" @click="removeGroup(index)" class="text-timerbot-red hover:text-timerbot-red/80 text-xs uppercase tracking-wider" style="font-family: var(--font-display);">
+                                            Remove
+                                        </button>
+                                    </template>
+                                    <template x-if="soleAdminGroupIds.includes(group.group_id)">
+                                        <span class="text-text-muted text-xs" title="You are the only admin in this group">Sole admin</span>
+                                    </template>
+                                @endif
+                            </div>
+                        </div>
+                    </template>
+                    <p x-show="groups.length === 0" class="text-text-muted text-sm">No groups.</p>
+                </div>
+            </div>
+            @endif
+
             <div class="flex gap-4">
                 <button type="submit" class="btn btn-primary">
                     Update User

@@ -321,7 +321,7 @@
 
             <div class="mb-6">
                 <label class="block mb-2 font-semibold text-timerbot-teal uppercase text-sm tracking-wider" style="font-family: var(--font-display);">Warnings</label>
-                <p class="text-text-muted text-sm mb-4">Configure sound warnings before each {{ old('participant_term', $timer->participant_term) }}'s time expires.</p>
+                <p class="text-text-muted text-sm mb-4">Configure sound warnings before each {{ old('participant_term', $timer->participant_term) }}'s time expires. Use negative values for warning sounds after expiration.</p>
 
                 <div class="space-y-3">
                     <template x-for="(warning, index) in warnings" :key="index">
@@ -348,6 +348,8 @@
                                     <option value="bell">Bell</option>
                                     <option value="beep">Beep</option>
                                     <option value="chime">Chime</option>
+                                    <option value="clockRadio">Clock radio</option>
+                                    <option value="dandelion">Dandelion</option>
                                     <option value="ding">Ding</option>
                                     <option value="twang">Twang</option>
                                     <option value="warning">Warning</option>
@@ -517,60 +519,5 @@
     })();
     </script>
 
-    <script>
-    (function () {
-        let ctx;
-        function c() { return ctx || (ctx = new (window.AudioContext || window.webkitAudioContext)()); }
-        function tone(type, freq, dur) {
-            const x = c(), o = x.createOscillator(), g = x.createGain();
-            o.type = type; o.frequency.value = freq;
-            g.gain.setValueAtTime(1, x.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.01, x.currentTime + dur);
-            o.connect(g).connect(x.destination);
-            o.start(x.currentTime); o.stop(x.currentTime + dur);
-        }
-        const sounds = {
-            beep()  { tone('sine', 880, 0.8); },
-            ding()  { tone('square', 220, 0.8); },
-            bell()  { tone('sine', 1046, 1.0); },
-            twang() { tone('sawtooth', 150, 1.2); },
-            chime() {
-                const x = c();
-                [523.25,659.25,783.99,523.25,659.25,783.99].forEach((f, i) => {
-                    const o = x.createOscillator(), g = x.createGain();
-                    o.type = 'sine'; o.frequency.value = f;
-                    const t = x.currentTime + i * 0.2;
-                    g.gain.setValueAtTime(1, t);
-                    g.gain.exponentialRampToValueAtTime(0.1, t + 0.3);
-                    o.connect(g).connect(x.destination); o.start(t); o.stop(t + 0.3);
-                });
-            },
-            alarm() {
-                const x = c(), o = x.createOscillator(), g = x.createGain(), now = x.currentTime;
-                o.type = 'square'; o.connect(g); g.connect(x.destination);
-                for (let i = 0; i < 8; i++) {
-                    const t = now + i * 0.15;
-                    o.frequency.setValueAtTime(1000, t);
-                    o.frequency.setValueAtTime(1200, t + 0.1);
-                    g.gain.setValueAtTime(1, t);
-                    g.gain.setValueAtTime(0, t + 0.1);
-                }
-                o.start(now); o.stop(now + 1.8);
-            },
-            warning() {
-                const x = c(), now = x.currentTime;
-                [523.25,659.25,783.99,1046.50].forEach((f, i) => {
-                    const o = x.createOscillator(), g = x.createGain(), t = now + i * 0.12;
-                    o.type = 'triangle'; o.frequency.value = f;
-                    o.connect(g); g.connect(x.destination);
-                    g.gain.setValueAtTime(0, t);
-                    g.gain.linearRampToValueAtTime(1, t + 0.05);
-                    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
-                    o.start(t); o.stop(t + 0.5);
-                });
-            }
-        };
-        window.previewSound = function (name) { const fn = sounds[name]; if (fn) fn(); };
-    })();
-    </script>
+    @vite(['resources/js/sounds.js'])
 </x-layouts.app>

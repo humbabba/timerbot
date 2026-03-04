@@ -3,6 +3,8 @@
  * Reads timerConfig global: { name, end_time, participant_count, warnings[], state_url, settings_url, csrf_token }
  */
 
+import { playSound } from './sounds';
+
 (function () {
     'use strict';
 
@@ -73,8 +75,6 @@
     let speakerTick          = null;
     let firedWarnings        = new Set();
     const history            = [];
-    let audioCtx             = null;
-
     // ── Helpers ──
     function formatTime(ms) {
         const negative = ms < 0;
@@ -226,144 +226,6 @@
             }).catch(() => {});
         }
     }, 1000);
-
-    // ── Web Audio API Sounds ──
-    function getAudioCtx() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        return audioCtx;
-    }
-
-    function playBeep() {
-        const ctx = getAudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = 880;
-        gain.gain.setValueAtTime(1, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.8);
-    }
-
-    function playDing() {
-        const ctx = getAudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.value = 220;
-        gain.gain.setValueAtTime(1, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.8);
-    }
-
-    function playChime() {
-        const ctx = getAudioCtx();
-        const notes = [523.25, 659.25, 783.99, 523.25, 659.25, 783.99]; // C5, E5, G5
-        notes.forEach((freq, i) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'sine';
-            osc.frequency.value = freq;
-            const start = ctx.currentTime + i * 0.2;
-            gain.gain.setValueAtTime(1, start);
-            gain.gain.exponentialRampToValueAtTime(0.1, start + 0.3);
-            osc.connect(gain).connect(ctx.destination);
-            osc.start(start);
-            osc.stop(start + 0.3);
-        });
-    }
-
-    function playBell() {
-        const ctx = getAudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = 1046;
-        gain.gain.setValueAtTime(1, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.0);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 1.0);
-    }
-
-    function playTwang() {
-        const ctx = getAudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.value = 150;
-        gain.gain.setValueAtTime(1, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.2);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 1.2);
-    }
-
-    function playAlarm() {
-        const ctx = getAudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        osc.type = 'square'; // Matches the harsh timbre
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        const now = audioCtx.currentTime;
-
-        // Create the "Toggling" pitch effect
-        for (let i = 0; i < 8; i++) {
-            let time = now + (i * 0.15);
-            osc.frequency.setValueAtTime(1000, time);
-            osc.frequency.setValueAtTime(1200, time + 0.1);
-
-            // Rapid On/Off volume envelope
-            gain.gain.setValueAtTime(1, time);
-            gain.gain.setValueAtTime(0, time + 0.1);
-        }
-
-        osc.start(now);
-        osc.stop(now + 1.8);
-    }
-
-    function playWarning() {
-        const ctx = getAudioCtx();
-        const notes = [523.25, 659.25, 783.99, 1046.50, 523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 arpeggio
-        const now = ctx.currentTime;
-
-        notes.forEach((freq, i) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-
-            osc.type = 'triangle'; // Smoother chime sound
-            osc.frequency.value = freq;
-
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            // Fade-in/out envelope
-            let startTime = now + (i * 0.12);
-            gain.gain.setValueAtTime(0, startTime);
-            gain.gain.linearRampToValueAtTime(1, startTime + 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.5);
-
-            osc.start(startTime);
-            osc.stop(startTime + 0.5);
-        });
-    }
-
-
-
-    const soundMap = { beep: playBeep, ding: playDing, chime: playChime, bell: playBell, twang: playTwang, alarm: playAlarm, warning: playWarning };
-
-    function playSound(name) {
-        const fn = soundMap[name];
-        if (fn) fn();
-    }
 
     // ── Visual feedback ──
     function flashSpeakerPanel() {
