@@ -1,59 +1,74 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Timerbot
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**A collaborative meeting timer that keeps everyone on track.**
 
-## About Laravel
+Timerbot divides your remaining meeting time equally among participants and counts each one down in real time. An operator runs the timer while participants watch their countdown on any device — no app install, no login required for public timers.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## How It Works
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Create a timer** — set your meeting end time, number of participants, and optional audio warnings.
+2. **Share the link** — participants open the timer URL on their phone, laptop, or a shared screen.
+3. **Run the meeting** — the operator starts the timer, advances between participants, and the time automatically redistributes as people finish early or run over.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The participant view updates in real time, showing a large countdown clock, the current participant number, time remaining per person, and overall meeting time left.
 
-## Learning Laravel
+## Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **Fair time distribution** — remaining time is recalculated and redistributed after each participant finishes.
+- **Live operator controls** — start, pause, next/previous participant, undo, and stop. Adjust end time and participant count on the fly.
+- **Audio warnings** — configurable sound alerts at custom countdown offsets (before or after time expires). Nine built-in sounds generated via the Web Audio API — no external files needed.
+- **Public and private timers** — public timers are viewable by anyone with the link. Private timers are restricted to group members.
+- **Group-based access control** — every timer belongs to a group. Group members can run timers; group admins can edit and manage them.
+- **Role-based permissions** — granular permissions for timers, users, roles, trash, settings, and activity logs. Roles define which other roles they can assign, preventing privilege escalation.
+- **Custom participant terms** — call them "speakers", "presenters", "updates", or anything else.
+- **Operator locking** — only one person can operate a timer at a time, with automatic lock expiry if the operator disconnects.
+- **State persistence** — timer state saves to the server every second. Refresh the page or lose your connection and pick up right where you left off.
+- **Overtime auto-reset** — forgotten timers automatically reset after a configurable overtime limit.
+- **Passwordless auth** — magic link login via email. No passwords to remember or manage.
+- **Soft delete with trash** — deleted items go to trash and can be restored or permanently removed.
+- **Activity logging** — full audit trail of every create, update, delete, and run action with before/after change details.
+- **Light and dark mode** — toggle between themes with a single click.
+- **Screen wake lock** — keep the display awake while the timer is running, useful for shared screens.
+- **App-wide settings** — configurable news/announcements on the home page, with unread badges in the nav.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Tech Stack
 
-## Laravel Sponsors
+- **[Laravel 12](https://laravel.com)** (PHP 8.2+)
+- **[Tailwind CSS 4](https://tailwindcss.com)** for styling
+- **[Alpine.js](https://alpinejs.dev)** for reactive UI components
+- **[Vite](https://vite.dev)** for asset bundling
+- **[Trix](https://trix-editor.org)** for rich text editing
+- SQLite or MySQL for data storage
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Getting Started
 
-### Premium Partners
+```bash
+# Clone the repository
+git clone https://github.com/your-username/cortex.git
+cd cortex
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Install dependencies and build
+composer setup
+```
 
-## Contributing
+The `composer setup` script installs PHP and Node dependencies, generates an app key, runs migrations, and builds frontend assets.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+To seed the database with default roles, permissions, and an admin user:
 
-## Code of Conduct
+```bash
+php artisan db:seed
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+This creates an admin account with the email `admin@example.com`. Since Timerbot uses passwordless magic link authentication, you'll need to configure a mail driver in your `.env` to receive the login link.
 
-## Security Vulnerabilities
+For local development:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+composer dev
+```
+
+This starts the Laravel dev server, queue worker, log tail, and Vite HMR concurrently.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

@@ -43,8 +43,8 @@ class PermissionSeeder extends Seeder
 
         // Create admin user
         $adminUser = User::firstOrCreate(
-            ['email' => 'humbabba@gmail.com'],
-            ['name' => 'Charles Gray']
+            ['email' => 'admin@example.com'],
+            ['name' => 'Example Admin']
         );
         $adminUser->roles()->attach($adminRole);
 
