@@ -59,7 +59,7 @@ To seed the database with default roles, permissions, and an admin user:
 php artisan db:seed
 ```
 
-This creates an admin account with the email `admin@example.com`. Since Timerbot uses passwordless magic link authentication, you'll need to configure a mail driver in your `.env` to receive the login link.
+This creates an admin account with the email `admin@example.com`. Since Timerbot uses passwordless magic link authentication, you'll need to configure a mail driver in your `.env` to receive the login link or update the admin info in the PermissionSeeder.php file. 
 
 For local development:
 
