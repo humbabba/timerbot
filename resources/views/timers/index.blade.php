@@ -76,6 +76,10 @@
             </form>
         </div>
 
+        @guest
+            <p class="my-6 text-sm text-center">Want to create a timer for your meeting? <a href="{{ route('register') }}" target="_blank">Register for free</a>.</p>
+        @endguest
+
         <div class="overflow-x-auto rounded-sm border border-divider">
             <table class="w-full">
                 <thead>
