@@ -77,7 +77,8 @@
         </div>
 
         @guest
-            <p class="my-6 text-sm text-center">Want to create a timer for your meeting? <a href="{{ route('register') }}" target="_blank">Register for free</a>.</p>
+            <div class="my-6 text-sm text-center hidden md:block">Want to create a timer for your meeting? <a href="{{ route('register') }}" target="_blank">Register for free</a>.</div>
+            <div class="my-4 text-sm text-center block md:hidden"><span class="my-2">Want to create a timer for your meeting?</span><br><span class="my-2"><a href="{{ route('register') }}" target="_blank">Register for free</a>.</span></div>
         @endguest
 
         <div class="overflow-x-auto rounded-sm border border-divider">
