@@ -44,8 +44,8 @@ The participant view updates in real time, showing a large countdown clock, the 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/cortex.git
-cd cortex
+git clone https://github.com/humbabba/timerbot.git
+cd timerbot
 
 # Install dependencies and build
 composer setup
