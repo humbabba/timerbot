@@ -356,9 +356,12 @@ import { playSound } from './sounds';
         endTime = parseEndTime(newEndTimeStr);
         endTimeStr = newEndTimeStr;
 
-        // Recalculate current speaker's allotted time if running
+        // Recalculate current speaker's allotted time if running.
+        // calcTimePerSpeaker() returns the fair share of *remaining* meeting time,
+        // so add back elapsed time to get the total allotment (speakerRemainingMs
+        // subtracts elapsed from allotted).
         if (running && !completed) {
-            speakerAllottedMs = calcTimePerSpeaker();
+            speakerAllottedMs = calcTimePerSpeaker() + speakerElapsedMs();
         }
 
         // Update label with current value
@@ -438,6 +441,10 @@ import { playSound } from './sounds';
     function tickSpeaker() {
         if (paused) return;
 
+        // Update meeting countdown in the same tick so both displays
+        // use nearly the same timestamp and stay visually in sync.
+        updateMeetingCountdown();
+
         const remainMs = speakerRemainingMs();
         speakerCountdownEl.textContent = formatTime(remainMs);
         updateSpeakerColor(remainMs);
@@ -452,7 +459,7 @@ import { playSound } from './sounds';
         }
 
         // Check warnings
-        const secsRemaining = remainMs / 1000;
+        const secsRemaining = Math.floor(remainMs / 1000);
         for (const w of warnings) {
             const key = `${currentSpeaker}-${w.seconds_before}`;
             if (!firedWarnings.has(key) && secsRemaining <= w.seconds_before && secsRemaining > w.seconds_before - 1) {
