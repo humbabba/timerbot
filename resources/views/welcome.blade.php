@@ -2,7 +2,7 @@
 <x-layouts.app>
     <div class="flex items-center justify-center w-full h-full">
         <div class="text-center">
-            <div class="mb-8 text-left">
+            <div class="mb-8 text-left p-4 md:p-8 max-w-3xl mx-auto">
                 {!! AppSetting::get('news') ?? '<h1 class="text-4xl mb-4">Welcome to Cortex</h1><p>All is well.</p>' !!}
             </div>
             @guest
