@@ -14,7 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Sublogical Endeavors'),
-    'version' => '2.00.03
+    'version' => '2.00.04
     ',
 
     /*

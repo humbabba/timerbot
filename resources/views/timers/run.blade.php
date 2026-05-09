@@ -21,14 +21,14 @@
 
         <!-- Meeting Countdown -->
         <div class="mb-8 p-4 md:p-6 bg-timerbot-panel-light rounded-sm text-center">
-            <h2 class="text-timerbot-teal text-sm uppercase tracking-wider mb-2" style="font-family: var(--font-display);">Meeting Time Remaining</h2>
-            <div id="meeting-countdown" class="text-4xl md:text-5xl font-bold text-timerbot-green tabular-nums" style="font-family: var(--font-display);">
+            <div class="text-timerbot-teal text-sm uppercase tracking-wider mb-2" style="font-family: var(--font-display);">Meeting Time Remaining</div>
+            <div id="meeting-countdown" class="text-2xl md:text-5xl font-bold text-timerbot-green tabular-nums" style="font-family: var(--font-display);">
                 --:--:--
             </div>
             <div id="time-per-person" class="mt-2 text-text-muted text-sm">
                 <span id="time-per-person-label"></span>
             </div>
-            <div class="mt-4 flex flex-wrap justify-center items-center gap-4 md:gap-6 text-text-muted text-sm">
+            <div class="mt-4 flex justify-center items-center gap-4 md:gap-6 text-text-muted text-sm">
                 <label class="flex items-center gap-2">
                     End time
                     <input type="time" id="setting-end-time" value="{{ $timer->end_time }}" class="bg-timerbot-panel border border-divider rounded px-2 py-1 text-text text-sm w-30">
@@ -46,6 +46,11 @@
                     @endforeach
                 </div>
             @endif
+        </div>
+
+        <!-- Timer Message Panel -->
+        <div class="mb-8 p-4 md:p-6 bg-timerbot-panel-light rounded-sm">
+            {!! $timer->message !!}
         </div>
 
         <!-- Current Speaker Panel -->
