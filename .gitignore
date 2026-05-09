@@ -17,6 +17,7 @@
 /error_log
 /node_modules
 #/public/build
+/public/.htaccess
 /public/error_log
 /public/hot
 /public/storage
